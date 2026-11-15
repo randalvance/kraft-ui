@@ -1,0 +1,31 @@
+[
+  {
+    "antipattern": "bounce-easing",
+    "name": "Bounce or elastic easing",
+    "description": "Bounce and elastic easing feel dated and tacky. Real objects decelerate smoothly — use exponential easing (ease-out-quart/quint/expo) instead.",
+    "severity": "advisory",
+    "category": "slop",
+    "file": "/Users/randal/orca/workspaces/kraft-ui/doliolid/src/tokens.css",
+    "line": 120,
+    "snippet": "cubic-bezier(0.34, 1.5, 0.64, 1)",
+    "advisory": true,
+    "importedBy": [
+      "styles.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/Users/randal/orca/workspaces/kraft-ui/doliolid/.storybook/preview.css",
+    "line": 6,
+    "snippet": "font-size: clamp(44px, 8vw, 88px) has fluid endpoints 44px and 88px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "44px",
+    "importedBy": [
+      "preview.tsx"
+    ]
+  }
+]

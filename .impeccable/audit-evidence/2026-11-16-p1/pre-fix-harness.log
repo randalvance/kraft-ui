@@ -1,0 +1,52 @@
+(node:43719) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+ RUN  v4.1.12 /Users/randal/orca/workspaces/kraft-ui/doliolid
+
+stdout | tests/contrast.browser.test.tsx > paper painted contrast > keeps labels and material compositions readable with texture=true
+ ❯ |contrast (chromium)| tests/contrast.browser.test.tsx (4 tests | 1 failed | 3 skipped) 372ms
+     × keeps labels and material compositions readable with texture=true 372ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |contrast (chromium)| tests/contrast.browser.test.tsx > paper painted contrast > keeps labels and material compositions readable with texture=true
+AssertionError: Normal text must reach 4.5:1 on the actual painted material: expected [ 'badge-sage: 4.206:1', …(11) ] to deeply equal []
+
+Failure screenshot:
+  - tests/__screenshots__/contrast.browser.test.tsx/paper-painted-contrast-keeps-labels-and-material-compositions-readable-with-texture-true-3.png
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [][39m
+[31m+ [[39m
+[31m+   "badge-sage: 4.206:1",[39m
+[31m+   "badge-danger: 4.416:1",[39m
+[31m+   "sticker-pill-sage: 4.448:1",[39m
+[31m+   "sticker-square-sage: 4.448:1",[39m
+[31m+   "sticker-blue-long-pill: 4.299:1",[39m
+[31m+   "paper-muted: 3.657:1",[39m
+[31m+   "paper-link: 4.147:1",[39m
+[31m+   "kraft-muted: 2.366:1",[39m
+[31m+   "kraft-link: 2.687:1",[39m
+[31m+   "cardboard-muted: 2.073:1",[39m
+[31m+   "cardboard-link: 2.364:1",[39m
+[31m+   "nested-paper-muted: 4.045:1",[39m
+[31m+ ][39m
+
+ ❯ verifyPaintedContrast tests/contrast.browser.test.tsx:78:82
+     76|     if (minimum < 4.5) failures.push(`${name}: ${minimum.toFixed(3)}:1…
+     77|   }
+     78|   expect(failures, 'Normal text must reach 4.5:1 on the actual painted…
+       |                                                                                  ^
+     79| }
+     80|
+ ❯ tests/contrast.browser.test.tsx:96:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  00:42:30
+   Duration  817ms (transform 0ms, setup 0ms, import 61ms, tests 372ms, environment 0ms)

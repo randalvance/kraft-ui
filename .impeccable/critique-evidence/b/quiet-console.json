@@ -1,0 +1,24 @@
+{
+  "id": "572c01c6-3371-45a9-87a9-19eeb86358aa",
+  "ok": true,
+  "result": {
+    "entries": [
+      {
+        "level": "startGroup",
+        "text": "%c[impeccable] 1 anti-pattern found color: oklch(84% 0.19 80.46); font-weight: bold"
+      },
+      {
+        "level": "log",
+        "text": "%clow-contrast%c 4.2:1 (need 4.5:1) — text #ffffff on #627bae (gradient on span.kraft-sticker) color: oklch(84% 0.19 80.46); font-weight: bold color: inherit {__reactFiber$88txiz8ly15: FiberNode, __reactProps$88txiz8ly15: Object, _impeccableOverlay: div.impeccable-overlay, title: \"\", lang: \"\", ...}"
+      },
+      {
+        "level": "endGroup",
+        "text": "console.groupEnd"
+      }
+    ],
+    "truncated": false
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

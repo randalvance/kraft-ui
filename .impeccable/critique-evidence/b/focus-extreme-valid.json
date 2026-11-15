@@ -1,0 +1,11 @@
+{
+  "id": "b7dec8e4-f14a-4c6f-996f-b45fa550c9a1",
+  "ok": true,
+  "result": {
+    "result": "{\"extreme\":{\"client\":320,\"rect\":{\"bottom\":60,\"height\":36,\"left\":24,\"right\":693.953125,\"top\":24,\"width\":669.953125,\"x\":24,\"y\":24},\"scroll\":694},\"focus\":{\"name\":\"blue\",\"offset\":\"0px\",\"outline\":\"rgb(255, 255, 255) none 3px\",\"visible\":false},\"reduced\":true,\"transition\":\"0s\"}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-button--variants&viewMode=story"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

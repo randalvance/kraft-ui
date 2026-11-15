@@ -1,0 +1,11 @@
+{
+  "id": "00512e9d-2e50-4e6d-9279-dfe14e071e58",
+  "ok": true,
+  "result": {
+    "result": "{\"elements\":[{\"bg\":\"rgb(74, 58, 36)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0) 55%), url(\\\"http://127.0.0.1:6006/src/assets/pulp-paper-night.png\\\"), none\",\"color\":\"rgb(239, 230, 211)\",\"font\":\"12px\",\"h\":32,\"outline\":\"rgb(239, 230, 211) none 3px\",\"text\":\"\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0.15s, 0.15s\",\"w\":28}],\"overflow\":[977,977],\"themes\":[{\"motion\":\"on\",\"theme\":\"night\",\"tilt\":\"on\"}],\"viewport\":[977,1024]}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-iconbutton--small&viewMode=story&globals=theme%3Anight"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

@@ -1,0 +1,1582 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T16:53:08.784312+00:00",
+  "title": "Design System: Kraft UI",
+  "extensions": {
+    "colorMeta": {
+      "desk": {
+        "role": "neutral",
+        "displayName": "desk",
+        "tonalRamp": [
+          "oklch(15% 0.0052 84.59)",
+          "oklch(27% 0.0095 84.59)",
+          "oklch(39% 0.0138 84.59)",
+          "oklch(51% 0.0172 84.59)",
+          "oklch(63% 0.0172 84.59)",
+          "oklch(75% 0.0138 84.59)",
+          "oklch(87% 0.0086 84.59)",
+          "oklch(95% 0.0034 84.59)"
+        ]
+      },
+      "desk-2": {
+        "role": "neutral",
+        "displayName": "desk-2",
+        "tonalRamp": [
+          "oklch(15% 0.0087 84.59)",
+          "oklch(27% 0.0159 84.59)",
+          "oklch(39% 0.0232 84.59)",
+          "oklch(51% 0.0290 84.59)",
+          "oklch(63% 0.0290 84.59)",
+          "oklch(75% 0.0232 84.59)",
+          "oklch(87% 0.0145 84.59)",
+          "oklch(95% 0.0058 84.59)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "sheet",
+        "tonalRamp": [
+          "oklch(15% 0.0038 86.83)",
+          "oklch(27% 0.0070 86.83)",
+          "oklch(39% 0.0101 86.83)",
+          "oklch(51% 0.0126 86.83)",
+          "oklch(63% 0.0126 86.83)",
+          "oklch(75% 0.0101 86.83)",
+          "oklch(87% 0.0063 86.83)",
+          "oklch(95% 0.0025 86.83)"
+        ]
+      },
+      "sheet-warm": {
+        "role": "neutral",
+        "displayName": "sheet-warm",
+        "tonalRamp": [
+          "oklch(15% 0.0050 88.00)",
+          "oklch(27% 0.0092 88.00)",
+          "oklch(39% 0.0134 88.00)",
+          "oklch(51% 0.0167 88.00)",
+          "oklch(63% 0.0167 88.00)",
+          "oklch(75% 0.0134 88.00)",
+          "oklch(87% 0.0084 88.00)",
+          "oklch(95% 0.0033 88.00)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "card",
+        "tonalRamp": [
+          "oklch(15% 0.0029 87.47)",
+          "oklch(27% 0.0054 87.47)",
+          "oklch(39% 0.0078 87.47)",
+          "oklch(51% 0.0098 87.47)",
+          "oklch(63% 0.0098 87.47)",
+          "oklch(75% 0.0078 87.47)",
+          "oklch(87% 0.0049 87.47)",
+          "oklch(95% 0.0020 87.47)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "paper",
+        "tonalRamp": [
+          "oklch(15% 0.0052 84.59)",
+          "oklch(27% 0.0094 84.59)",
+          "oklch(39% 0.0137 84.59)",
+          "oklch(51% 0.0172 84.59)",
+          "oklch(63% 0.0172 84.59)",
+          "oklch(75% 0.0137 84.59)",
+          "oklch(87% 0.0086 84.59)",
+          "oklch(95% 0.0034 84.59)"
+        ]
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "paper-2",
+        "tonalRamp": [
+          "oklch(15% 0.0073 85.79)",
+          "oklch(27% 0.0133 85.79)",
+          "oklch(39% 0.0194 85.79)",
+          "oklch(51% 0.0242 85.79)",
+          "oklch(63% 0.0242 85.79)",
+          "oklch(75% 0.0194 85.79)",
+          "oklch(87% 0.0121 85.79)",
+          "oklch(95% 0.0048 85.79)"
+        ]
+      },
+      "hover": {
+        "role": "neutral",
+        "displayName": "hover",
+        "tonalRamp": [
+          "oklch(15% 0.0073 85.79)",
+          "oklch(27% 0.0133 85.79)",
+          "oklch(39% 0.0193 85.79)",
+          "oklch(51% 0.0242 85.79)",
+          "oklch(63% 0.0242 85.79)",
+          "oklch(75% 0.0193 85.79)",
+          "oklch(87% 0.0121 85.79)",
+          "oklch(95% 0.0048 85.79)"
+        ]
+      },
+      "board": {
+        "role": "neutral",
+        "displayName": "board",
+        "tonalRamp": [
+          "oklch(15% 0.0242 79.41)",
+          "oklch(27% 0.0443 79.41)",
+          "oklch(39% 0.0644 79.41)",
+          "oklch(51% 0.0805 79.41)",
+          "oklch(63% 0.0805 79.41)",
+          "oklch(75% 0.0644 79.41)",
+          "oklch(87% 0.0403 79.41)",
+          "oklch(95% 0.0161 79.41)"
+        ]
+      },
+      "board-2": {
+        "role": "neutral",
+        "displayName": "board-2",
+        "tonalRamp": [
+          "oklch(15% 0.0241 79.92)",
+          "oklch(27% 0.0442 79.92)",
+          "oklch(39% 0.0642 79.92)",
+          "oklch(51% 0.0803 79.92)",
+          "oklch(63% 0.0803 79.92)",
+          "oklch(75% 0.0642 79.92)",
+          "oklch(87% 0.0401 79.92)",
+          "oklch(95% 0.0161 79.92)"
+        ]
+      },
+      "kraft": {
+        "role": "neutral",
+        "displayName": "kraft",
+        "tonalRamp": [
+          "oklch(15% 0.0225 82.63)",
+          "oklch(27% 0.0413 82.63)",
+          "oklch(39% 0.0601 82.63)",
+          "oklch(51% 0.0751 82.63)",
+          "oklch(63% 0.0751 82.63)",
+          "oklch(75% 0.0601 82.63)",
+          "oklch(87% 0.0376 82.63)",
+          "oklch(95% 0.0150 82.63)"
+        ]
+      },
+      "kraft-2": {
+        "role": "neutral",
+        "displayName": "kraft-2",
+        "tonalRamp": [
+          "oklch(15% 0.0249 77.47)",
+          "oklch(27% 0.0457 77.47)",
+          "oklch(39% 0.0664 77.47)",
+          "oklch(51% 0.0830 77.47)",
+          "oklch(63% 0.0830 77.47)",
+          "oklch(75% 0.0664 77.47)",
+          "oklch(87% 0.0415 77.47)",
+          "oklch(95% 0.0166 77.47)"
+        ]
+      },
+      "mat-green": {
+        "role": "secondary",
+        "displayName": "mat-green",
+        "tonalRamp": [
+          "oklch(15% 0.0195 141.39)",
+          "oklch(27% 0.0357 141.39)",
+          "oklch(39% 0.0520 141.39)",
+          "oklch(51% 0.0650 141.39)",
+          "oklch(63% 0.0650 141.39)",
+          "oklch(75% 0.0520 141.39)",
+          "oklch(87% 0.0325 141.39)",
+          "oklch(95% 0.0130 141.39)"
+        ]
+      },
+      "mat-green-2": {
+        "role": "secondary",
+        "displayName": "mat-green-2",
+        "tonalRamp": [
+          "oklch(15% 0.0244 143.93)",
+          "oklch(27% 0.0447 143.93)",
+          "oklch(39% 0.0650 143.93)",
+          "oklch(51% 0.0812 143.93)",
+          "oklch(63% 0.0812 143.93)",
+          "oklch(75% 0.0650 143.93)",
+          "oklch(87% 0.0406 143.93)",
+          "oklch(95% 0.0162 143.93)"
+        ]
+      },
+      "mat-red": {
+        "role": "secondary",
+        "displayName": "mat-red",
+        "tonalRamp": [
+          "oklch(15% 0.0400 34.51)",
+          "oklch(27% 0.0733 34.51)",
+          "oklch(39% 0.1066 34.51)",
+          "oklch(51% 0.1333 34.51)",
+          "oklch(63% 0.1333 34.51)",
+          "oklch(75% 0.1066 34.51)",
+          "oklch(87% 0.0666 34.51)",
+          "oklch(95% 0.0267 34.51)"
+        ]
+      },
+      "mat-red-2": {
+        "role": "secondary",
+        "displayName": "mat-red-2",
+        "tonalRamp": [
+          "oklch(15% 0.0371 34.59)",
+          "oklch(27% 0.0681 34.59)",
+          "oklch(39% 0.0990 34.59)",
+          "oklch(51% 0.1238 34.59)",
+          "oklch(63% 0.1238 34.59)",
+          "oklch(75% 0.0990 34.59)",
+          "oklch(87% 0.0619 34.59)",
+          "oklch(95% 0.0248 34.59)"
+        ]
+      },
+      "mat-red-3": {
+        "role": "secondary",
+        "displayName": "mat-red-3",
+        "tonalRamp": [
+          "oklch(15% 0.0290 33.72)",
+          "oklch(27% 0.0531 33.72)",
+          "oklch(39% 0.0772 33.72)",
+          "oklch(51% 0.0965 33.72)",
+          "oklch(63% 0.0965 33.72)",
+          "oklch(75% 0.0772 33.72)",
+          "oklch(87% 0.0483 33.72)",
+          "oklch(95% 0.0193 33.72)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "ink",
+        "tonalRamp": [
+          "oklch(15% 0.0060 70.05)",
+          "oklch(27% 0.0111 70.05)",
+          "oklch(39% 0.0161 70.05)",
+          "oklch(51% 0.0202 70.05)",
+          "oklch(63% 0.0202 70.05)",
+          "oklch(75% 0.0161 70.05)",
+          "oklch(87% 0.0101 70.05)",
+          "oklch(95% 0.0040 70.05)"
+        ]
+      },
+      "mute": {
+        "role": "neutral",
+        "displayName": "mute",
+        "tonalRamp": [
+          "oklch(15% 0.0089 72.82)",
+          "oklch(27% 0.0163 72.82)",
+          "oklch(39% 0.0237 72.82)",
+          "oklch(51% 0.0296 72.82)",
+          "oklch(63% 0.0296 72.82)",
+          "oklch(75% 0.0237 72.82)",
+          "oklch(87% 0.0148 72.82)",
+          "oklch(95% 0.0059 72.82)"
+        ]
+      },
+      "faint": {
+        "role": "neutral",
+        "displayName": "faint",
+        "tonalRamp": [
+          "oklch(15% 0.0111 80.73)",
+          "oklch(27% 0.0203 80.73)",
+          "oklch(39% 0.0295 80.73)",
+          "oklch(51% 0.0369 80.73)",
+          "oklch(63% 0.0369 80.73)",
+          "oklch(75% 0.0295 80.73)",
+          "oklch(87% 0.0185 80.73)",
+          "oklch(95% 0.0074 80.73)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "line",
+        "tonalRamp": [
+          "oklch(15% 0.0117 85.34)",
+          "oklch(27% 0.0215 85.34)",
+          "oklch(39% 0.0313 85.34)",
+          "oklch(51% 0.0391 85.34)",
+          "oklch(63% 0.0391 85.34)",
+          "oklch(75% 0.0313 85.34)",
+          "oklch(87% 0.0196 85.34)",
+          "oklch(95% 0.0078 85.34)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "rule",
+        "tonalRamp": [
+          "oklch(15% 0.0041 258.35)",
+          "oklch(27% 0.0076 258.35)",
+          "oklch(39% 0.0111 258.35)",
+          "oklch(51% 0.0138 258.35)",
+          "oklch(63% 0.0138 258.35)",
+          "oklch(75% 0.0111 258.35)",
+          "oklch(87% 0.0069 258.35)",
+          "oklch(95% 0.0028 258.35)"
+        ]
+      },
+      "bar": {
+        "role": "neutral",
+        "displayName": "bar",
+        "tonalRamp": [
+          "oklch(15% 0.0140 83.84)",
+          "oklch(27% 0.0256 83.84)",
+          "oklch(39% 0.0372 83.84)",
+          "oklch(51% 0.0465 83.84)",
+          "oklch(63% 0.0465 83.84)",
+          "oklch(75% 0.0372 83.84)",
+          "oklch(87% 0.0233 83.84)",
+          "oklch(95% 0.0093 83.84)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "white",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "sticker-cut": {
+        "role": "neutral",
+        "displayName": "sticker-cut",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "red": {
+        "role": "secondary",
+        "displayName": "red",
+        "tonalRamp": [
+          "oklch(15% 0.0457 33.43)",
+          "oklch(27% 0.0837 33.43)",
+          "oklch(39% 0.1217 33.43)",
+          "oklch(51% 0.1522 33.43)",
+          "oklch(63% 0.1522 33.43)",
+          "oklch(75% 0.1217 33.43)",
+          "oklch(87% 0.0761 33.43)",
+          "oklch(95% 0.0304 33.43)"
+        ]
+      },
+      "red-2": {
+        "role": "secondary",
+        "displayName": "red-2",
+        "tonalRamp": [
+          "oklch(15% 0.0358 32.52)",
+          "oklch(27% 0.0656 32.52)",
+          "oklch(39% 0.0953 32.52)",
+          "oklch(51% 0.1192 32.52)",
+          "oklch(63% 0.1192 32.52)",
+          "oklch(75% 0.0953 32.52)",
+          "oklch(87% 0.0596 32.52)",
+          "oklch(95% 0.0238 32.52)"
+        ]
+      },
+      "blue": {
+        "role": "primary",
+        "displayName": "blue",
+        "tonalRamp": [
+          "oklch(15% 0.0326 262.65)",
+          "oklch(27% 0.0598 262.65)",
+          "oklch(39% 0.0870 262.65)",
+          "oklch(51% 0.1088 262.65)",
+          "oklch(63% 0.1088 262.65)",
+          "oklch(75% 0.0870 262.65)",
+          "oklch(87% 0.0544 262.65)",
+          "oklch(95% 0.0218 262.65)"
+        ]
+      },
+      "blue-2": {
+        "role": "primary",
+        "displayName": "blue-2",
+        "tonalRamp": [
+          "oklch(15% 0.0261 264.12)",
+          "oklch(27% 0.0478 264.12)",
+          "oklch(39% 0.0695 264.12)",
+          "oklch(51% 0.0869 264.12)",
+          "oklch(63% 0.0869 264.12)",
+          "oklch(75% 0.0695 264.12)",
+          "oklch(87% 0.0434 264.12)",
+          "oklch(95% 0.0174 264.12)"
+        ]
+      },
+      "on-blue": {
+        "role": "primary",
+        "displayName": "on-blue",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "green",
+        "tonalRamp": [
+          "oklch(15% 0.0275 143.86)",
+          "oklch(27% 0.0504 143.86)",
+          "oklch(39% 0.0733 143.86)",
+          "oklch(51% 0.0917 143.86)",
+          "oklch(63% 0.0917 143.86)",
+          "oklch(75% 0.0733 143.86)",
+          "oklch(87% 0.0458 143.86)",
+          "oklch(95% 0.0183 143.86)"
+        ]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "amber",
+        "tonalRamp": [
+          "oklch(15% 0.0353 66.57)",
+          "oklch(27% 0.0648 66.57)",
+          "oklch(39% 0.0942 66.57)",
+          "oklch(51% 0.1178 66.57)",
+          "oklch(63% 0.1178 66.57)",
+          "oklch(75% 0.0942 66.57)",
+          "oklch(87% 0.0589 66.57)",
+          "oklch(95% 0.0236 66.57)"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "ochre",
+        "tonalRamp": [
+          "oklch(15% 0.0291 67.66)",
+          "oklch(27% 0.0534 67.66)",
+          "oklch(39% 0.0776 67.66)",
+          "oklch(51% 0.0970 67.66)",
+          "oklch(63% 0.0970 67.66)",
+          "oklch(75% 0.0776 67.66)",
+          "oklch(87% 0.0485 67.66)",
+          "oklch(95% 0.0194 67.66)"
+        ]
+      },
+      "ochre-soft": {
+        "role": "secondary",
+        "displayName": "ochre-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0211 70.08)",
+          "oklch(27% 0.0388 70.08)",
+          "oklch(39% 0.0564 70.08)",
+          "oklch(51% 0.0705 70.08)",
+          "oklch(63% 0.0705 70.08)",
+          "oklch(75% 0.0564 70.08)",
+          "oklch(87% 0.0352 70.08)",
+          "oklch(95% 0.0141 70.08)"
+        ]
+      },
+      "teal": {
+        "role": "secondary",
+        "displayName": "teal",
+        "tonalRamp": [
+          "oklch(15% 0.0213 207.77)",
+          "oklch(27% 0.0391 207.77)",
+          "oklch(39% 0.0569 207.77)",
+          "oklch(51% 0.0712 207.77)",
+          "oklch(63% 0.0712 207.77)",
+          "oklch(75% 0.0569 207.77)",
+          "oklch(87% 0.0356 207.77)",
+          "oklch(95% 0.0142 207.77)"
+        ]
+      },
+      "violet": {
+        "role": "secondary",
+        "displayName": "violet",
+        "tonalRamp": [
+          "oklch(15% 0.0336 303.61)",
+          "oklch(27% 0.0617 303.61)",
+          "oklch(39% 0.0897 303.61)",
+          "oklch(51% 0.1121 303.61)",
+          "oklch(63% 0.1121 303.61)",
+          "oklch(75% 0.0897 303.61)",
+          "oklch(87% 0.0561 303.61)",
+          "oklch(95% 0.0224 303.61)"
+        ]
+      },
+      "plum": {
+        "role": "secondary",
+        "displayName": "plum",
+        "tonalRamp": [
+          "oklch(15% 0.0290 343.52)",
+          "oklch(27% 0.0532 343.52)",
+          "oklch(39% 0.0774 343.52)",
+          "oklch(51% 0.0968 343.52)",
+          "oklch(63% 0.0968 343.52)",
+          "oklch(75% 0.0774 343.52)",
+          "oklch(87% 0.0484 343.52)",
+          "oklch(95% 0.0194 343.52)"
+        ]
+      },
+      "attention": {
+        "role": "primary",
+        "displayName": "attention",
+        "tonalRamp": [
+          "oklch(15% 0.0431 87.47)",
+          "oklch(27% 0.0789 87.47)",
+          "oklch(39% 0.1148 87.47)",
+          "oklch(51% 0.1435 87.47)",
+          "oklch(63% 0.1435 87.47)",
+          "oklch(75% 0.1148 87.47)",
+          "oklch(87% 0.0718 87.47)",
+          "oklch(95% 0.0287 87.47)"
+        ]
+      },
+      "on-attention": {
+        "role": "primary",
+        "displayName": "on-attention",
+        "tonalRamp": [
+          "oklch(15% 0.0060 70.05)",
+          "oklch(27% 0.0111 70.05)",
+          "oklch(39% 0.0161 70.05)",
+          "oklch(51% 0.0202 70.05)",
+          "oklch(63% 0.0202 70.05)",
+          "oklch(75% 0.0161 70.05)",
+          "oklch(87% 0.0101 70.05)",
+          "oklch(95% 0.0040 70.05)"
+        ]
+      },
+      "highlighter": {
+        "role": "neutral",
+        "displayName": "highlighter",
+        "tonalRamp": [
+          "oklch(15% 0.0303 98.88)",
+          "oklch(27% 0.0555 98.88)",
+          "oklch(39% 0.0807 98.88)",
+          "oklch(51% 0.1009 98.88)",
+          "oklch(63% 0.1009 98.88)",
+          "oklch(75% 0.0807 98.88)",
+          "oklch(87% 0.0505 98.88)",
+          "oklch(95% 0.0202 98.88)"
+        ]
+      },
+      "highlighter-2": {
+        "role": "neutral",
+        "displayName": "highlighter-2",
+        "tonalRamp": [
+          "oklch(15% 0.0397 92.29)",
+          "oklch(27% 0.0728 92.29)",
+          "oklch(39% 0.1058 92.29)",
+          "oklch(51% 0.1323 92.29)",
+          "oklch(63% 0.1323 92.29)",
+          "oklch(75% 0.1058 92.29)",
+          "oklch(87% 0.0661 92.29)",
+          "oklch(95% 0.0265 92.29)"
+        ]
+      },
+      "tape": {
+        "role": "neutral",
+        "displayName": "tape",
+        "tonalRamp": [
+          "oklch(15% 0.0239 96.74)",
+          "oklch(27% 0.0438 96.74)",
+          "oklch(39% 0.0637 96.74)",
+          "oklch(51% 0.0796 96.74)",
+          "oklch(63% 0.0796 96.74)",
+          "oklch(75% 0.0637 96.74)",
+          "oklch(87% 0.0398 96.74)",
+          "oklch(95% 0.0159 96.74)"
+        ]
+      },
+      "edge": {
+        "role": "neutral",
+        "displayName": "edge",
+        "tonalRamp": [
+          "oklch(15% 0.0147 87.01)",
+          "oklch(27% 0.0269 87.01)",
+          "oklch(39% 0.0392 87.01)",
+          "oklch(51% 0.0490 87.01)",
+          "oklch(63% 0.0490 87.01)",
+          "oklch(75% 0.0392 87.01)",
+          "oklch(87% 0.0245 87.01)",
+          "oklch(95% 0.0098 87.01)"
+        ]
+      },
+      "edge-2": {
+        "role": "neutral",
+        "displayName": "edge-2",
+        "tonalRamp": [
+          "oklch(15% 0.0168 83.79)",
+          "oklch(27% 0.0308 83.79)",
+          "oklch(39% 0.0448 83.79)",
+          "oklch(51% 0.0560 83.79)",
+          "oklch(63% 0.0560 83.79)",
+          "oklch(75% 0.0448 83.79)",
+          "oklch(87% 0.0280 83.79)",
+          "oklch(95% 0.0112 83.79)"
+        ]
+      },
+      "amb": {
+        "role": "neutral",
+        "displayName": "amb",
+        "tonalRamp": [
+          "oklch(15% 0.0145 70.00)",
+          "oklch(27% 0.0266 70.00)",
+          "oklch(39% 0.0387 70.00)",
+          "oklch(51% 0.0484 70.00)",
+          "oklch(63% 0.0484 70.00)",
+          "oklch(75% 0.0387 70.00)",
+          "oklch(87% 0.0242 70.00)",
+          "oklch(95% 0.0097 70.00)"
+        ]
+      },
+      "amb-2": {
+        "role": "neutral",
+        "displayName": "amb-2",
+        "tonalRamp": [
+          "oklch(15% 0.0145 70.00)",
+          "oklch(27% 0.0266 70.00)",
+          "oklch(39% 0.0387 70.00)",
+          "oklch(51% 0.0484 70.00)",
+          "oklch(63% 0.0484 70.00)",
+          "oklch(75% 0.0387 70.00)",
+          "oklch(87% 0.0242 70.00)",
+          "oklch(95% 0.0097 70.00)"
+        ]
+      },
+      "face": {
+        "role": "neutral",
+        "displayName": "face",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "gloss": {
+        "role": "neutral",
+        "displayName": "gloss",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "veil": {
+        "role": "neutral",
+        "displayName": "veil",
+        "tonalRamp": [
+          "oklch(15% 0.0060 70.05)",
+          "oklch(27% 0.0111 70.05)",
+          "oklch(39% 0.0161 70.05)",
+          "oklch(51% 0.0202 70.05)",
+          "oklch(63% 0.0202 70.05)",
+          "oklch(75% 0.0161 70.05)",
+          "oklch(87% 0.0101 70.05)",
+          "oklch(95% 0.0040 70.05)"
+        ]
+      },
+      "marker": {
+        "role": "neutral",
+        "displayName": "marker",
+        "tonalRamp": [
+          "oklch(15% 0.0410 97.64)",
+          "oklch(27% 0.0751 97.64)",
+          "oklch(39% 0.1092 97.64)",
+          "oklch(51% 0.1365 97.64)",
+          "oklch(63% 0.1365 97.64)",
+          "oklch(75% 0.1092 97.64)",
+          "oklch(87% 0.0683 97.64)",
+          "oklch(95% 0.0273 97.64)"
+        ]
+      },
+      "st-green": {
+        "role": "secondary",
+        "displayName": "st-green",
+        "tonalRamp": [
+          "oklch(15% 0.0229 143.78)",
+          "oklch(27% 0.0420 143.78)",
+          "oklch(39% 0.0610 143.78)",
+          "oklch(51% 0.0763 143.78)",
+          "oklch(63% 0.0763 143.78)",
+          "oklch(75% 0.0610 143.78)",
+          "oklch(87% 0.0381 143.78)",
+          "oklch(95% 0.0153 143.78)"
+        ]
+      },
+      "st-amber": {
+        "role": "secondary",
+        "displayName": "st-amber",
+        "tonalRamp": [
+          "oklch(15% 0.0295 67.04)",
+          "oklch(27% 0.0540 67.04)",
+          "oklch(39% 0.0785 67.04)",
+          "oklch(51% 0.0982 67.04)",
+          "oklch(63% 0.0982 67.04)",
+          "oklch(75% 0.0785 67.04)",
+          "oklch(87% 0.0491 67.04)",
+          "oklch(95% 0.0196 67.04)"
+        ]
+      },
+      "st-red": {
+        "role": "secondary",
+        "displayName": "st-red",
+        "tonalRamp": [
+          "oklch(15% 0.0381 33.30)",
+          "oklch(27% 0.0698 33.30)",
+          "oklch(39% 0.1015 33.30)",
+          "oklch(51% 0.1269 33.30)",
+          "oklch(63% 0.1269 33.30)",
+          "oklch(75% 0.1015 33.30)",
+          "oklch(87% 0.0634 33.30)",
+          "oklch(95% 0.0254 33.30)"
+        ]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "rail",
+        "tonalRamp": [
+          "oklch(15% 0.0252 80.57)",
+          "oklch(27% 0.0462 80.57)",
+          "oklch(39% 0.0671 80.57)",
+          "oklch(51% 0.0839 80.57)",
+          "oklch(63% 0.0839 80.57)",
+          "oklch(75% 0.0671 80.57)",
+          "oklch(87% 0.0420 80.57)",
+          "oklch(95% 0.0168 80.57)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "panel",
+        "tonalRamp": [
+          "oklch(15% 0.0242 79.41)",
+          "oklch(27% 0.0443 79.41)",
+          "oklch(39% 0.0644 79.41)",
+          "oklch(51% 0.0805 79.41)",
+          "oklch(63% 0.0805 79.41)",
+          "oklch(75% 0.0644 79.41)",
+          "oklch(87% 0.0403 79.41)",
+          "oklch(95% 0.0161 79.41)"
+        ]
+      },
+      "deck-1": {
+        "role": "neutral",
+        "displayName": "deck-1",
+        "tonalRamp": [
+          "oklch(15% 0.0078 84.59)",
+          "oklch(27% 0.0142 84.59)",
+          "oklch(39% 0.0207 84.59)",
+          "oklch(51% 0.0259 84.59)",
+          "oklch(63% 0.0259 84.59)",
+          "oklch(75% 0.0207 84.59)",
+          "oklch(87% 0.0129 84.59)",
+          "oklch(95% 0.0052 84.59)"
+        ]
+      },
+      "deck-2": {
+        "role": "neutral",
+        "displayName": "deck-2",
+        "tonalRamp": [
+          "oklch(15% 0.0087 84.59)",
+          "oklch(27% 0.0159 84.59)",
+          "oklch(39% 0.0231 84.59)",
+          "oklch(51% 0.0289 84.59)",
+          "oklch(63% 0.0289 84.59)",
+          "oklch(75% 0.0231 84.59)",
+          "oklch(87% 0.0145 84.59)",
+          "oklch(95% 0.0058 84.59)"
+        ]
+      },
+      "shadow": {
+        "role": "neutral",
+        "displayName": "shadow",
+        "tonalRamp": [
+          "oklch(15% 0.0138 87.18)",
+          "oklch(27% 0.0253 87.18)",
+          "oklch(39% 0.0368 87.18)",
+          "oklch(51% 0.0461 87.18)",
+          "oklch(63% 0.0461 87.18)",
+          "oklch(75% 0.0368 87.18)",
+          "oklch(87% 0.0230 87.18)",
+          "oklch(95% 0.0092 87.18)"
+        ]
+      },
+      "blush": {
+        "role": "secondary",
+        "displayName": "blush",
+        "tonalRamp": [
+          "oklch(15% 0.0227 26.05)",
+          "oklch(27% 0.0415 26.05)",
+          "oklch(39% 0.0604 26.05)",
+          "oklch(51% 0.0755 26.05)",
+          "oklch(63% 0.0755 26.05)",
+          "oklch(75% 0.0604 26.05)",
+          "oklch(87% 0.0378 26.05)",
+          "oklch(95% 0.0151 26.05)"
+        ]
+      },
+      "cork": {
+        "role": "neutral",
+        "displayName": "cork",
+        "tonalRamp": [
+          "oklch(15% 0.0248 66.26)",
+          "oklch(27% 0.0455 66.26)",
+          "oklch(39% 0.0661 66.26)",
+          "oklch(51% 0.0827 66.26)",
+          "oklch(63% 0.0827 66.26)",
+          "oklch(75% 0.0661 66.26)",
+          "oklch(87% 0.0413 66.26)",
+          "oklch(95% 0.0165 66.26)"
+        ]
+      },
+      "cork-2": {
+        "role": "neutral",
+        "displayName": "cork-2",
+        "tonalRamp": [
+          "oklch(15% 0.0205 63.41)",
+          "oklch(27% 0.0376 63.41)",
+          "oklch(39% 0.0546 63.41)",
+          "oklch(51% 0.0683 63.41)",
+          "oklch(63% 0.0683 63.41)",
+          "oklch(75% 0.0546 63.41)",
+          "oklch(87% 0.0341 63.41)",
+          "oklch(95% 0.0137 63.41)"
+        ]
+      },
+      "stamp-ground": {
+        "role": "neutral",
+        "displayName": "stamp-ground",
+        "tonalRamp": [
+          "oklch(15% 0.0021 88.64)",
+          "oklch(27% 0.0038 88.64)",
+          "oklch(39% 0.0055 88.64)",
+          "oklch(51% 0.0069 88.64)",
+          "oklch(63% 0.0069 88.64)",
+          "oklch(75% 0.0055 88.64)",
+          "oklch(87% 0.0035 88.64)",
+          "oklch(95% 0.0014 88.64)"
+        ]
+      },
+      "stamp-ground-soft": {
+        "role": "neutral",
+        "displayName": "stamp-ground-soft",
+        "tonalRamp": [
+          "oklch(15% 0.0021 88.64)",
+          "oklch(27% 0.0038 88.64)",
+          "oklch(39% 0.0055 88.64)",
+          "oklch(51% 0.0069 88.64)",
+          "oklch(63% 0.0069 88.64)",
+          "oklch(75% 0.0055 88.64)",
+          "oklch(87% 0.0035 88.64)",
+          "oklch(95% 0.0014 88.64)"
+        ]
+      },
+      "knob": {
+        "role": "neutral",
+        "displayName": "knob",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "glass",
+        "tonalRamp": [
+          "oklch(15% 0.0025 91.48)",
+          "oklch(27% 0.0045 91.48)",
+          "oklch(39% 0.0065 91.48)",
+          "oklch(51% 0.0082 91.48)",
+          "oklch(63% 0.0082 91.48)",
+          "oklch(75% 0.0065 91.48)",
+          "oklch(87% 0.0041 91.48)",
+          "oklch(95% 0.0016 91.48)"
+        ]
+      },
+      "mark-gloss": {
+        "role": "neutral",
+        "displayName": "mark gloss",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "link-paper": {
+        "role": "primary",
+        "displayName": "link paper",
+        "tonalRamp": [
+          "oklch(15% 0.0291 261.77)",
+          "oklch(27% 0.0534 261.77)",
+          "oklch(39% 0.0777 261.77)",
+          "oklch(51% 0.0971 261.77)",
+          "oklch(63% 0.0971 261.77)",
+          "oklch(75% 0.0777 261.77)",
+          "oklch(87% 0.0486 261.77)",
+          "oklch(95% 0.0194 261.77)"
+        ]
+      },
+      "text-muted-paper": {
+        "role": "neutral",
+        "displayName": "text muted paper",
+        "tonalRamp": [
+          "oklch(15% 0.0086 73.14)",
+          "oklch(27% 0.0157 73.14)",
+          "oklch(39% 0.0228 73.14)",
+          "oklch(51% 0.0285 73.14)",
+          "oklch(63% 0.0285 73.14)",
+          "oklch(75% 0.0228 73.14)",
+          "oklch(87% 0.0143 73.14)",
+          "oklch(95% 0.0057 73.14)"
+        ]
+      },
+      "ink-kraft": {
+        "role": "neutral",
+        "displayName": "ink kraft",
+        "tonalRamp": [
+          "oklch(15% 0.0060 70.05)",
+          "oklch(27% 0.0111 70.05)",
+          "oklch(39% 0.0161 70.05)",
+          "oklch(51% 0.0202 70.05)",
+          "oklch(63% 0.0202 70.05)",
+          "oklch(75% 0.0161 70.05)",
+          "oklch(87% 0.0101 70.05)",
+          "oklch(95% 0.0040 70.05)"
+        ]
+      },
+      "link-kraft": {
+        "role": "primary",
+        "displayName": "link kraft",
+        "tonalRamp": [
+          "oklch(15% 0.0167 258.95)",
+          "oklch(27% 0.0307 258.95)",
+          "oklch(39% 0.0446 258.95)",
+          "oklch(51% 0.0558 258.95)",
+          "oklch(63% 0.0558 258.95)",
+          "oklch(75% 0.0446 258.95)",
+          "oklch(87% 0.0279 258.95)",
+          "oklch(95% 0.0112 258.95)"
+        ]
+      },
+      "text-muted-kraft": {
+        "role": "neutral",
+        "displayName": "text muted kraft",
+        "tonalRamp": [
+          "oklch(15% 0.0101 73.55)",
+          "oklch(27% 0.0186 73.55)",
+          "oklch(39% 0.0270 73.55)",
+          "oklch(51% 0.0337 73.55)",
+          "oklch(63% 0.0337 73.55)",
+          "oklch(75% 0.0270 73.55)",
+          "oklch(87% 0.0169 73.55)",
+          "oklch(95% 0.0067 73.55)"
+        ]
+      },
+      "link-board": {
+        "role": "primary",
+        "displayName": "link board",
+        "tonalRamp": [
+          "oklch(15% 0.0144 257.46)",
+          "oklch(27% 0.0265 257.46)",
+          "oklch(39% 0.0385 257.46)",
+          "oklch(51% 0.0481 257.46)",
+          "oklch(63% 0.0481 257.46)",
+          "oklch(75% 0.0385 257.46)",
+          "oklch(87% 0.0241 257.46)",
+          "oklch(95% 0.0096 257.46)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "heading-lg": {
+        "displayName": "heading-lg",
+        "purpose": "Heading role."
+      },
+      "heading": {
+        "displayName": "heading",
+        "purpose": "Heading role."
+      },
+      "heading-sm": {
+        "displayName": "heading-sm",
+        "purpose": "Heading role."
+      },
+      "said": {
+        "displayName": "said",
+        "purpose": "Foundation role; not an additional component variant.",
+        "fontStyle": "italic"
+      },
+      "cover": {
+        "displayName": "cover",
+        "purpose": "Foundation role; not an additional component variant.",
+        "opticalSize": 144
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "Text variant."
+      },
+      "label": {
+        "displayName": "label",
+        "purpose": "Text variant."
+      },
+      "label-sm": {
+        "displayName": "label-sm",
+        "purpose": "Text variant."
+      },
+      "badge": {
+        "displayName": "badge",
+        "purpose": "Foundation role; not an additional component variant."
+      },
+      "greeting": {
+        "displayName": "greeting",
+        "purpose": "Foundation role; not an additional component variant."
+      },
+      "title": {
+        "displayName": "title",
+        "purpose": "Heading role."
+      },
+      "title-compact": {
+        "displayName": "title-compact",
+        "purpose": "Foundation role; not an additional component variant."
+      },
+      "hand": {
+        "displayName": "hand",
+        "purpose": "Text variant."
+      },
+      "chip": {
+        "displayName": "chip",
+        "purpose": "Foundation role; not an additional component variant."
+      },
+      "code": {
+        "displayName": "code",
+        "purpose": "Text variant."
+      }
+    },
+    "themes": {
+      "night": {
+        "name": "Night",
+        "colors": {
+          "desk": "#1c1712",
+          "desk-2": "#100d09",
+          "sheet": "#2d2720",
+          "sheet-warm": "#29231c",
+          "card": "#302a22",
+          "paper": "#211c16",
+          "paper-2": "#2b251e",
+          "hover": "#3f362a",
+          "board": "#4a3a24",
+          "board-2": "#1f170c",
+          "kraft": "#6f5530",
+          "kraft-2": "#4e3a1f",
+          "mat-green": "#3f5c3e",
+          "mat-green-2": "#1f3320",
+          "mat-red": "#8a3f2d",
+          "mat-red-2": "#4f2217",
+          "mat-red-3": "#2a110a",
+          "ink": "#efe6d3",
+          "mute": "#b4a68e",
+          "faint": "#a89a80",
+          "line": "#4a4034",
+          "rule": "#3b4350",
+          "bar": "#5e5343",
+          "white": "#ffffff",
+          "sticker-cut": "#d9cfb8",
+          "red": "#d9654c",
+          "red-2": "#a8432e",
+          "blue": "#7d9bd8",
+          "blue-2": "#3d5a94",
+          "on-blue": "#1c1712",
+          "green": "#78a876",
+          "amber": "#d6964a",
+          "ochre": "#8c6436",
+          "ochre-soft": "#5f4425",
+          "teal": "#5fa9b3",
+          "violet": "#a58ad0",
+          "plum": "#b77aa0",
+          "attention": "#e3b53a",
+          "on-attention": "#2a2219",
+          "highlighter": "#5c4f14",
+          "highlighter-2": "#a88f2e",
+          "tape": "#ffec9640",
+          "edge": "#0f0b07",
+          "edge-2": "#070503",
+          "amb": "rgba(0,0,0,0.62)",
+          "amb-2": "rgba(0,0,0,0.42)",
+          "face": "rgba(255,255,255,0.05)",
+          "gloss": "rgba(255,255,255,0.22)",
+          "veil": "#000000a6",
+          "marker": "#5c4f14",
+          "st-green": "#557150",
+          "st-amber": "#8f6635",
+          "st-red": "#914736",
+          "rail": "#3a2d1b",
+          "panel": "#4a3a24",
+          "deck-1": "#27221b",
+          "deck-2": "#221d17",
+          "shadow": "#0c0a07",
+          "blush": "#7a3d36",
+          "cork": "#5a4028",
+          "cork-2": "#3a2816",
+          "stamp-ground": "#211c16cc",
+          "stamp-ground-soft": "#211c168c",
+          "knob": "#efe6d3",
+          "glass": "#2d272014",
+          "mark-gloss": "rgba(255,255,255,0.06)",
+          "link-paper": "#a6c2f5",
+          "text-muted-paper": "#c6b89b",
+          "ink-kraft": "#fffbf2",
+          "link-kraft": "#ffffff",
+          "text-muted-kraft": "#fffbf2",
+          "link-board": "#d5e4ff"
+        },
+        "purpose": "The same desk after dark; preserve material roles and geometry."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lift-paper-1",
+        "value": "0 1px 0 #cbbc9a, 2px 3px 3px rgba(60,40,15,0.36)",
+        "nightValue": "0 1px 0 #0f0b07, 2px 3px 3px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-paper-2",
+        "value": "1px 1px 0 #cbbc9a, 3px 5px 6px rgba(60,40,15,0.36)",
+        "nightValue": "1px 1px 0 #0f0b07, 3px 5px 6px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-paper-3",
+        "value": "1px 2px 0 #a89570, 5px 8px 10px rgba(60,40,15,0.36), 10px 18px 26px -8px rgba(60,40,15,0.22)",
+        "nightValue": "1px 2px 0 #070503, 5px 8px 10px rgba(0,0,0,0.62), 10px 18px 26px -8px rgba(0,0,0,0.42)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-board",
+        "value": "2px 3px 0 #a3844f, 5px 8px 10px rgba(60,40,15,0.36), 10px 18px 26px -8px rgba(60,40,15,0.22)",
+        "nightValue": "2px 3px 0 #1f170c, 5px 8px 10px rgba(0,0,0,0.62), 10px 18px 26px -8px rgba(0,0,0,0.42)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-board-sm",
+        "value": "2px 3px 0 #a3844f, 4px 6px 7px rgba(60,40,15,0.36)",
+        "nightValue": "2px 3px 0 #1f170c, 4px 6px 7px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-board-up",
+        "value": "3px 4px 0 #a3844f, 6px 9px 10px rgba(60,40,15,0.36)",
+        "nightValue": "3px 4px 0 #1f170c, 6px 9px 10px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-mat",
+        "value": "1.5px 2px 0 #5f8a5e, 4px 6px 7px rgba(60,40,15,0.36), 8px 14px 20px -8px rgba(60,40,15,0.22)",
+        "nightValue": "1.5px 2px 0 #1f3320, 4px 6px 7px rgba(0,0,0,0.62), 8px 14px 20px -8px rgba(0,0,0,0.42)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "lift-frame",
+        "value": "1.5px 3px 0 #9e4530, 5px 9px 10px rgba(60,40,15,0.36), 12px 22px 30px -6px rgba(60,40,15,0.22)",
+        "nightValue": "1.5px 3px 0 #4f2217, 5px 9px 10px rgba(0,0,0,0.62), 12px 22px 30px -6px rgba(0,0,0,0.42)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "press-paper",
+        "value": "0 0 0 #cbbc9a, 1px 1px 1px rgba(60,40,15,0.36)",
+        "nightValue": "0 0 0 #0f0b07, 1px 1px 1px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "press-board",
+        "value": "0 0 0 #a3844f, 1px 1px 2px rgba(60,40,15,0.36)",
+        "nightValue": "0 0 0 #1f170c, 1px 1px 2px rgba(0,0,0,0.62)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      },
+      {
+        "name": "sticker",
+        "value": "0 0 0 2px #ffffff, 0 0 0 2.6px rgba(0,0,0,0.16)",
+        "nightValue": "0 0 0 2px #d9cfb8, 0 0 0 2.6px rgba(0,0,0,0.16)",
+        "purpose": "Cut outline without cast shadow."
+      },
+      {
+        "name": "sticker-s",
+        "value": "0 0 0 1.5px #ffffff, 0 0 0 2px rgba(0,0,0,0.16)",
+        "nightValue": "0 0 0 1.5px #d9cfb8, 0 0 0 2px rgba(0,0,0,0.16)",
+        "purpose": "Cut outline without cast shadow."
+      },
+      {
+        "name": "sticker-on",
+        "value": "0 0 0 2px #ffffff, 0 0 0 4.5px #f0c24a, 0 0 0 5px rgba(0,0,0,0.16)",
+        "nightValue": "0 0 0 2px #d9cfb8, 0 0 0 4.5px #e3b53a, 0 0 0 5px rgba(0,0,0,0.16)",
+        "purpose": "Cut outline without cast shadow."
+      },
+      {
+        "name": "recess",
+        "value": "inset 1px 1px 3px rgba(0,0,0,0.14)",
+        "nightValue": "inset 1px 1px 3px rgba(0,0,0,0.45)",
+        "purpose": "Material depth; use the role described in DESIGN.md."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2,0.7,0.2,1)",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "ease-pop",
+        "value": "cubic-bezier(0.34,1.5,0.64,1)",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "ease-io",
+        "value": "cubic-bezier(0.45,0,0.55,1)",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "dur-hover",
+        "value": "150ms",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "dur-enter",
+        "value": "240ms",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "dur-land",
+        "value": "260ms",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      },
+      {
+        "name": "dur-loop",
+        "value": "1.2s",
+        "purpose": "Foundation motion token; buttons use dur-hover and ease. Reduced motion removes transitions."
+      }
+    ],
+    "tilt": [
+      {
+        "name": "tilt-mark",
+        "value": "-8deg"
+      },
+      {
+        "name": "tilt-sticker-on",
+        "value": "-4deg"
+      },
+      {
+        "name": "tilt-hover",
+        "value": "-2deg"
+      },
+      {
+        "name": "tilt-badge",
+        "value": "8deg"
+      },
+      {
+        "name": "tilt-badge-row",
+        "value": "-8deg"
+      },
+      {
+        "name": "tilt-chip",
+        "value": "-4deg"
+      },
+      {
+        "name": "tilt-decoration",
+        "value": "-4deg"
+      },
+      {
+        "name": "tilt-stamp",
+        "value": "-4deg"
+      }
+    ],
+    "strokes": [
+      {
+        "name": "stroke-hair",
+        "value": "1px"
+      },
+      {
+        "name": "stroke-mat",
+        "value": "1.5px"
+      },
+      {
+        "name": "stroke-cut-s",
+        "value": "1.5px"
+      },
+      {
+        "name": "stroke-cut",
+        "value": "2px"
+      },
+      {
+        "name": "stroke-ring",
+        "value": "2.5px"
+      },
+      {
+        "name": "stroke-tab",
+        "value": "3px"
+      },
+      {
+        "name": "stroke-frame",
+        "value": "7px"
+      }
+    ],
+    "material": {
+      "lightDirection": "top-left",
+      "castDirection": "down-right",
+      "paper": {
+        "surface": "sheet",
+        "edge": "edge",
+        "shadow": "lift-paper-1",
+        "foregroundRoles": {
+          "ink": "ink",
+          "muted": "text-muted-paper",
+          "link": "link-paper"
+        }
+      },
+      "cardboard": {
+        "surface": "board",
+        "edge": "board-2",
+        "shadow": "lift-board",
+        "foregroundRoles": {
+          "ink": "ink",
+          "muted": "ink",
+          "link": "link-board"
+        }
+      },
+      "kraft": {
+        "surface": "kraft",
+        "edge": "kraft-2",
+        "shadow": "lift-paper-1",
+        "foregroundRoles": {
+          "ink": "ink-kraft",
+          "muted": "text-muted-kraft",
+          "link": "link-kraft"
+        }
+      },
+      "sticker": {
+        "cut": "sticker-cut",
+        "castShadow": false,
+        "gloss": "mark-gloss"
+      },
+      "texture": [
+        {
+          "name": "pulp-paper",
+          "value": "256px"
+        },
+        {
+          "name": "pulp-board",
+          "value": "128px"
+        }
+      ],
+      "fontLoading": "Application-owned; no library font requests."
+    },
+    "breakpoints": [],
+    "componentGeometry": {
+      "button": {
+        "minHeight": {
+          "sm": "28px",
+          "md": "36px",
+          "lg": "44px"
+        },
+        "hoverTranslation": "-1px, -1px",
+        "pressedTranslation": "2px, 3px",
+        "focus": "2px solid ink; 5px offset",
+        "disabled": "paper-2 face, faint text, edge cut",
+        "loadingMark": "10px circle, 2px currentColor border, transparent right border",
+        "longLabels": "Text buttons shrink within their available inline size and wrap long words without truncation; IconButton keeps its fixed geometry.",
+        "pressedHover": "Persistent pressed controls remain depressed on hover; unpressed controls still lift and press normally."
+      },
+      "icon-button": {
+        "minHeight": {
+          "sm": "28px",
+          "md": "44px",
+          "lg": "48px"
+        },
+        "iconSize": {
+          "sm": "16px",
+          "md": "20px",
+          "lg": "20px"
+        },
+        "smallDiameter": "28px",
+        "loading": "Busy mark replaces the action icon."
+      },
+      "badge": {
+        "font": "800 12px/1.3 sans",
+        "gap": "4px"
+      },
+      "sticker": {
+        "minHeight": "40px",
+        "font": "800 12px/1.3 sans",
+        "roundDiameter": "var(--kraft-sticker-size, 64px)",
+        "rotation": "none; all shapes stay upright",
+        "gloss": "mark-gloss; bounded highlight over the printed face"
+      },
+      "text": {
+        "maxWidth": "72ch"
+      },
+      "surface": {
+        "layoutProps": [
+          "padding"
+        ],
+        "composition": "Place Stack or Inline inside Surface for flex gap, alignment, justification, and wrapping.",
+        "foregroundInheritance": "Each Surface and ThemeProvider establishes its own readable material/theme ink roles."
+      },
+      "layout": {
+        "paddingDefault": "0px",
+        "gapDefault": "space-8",
+        "inheritance": "Each Box, Stack, and Inline resets its own padding and gap defaults."
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Neutral Button",
+      "kind": "button",
+      "refersTo": "button-neutral",
+      "description": "A straight material button with lift, focus, and press states.",
+      "html": "<button type=\"button\" class=\"ds-button\" data-variant=\"neutral\" data-size=\"md\">Keep this idea</button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Blue Button",
+      "kind": "button",
+      "refersTo": "button-blue",
+      "description": "A straight material button with lift, focus, and press states.",
+      "html": "<button type=\"button\" class=\"ds-button\" data-variant=\"blue\" data-size=\"md\">Keep this idea</button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Sage Button",
+      "kind": "button",
+      "refersTo": "button-sage",
+      "description": "A straight material button with lift, focus, and press states.",
+      "html": "<button type=\"button\" class=\"ds-button\" data-variant=\"sage\" data-size=\"md\">Keep this idea</button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "A straight material button with lift, focus, and press states.",
+      "html": "<button type=\"button\" class=\"ds-button\" data-variant=\"danger\" data-size=\"md\">Keep this idea</button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Attention Button",
+      "kind": "button",
+      "refersTo": "button-attention",
+      "description": "A straight material button with lift, focus, and press states.",
+      "html": "<button type=\"button\" class=\"ds-button\" data-variant=\"attention\" data-size=\"md\">Keep this idea</button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "An accessible icon action using the same material press.",
+      "html": "<button type=\"button\" class=\"ds-button ds-icon-button\" data-variant=\"neutral\" data-size=\"md\" aria-label=\"Add idea\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></button>",
+      "css": ".ds-button { --kraft-button-face: var(--kraft-board); --kraft-button-edge: var(--kraft-board-2); --kraft-button-ink: var(--kraft-ink); appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--kraft-space-6); min-height: 36px; padding: 8px 14px; border: 1px solid var(--kraft-button-edge); border-radius: var(--kraft-radius-4); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-button-face); color: var(--kraft-button-ink); font: 800 13px/1.2 var(--kraft-font-sans); text-decoration: none; cursor: pointer; box-shadow: 2px 3px 0 var(--kraft-button-edge), 4px 6px 7px var(--kraft-amb); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }\n.ds-button:not(.ds-icon-button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }\n.ds-button[data-variant=\"blue\"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }\n.ds-button[data-variant=\"sage\"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }\n.ds-button[data-variant=\"danger\"] { --kraft-button-face: var(--kraft-mat-red-2); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }\n.ds-button[data-variant=\"attention\"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }\n.ds-button[data-size=\"sm\"] { min-height: 28px; padding: 5px 10px; font-size: 12px; }\n.ds-button[data-size=\"lg\"] { min-height: 44px; padding: 12px 16px; }\n.ds-button:hover:enabled:where(:not([aria-pressed=\"true\"])) { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 var(--kraft-button-edge), 6px 9px 10px var(--kraft-amb); }\n.ds-button:active:enabled, .ds-button[aria-pressed=\"true\"] { transform: translate(2px, 3px); box-shadow: 0 0 0 var(--kraft-button-edge), 1px 1px 2px var(--kraft-amb); }\n.ds-button:disabled { cursor: not-allowed; filter: saturate(.45); }\n.ds-button:disabled:not([aria-busy=\"true\"]) { background: var(--kraft-paper-2); color: var(--kraft-faint); --kraft-button-edge: var(--kraft-edge); box-shadow: 0 1px 0 var(--kraft-edge); }\n.ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }\n.ds-icon-button { width: 44px; min-height: 44px; padding: 9px; border-radius: var(--kraft-radius-10); flex-shrink: 0; }\n.ds-icon-button[data-size=\"sm\"] { width: 28px; height: 28px; min-height: 28px; padding: 5px; border-radius: 50%; }\n.ds-icon-button[data-size=\"lg\"] { width: 48px; min-height: 48px; }\n.ds-icon-button svg { width: 20px; height: 20px; flex-shrink: 0; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }\n.ds-icon-button[data-size=\"sm\"] svg { width: 16px; height: 16px; }"
+    },
+    {
+      "name": "Paper Surface",
+      "kind": "card",
+      "refersTo": "surface-paper",
+      "description": "A noninteractive content sheet with material elevation.",
+      "html": "<section class=\"ds-surface\" data-material=\"paper\" data-elevation=\"1\" style=\"padding:var(--kraft-space-24);font:400 14px/1.5 var(--kraft-font-sans)\">Paper carries words.</section>",
+      "css": ".ds-surface { --kraft-content-ink: var(--kraft-ink); --kraft-content-muted: var(--kraft-text-muted-paper); --kraft-content-link: var(--kraft-link-paper); --kraft-surface-face: var(--kraft-sheet); --kraft-surface-edge: var(--kraft-edge); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-surface-face); border: 1px solid color-mix(in srgb, var(--kraft-surface-edge) 45%, transparent); border-radius: var(--kraft-radius-4); color: var(--kraft-content-ink); box-shadow: var(--kraft-lift-paper-1); }\n.ds-surface[data-material=\"cardboard\"] { --kraft-content-muted: var(--kraft-ink); --kraft-content-link: var(--kraft-link-board); --kraft-surface-face: var(--kraft-board); --kraft-surface-edge: var(--kraft-board-2); background-image: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)); border-radius: var(--kraft-radius-10); box-shadow: var(--kraft-lift-board); }\n.ds-surface[data-material=\"kraft\"] { --kraft-content-ink: var(--kraft-ink-kraft); --kraft-content-muted: var(--kraft-text-muted-kraft); --kraft-content-link: var(--kraft-link-kraft); --kraft-surface-face: var(--kraft-kraft); --kraft-surface-edge: var(--kraft-kraft-2); }\n.ds-surface[data-elevation=\"0\"] { box-shadow: none; }\n.ds-surface[data-elevation=\"2\"]:not([data-material=\"cardboard\"]) { box-shadow: var(--kraft-lift-paper-2); }\n.ds-surface[data-elevation=\"3\"]:not([data-material=\"cardboard\"]) { box-shadow: var(--kraft-lift-paper-3); }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Link",
+      "kind": "custom",
+      "refersTo": "link",
+      "description": "An underlined native anchor with visible focus.",
+      "html": "<a class=\"ds-link\" href=\"#details\" style=\"font:400 14px/1.5 var(--kraft-font-sans)\">Read the details</a>",
+      "css": ".ds-button:focus-visible, .ds-link:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 5px; }\n.ds-link { color: var(--kraft-content-link, var(--kraft-link-paper)); text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }\n.ds-link:hover { text-decoration-thickness: 2px; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "A small noninteractive printed mark.",
+      "html": "<span class=\"ds-badge\" data-tone=\"neutral\">Saved</span>",
+      "css": ".ds-badge, .ds-sticker { --kraft-sticker-face: var(--kraft-kraft); --kraft-sticker-ink: var(--kraft-ink); display: inline-flex; align-items: center; justify-content: center; width: fit-content; max-width: 100%; gap: 4px; padding: 5px 9px; color: var(--kraft-sticker-ink); background: linear-gradient(135deg, var(--kraft-mark-gloss), transparent 55%), var(--kraft-sticker-face); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-sticker-s); font: 800 12px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }\n.ds-badge[data-tone=\"blue\"], .ds-sticker[data-tone=\"blue\"] { --kraft-sticker-face: var(--kraft-blue); --kraft-sticker-ink: var(--kraft-on-blue); }\n.ds-badge[data-tone=\"sage\"], .ds-sticker[data-tone=\"sage\"] { --kraft-sticker-face: var(--kraft-st-green); --kraft-sticker-ink: var(--kraft-white); }\n.ds-badge[data-tone=\"danger\"], .ds-sticker[data-tone=\"danger\"] { --kraft-sticker-face: var(--kraft-st-red); --kraft-sticker-ink: var(--kraft-white); }\n.ds-badge[data-tone=\"attention\"], .ds-sticker[data-tone=\"attention\"] { --kraft-sticker-face: var(--kraft-attention); --kraft-sticker-ink: var(--kraft-on-attention); }\n.ds-sticker { transform: none; min-height: 40px; padding: 10px 14px; box-shadow: var(--kraft-sticker); }\n.ds-sticker[data-shape=\"round\"] { box-sizing: border-box; flex: none; width: var(--kraft-sticker-size, 64px); height: var(--kraft-sticker-size, 64px); min-width: 0; min-height: 0; max-width: none; padding: 8px; aspect-ratio: 1; border-radius: 50%; text-align: center; }\n.ds-sticker[data-shape=\"square\"] { border-radius: var(--kraft-radius-10); }\n\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    },
+    {
+      "name": "Sticker",
+      "kind": "custom",
+      "refersTo": "sticker",
+      "description": "A rounded cut-out with deliberate decorative tilt and no cast shadow.",
+      "html": "<span class=\"ds-sticker\" data-tone=\"blue\" data-shape=\"round\">New</span>",
+      "css": ".ds-badge, .ds-sticker { --kraft-sticker-face: var(--kraft-kraft); --kraft-sticker-ink: var(--kraft-ink); display: inline-flex; align-items: center; justify-content: center; width: fit-content; max-width: 100%; gap: 4px; padding: 5px 9px; color: var(--kraft-sticker-ink); background: linear-gradient(135deg, var(--kraft-mark-gloss), transparent 55%), var(--kraft-sticker-face); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-sticker-s); font: 800 12px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }\n.ds-badge[data-tone=\"blue\"], .ds-sticker[data-tone=\"blue\"] { --kraft-sticker-face: var(--kraft-blue); --kraft-sticker-ink: var(--kraft-on-blue); }\n.ds-badge[data-tone=\"sage\"], .ds-sticker[data-tone=\"sage\"] { --kraft-sticker-face: var(--kraft-st-green); --kraft-sticker-ink: var(--kraft-white); }\n.ds-badge[data-tone=\"danger\"], .ds-sticker[data-tone=\"danger\"] { --kraft-sticker-face: var(--kraft-st-red); --kraft-sticker-ink: var(--kraft-white); }\n.ds-badge[data-tone=\"attention\"], .ds-sticker[data-tone=\"attention\"] { --kraft-sticker-face: var(--kraft-attention); --kraft-sticker-ink: var(--kraft-on-attention); }\n.ds-sticker { transform: none; min-height: 40px; padding: 10px 14px; box-shadow: var(--kraft-sticker); }\n.ds-sticker[data-shape=\"round\"] { box-sizing: border-box; flex: none; width: var(--kraft-sticker-size, 64px); height: var(--kraft-sticker-size, 64px); min-width: 0; min-height: 0; max-width: none; padding: 8px; aspect-ratio: 1; border-radius: 50%; text-align: center; }\n.ds-sticker[data-shape=\"square\"] { border-radius: var(--kraft-radius-10); }\n\n[data-kraft-tilt=\"off\"] .ds-sticker { transform: none; }\n@media (prefers-reduced-motion: reduce) { .ds-button { transition: none; } }\n@media (forced-colors: active) { .ds-button, .ds-surface, .ds-badge, .ds-sticker { border: 1px solid CanvasText; box-shadow: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Desk of Cut-outs",
+    "overview": "The Desk of Cut-outs makes structure feel assembled by hand: cardboard holds things, paper carries words, and stickers mark things. Materials provide warmth and hierarchy, while small, deliberate moments of play keep the interface calm and useful.\n\nComponents are tactile and dependable. Light comes from the top left; cut edges and shadows fall down and right. Night is the same desk after dark, preserving material relationships and behavior rather than replacing the world.",
+    "keyCharacteristics": [
+      "Materials communicate structure and warmth.",
+      "Playfulness is small and deliberate.",
+      "Native semantics and visible states make interaction dependable.",
+      "Paper and Night share one geometry and material vocabulary."
+    ],
+    "rules": [
+      {
+        "name": "The Material Rule",
+        "body": "Cardboard holds things, paper carries words, and stickers mark things.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cut-edge Rule",
+        "body": "Light comes from the top left. Structural edges and cast shadows travel down and right; sticker outlines never become cast shadows.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Dependable Press Rule",
+        "body": "Buttons depress toward their cut edge and never tilt. Stickers stay upright in every shape; decorative rotation is reserved for paper.",
+        "section": "components"
+      },
+      {
+        "name": "The Readable Ink Rule",
+        "body": "Validate text against the fully painted material, including gloss and texture, in both themes; a passing solid swatch is not enough.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do use material changes to communicate structure before adding decoration.",
+      "Do keep buttons straight and preserve their visible pressed state.",
+      "Do load the chosen fonts in the consuming application and keep the fallback stacks intact.",
+      "Do target WCAG 2.2 AA with native semantics, visible keyboard focus, accessible names, sufficient contrast, and reduced motion.",
+      "Do use scoped Paper and Night theme boundaries and honor texture, motion, and tilt preferences."
+    ],
+    "donts": [
+      "Don't give stickers cast shadows or rotate them.",
+      "Don't rotate interactive buttons.",
+      "Don't use accent or material tokens as text colors without checking contrast against the actual background.",
+      "Don't treat catalogued token names as evidence of an implemented control."
+    ]
+  }
+}

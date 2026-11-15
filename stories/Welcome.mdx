@@ -1,0 +1,45 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Start here/Introduction" />
+
+# Kraft UI
+
+Tactile React primitives made of paper, cardboard, and stickers.
+
+Cardboard holds things. Paper carries words. Stickers mark things. Start with the **Workbench** composition to see the materials together, then explore foundations and individual primitives.
+
+## Install
+
+```sh
+npm install @randalvance/kraft-ui
+```
+
+The package is being prepared for its first release. Until publication, use `npm pack` from this repository and install the resulting archive.
+
+```tsx
+import { ThemeProvider, Surface, Heading, Button } from '@randalvance/kraft-ui';
+import '@randalvance/kraft-ui/styles.css';
+
+<ThemeProvider theme="paper">
+  <Surface as="section">
+    <Heading>A fresh sheet</Heading>
+    <Button>Start writing</Button>
+  </Surface>
+</ThemeProvider>
+```
+
+## Explore
+
+Use the toolbar to switch Paper/Night and turn texture, motion, or tilt off. Every component has controls and an accessibility panel. Tests exercise keyboard interaction and accessible names.
+
+## Compose with intent
+
+Use native elements for behavior. `Button` renders a button, `Link` an anchor. Layout, typography, and surfaces accept `as` for appropriate semantics. `Sticker` is a noninteractive mark; wrap it in a named control if it needs behavior.
+
+## Fonts
+
+The library declares Fraunces, Nunito, Caveat, and Courier New stacks but makes no font requests. This Storybook loads fonts locally. Applications choose how to load them and may override `--kraft-font-serif`, `--kraft-font-sans`, `--kraft-font-hand`, and `--kraft-font-mono`.
+
+## Accessibility
+
+Target WCAG 2.2 AA. Give icon buttons accessible labels, choose heading levels to fit the document, preserve visible focus, and use text-safe status colors. Reduced-motion preferences take precedence over motion settings. Automated checks complement manual keyboard and contrast review.

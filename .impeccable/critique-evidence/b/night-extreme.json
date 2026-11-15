@@ -1,0 +1,11 @@
+{
+  "id": "e2731270-f1a4-401e-a8c1-ed203b5e0015",
+  "ok": true,
+  "result": {
+    "result": "{\"button\":669.953125,\"client\":320,\"color\":\"rgb(239, 230, 211)\",\"scroll\":694,\"theme\":\"night\"}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-button--variants&viewMode=story"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

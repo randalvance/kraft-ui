@@ -1,0 +1,28 @@
+{
+  "id": "a954e50c-f5dc-486f-9931-b4e724ef151f",
+  "ok": true,
+  "result": {
+    "entries": [
+      {
+        "level": "startGroup",
+        "text": "%c[impeccable] 2 anti-patterns found color: oklch(84% 0.19 80.46); font-weight: bold"
+      },
+      {
+        "level": "log",
+        "text": "%clow-contrast%c 4.0:1 (need 4.5:1) — text #efe6d3 on #836d4d (gradient on span.kraft-badge) color: oklch(84% 0.19 80.46); font-weight: bold color: inherit {__reactFiber$0pel12w9sfdq: FiberNode, __reactProps$0pel12w9sfdq: Object, _impeccableOverlay: div.impeccable-overlay, title: \"\", lang: \"\", ...}"
+      },
+      {
+        "level": "log",
+        "text": "%clow-contrast%c 4.2:1 (need 4.5:1) — text #ffffff on #6a8366 (gradient on span.kraft-badge) color: oklch(84% 0.19 80.46); font-weight: bold color: inherit {__reactFiber$0pel12w9sfdq: FiberNode, __reactProps$0pel12w9sfdq: Object, _impeccableOverlay: div.impeccable-overlay, title: \"\", lang: \"\", ...}"
+      },
+      {
+        "level": "endGroup",
+        "text": "console.groupEnd"
+      }
+    ],
+    "truncated": false
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

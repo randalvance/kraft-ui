@@ -1,0 +1,11 @@
+{
+  "id": "8c9f5e0b-9bce-467c-acfe-fb7cf7abc040",
+  "ok": true,
+  "result": {
+    "result": "{\"busy\":\"true\",\"disabled\":true,\"markAnimation\":\"none\",\"markHidden\":\"true\",\"name\":\"Saving idea\"}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-button--loading&viewMode=story&globals=theme%3Anight"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

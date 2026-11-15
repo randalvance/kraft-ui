@@ -1,0 +1,45 @@
+name: Publish
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact version approved for publication (must match package.json)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - name: Verify release identity
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          if (pkg.name !== '@randalvance/kraft-ui' || pkg.version !== process.env.RELEASE_VERSION || pkg.version === '0.0.0') {
+            throw new Error('Package identity or approved version does not match. Merge the version PR first.');
+          }
+          JS
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm pack --dry-run
+      - name: Publish with npm OIDC
+        run: npm publish --access public --provenance

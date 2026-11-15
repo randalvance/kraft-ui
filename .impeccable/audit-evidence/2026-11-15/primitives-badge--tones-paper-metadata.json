@@ -1,0 +1,82 @@
+[
+  {
+    "text": "neutral",
+    "tone": "neutral",
+    "color": "rgb(42, 34, 25)",
+    "theme": "paper",
+    "rect": {
+      "x": 50,
+      "y": 50,
+      "width": 59.234375,
+      "height": 25.59375,
+      "top": 50,
+      "right": 109.234375,
+      "bottom": 75.59375,
+      "left": 50
+    }
+  },
+  {
+    "text": "blue",
+    "tone": "blue",
+    "color": "rgb(255, 255, 255)",
+    "theme": "paper",
+    "rect": {
+      "x": 133.234375,
+      "y": 50,
+      "width": 42.9765625,
+      "height": 25.59375,
+      "top": 50,
+      "right": 176.2109375,
+      "bottom": 75.59375,
+      "left": 133.234375
+    }
+  },
+  {
+    "text": "sage",
+    "tone": "sage",
+    "color": "rgb(255, 255, 255)",
+    "theme": "paper",
+    "rect": {
+      "x": 200.2109375,
+      "y": 50,
+      "width": 44.5546875,
+      "height": 25.59375,
+      "top": 50,
+      "right": 244.765625,
+      "bottom": 75.59375,
+      "left": 200.2109375
+    }
+  },
+  {
+    "text": "danger",
+    "tone": "danger",
+    "color": "rgb(255, 255, 255)",
+    "theme": "paper",
+    "rect": {
+      "x": 268.765625,
+      "y": 50,
+      "width": 58.0625,
+      "height": 25.59375,
+      "top": 50,
+      "right": 326.828125,
+      "bottom": 75.59375,
+      "left": 268.765625
+    }
+  },
+  {
+    "text": "attention",
+    "tone": "attention",
+    "color": "rgb(42, 34, 25)",
+    "theme": "paper",
+    "rect": {
+      "x": 350.828125,
+      "y": 50,
+      "width": 70.078125,
+      "height": 25.59375,
+      "top": 50,
+      "right": 420.90625,
+      "bottom": 75.59375,
+      "left": 350.828125
+    }
+  }
+]

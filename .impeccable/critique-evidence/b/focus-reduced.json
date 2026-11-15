@@ -1,0 +1,11 @@
+{
+  "id": "774596fa-8733-462d-8b37-a8bd0d600418",
+  "ok": true,
+  "result": {
+    "result": "{\"focus\":{\"name\":\"neutral\",\"offset\":\"0px\",\"outline\":\"rgb(42, 34, 25) none 3px\",\"visible\":false},\"reduced\":true,\"transition\":\"all\"}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-button--variants&viewMode=story"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

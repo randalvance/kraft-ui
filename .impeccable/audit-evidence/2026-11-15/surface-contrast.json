@@ -1,0 +1,410 @@
+[
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "paper",
+    "material": "paper",
+    "color": "rgb(59, 91, 154)",
+    "rect": {
+      "x": 49,
+      "y": 49,
+      "width": 210,
+      "height": 21,
+      "top": 49,
+      "right": 259,
+      "bottom": 70,
+      "left": 49
+    },
+    "foreground": [
+      59.0,
+      91.0,
+      154.0
+    ],
+    "minContrast": 4.741229855768704,
+    "backgroundAtWorst": [
+      221,
+      217,
+      210
+    ],
+    "worstPixel": [
+      126,
+      63
+    ],
+    "glyphSamples": 504,
+    "samplesBelow4_5": 0
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "paper",
+    "material": "paper",
+    "color": "rgb(111, 98, 82)",
+    "rect": {
+      "x": 49,
+      "y": 82,
+      "width": 210,
+      "height": 21,
+      "top": 82,
+      "right": 259,
+      "bottom": 103,
+      "left": 49
+    },
+    "foreground": [
+      111.0,
+      98.0,
+      82.0
+    ],
+    "minContrast": 4.130824288949532,
+    "backgroundAtWorst": [
+      219,
+      215,
+      208
+    ],
+    "worstPixel": [
+      148,
+      92
+    ],
+    "glyphSamples": 463,
+    "samplesBelow4_5": 22
+  },
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "paper",
+    "material": "kraft",
+    "color": "rgb(59, 91, 154)",
+    "rect": {
+      "x": 329,
+      "y": 49,
+      "width": 210,
+      "height": 21,
+      "top": 49,
+      "right": 539,
+      "bottom": 70,
+      "left": 329
+    },
+    "foreground": [
+      59.0,
+      91.0,
+      154.0
+    ],
+    "minContrast": 3.0042825580728882,
+    "backgroundAtWorst": [
+      191,
+      172,
+      134
+    ],
+    "worstPixel": [
+      406,
+      63
+    ],
+    "glyphSamples": 504,
+    "samplesBelow4_5": 504
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "paper",
+    "material": "kraft",
+    "color": "rgb(111, 98, 82)",
+    "rect": {
+      "x": 329,
+      "y": 82,
+      "width": 210,
+      "height": 21,
+      "top": 82,
+      "right": 539,
+      "bottom": 103,
+      "left": 329
+    },
+    "foreground": [
+      111.0,
+      98.0,
+      82.0
+    ],
+    "minContrast": 2.553315695316448,
+    "backgroundAtWorst": [
+      188,
+      168,
+      128
+    ],
+    "worstPixel": [
+      428,
+      92
+    ],
+    "glyphSamples": 464,
+    "samplesBelow4_5": 464
+  },
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "paper",
+    "material": "cardboard",
+    "color": "rgb(59, 91, 154)",
+    "rect": {
+      "x": 609,
+      "y": 49,
+      "width": 210,
+      "height": 21,
+      "top": 49,
+      "right": 819,
+      "bottom": 70,
+      "left": 609
+    },
+    "foreground": [
+      59.0,
+      91.0,
+      154.0
+    ],
+    "minContrast": 2.3910591684800155,
+    "backgroundAtWorst": [
+      174,
+      152,
+      113
+    ],
+    "worstPixel": [
+      691,
+      61
+    ],
+    "glyphSamples": 503,
+    "samplesBelow4_5": 503
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "paper",
+    "material": "cardboard",
+    "color": "rgb(111, 98, 82)",
+    "rect": {
+      "x": 609,
+      "y": 82,
+      "width": 210,
+      "height": 21,
+      "top": 82,
+      "right": 819,
+      "bottom": 103,
+      "left": 609
+    },
+    "foreground": [
+      111.0,
+      98.0,
+      82.0
+    ],
+    "minContrast": 1.9938968753361235,
+    "backgroundAtWorst": [
+      168,
+      147,
+      111
+    ],
+    "worstPixel": [
+      648,
+      92
+    ],
+    "glyphSamples": 463,
+    "samplesBelow4_5": 463
+  },
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "night",
+    "material": "paper",
+    "color": "rgb(125, 155, 216)",
+    "rect": {
+      "x": 49,
+      "y": 201,
+      "width": 210,
+      "height": 21,
+      "top": 201,
+      "right": 259,
+      "bottom": 222,
+      "left": 49
+    },
+    "foreground": [
+      125.0,
+      155.0,
+      216.0
+    ],
+    "minContrast": 3.9382919273146797,
+    "backgroundAtWorst": [
+      64,
+      60,
+      54
+    ],
+    "worstPixel": [
+      56,
+      211
+    ],
+    "glyphSamples": 530,
+    "samplesBelow4_5": 62
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "night",
+    "material": "paper",
+    "color": "rgb(180, 166, 142)",
+    "rect": {
+      "x": 49,
+      "y": 234,
+      "width": 210,
+      "height": 21,
+      "top": 234,
+      "right": 259,
+      "bottom": 255,
+      "left": 49
+    },
+    "foreground": [
+      180.0,
+      166.0,
+      142.0
+    ],
+    "minContrast": 5.154080637799385,
+    "backgroundAtWorst": [
+      57,
+      52,
+      46
+    ],
+    "worstPixel": [
+      52,
+      243
+    ],
+    "glyphSamples": 473,
+    "samplesBelow4_5": 0
+  },
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "night",
+    "material": "kraft",
+    "color": "rgb(125, 155, 216)",
+    "rect": {
+      "x": 329,
+      "y": 201,
+      "width": 210,
+      "height": 21,
+      "top": 201,
+      "right": 539,
+      "bottom": 222,
+      "left": 329
+    },
+    "foreground": [
+      125.0,
+      155.0,
+      216.0
+    ],
+    "minContrast": 1.9605822423523547,
+    "backgroundAtWorst": [
+      121,
+      103,
+      74
+    ],
+    "worstPixel": [
+      336,
+      211
+    ],
+    "glyphSamples": 530,
+    "samplesBelow4_5": 530
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "night",
+    "material": "kraft",
+    "color": "rgb(180, 166, 142)",
+    "rect": {
+      "x": 329,
+      "y": 234,
+      "width": 210,
+      "height": 21,
+      "top": 234,
+      "right": 539,
+      "bottom": 255,
+      "left": 329
+    },
+    "foreground": [
+      180.0,
+      166.0,
+      142.0
+    ],
+    "minContrast": 2.5159062315859297,
+    "backgroundAtWorst": [
+      116,
+      96,
+      65
+    ],
+    "worstPixel": [
+      332,
+      243
+    ],
+    "glyphSamples": 473,
+    "samplesBelow4_5": 473
+  },
+  {
+    "text": "Read the notes",
+    "kind": "A",
+    "theme": "night",
+    "material": "cardboard",
+    "color": "rgb(125, 155, 216)",
+    "rect": {
+      "x": 609,
+      "y": 201,
+      "width": 210,
+      "height": 21,
+      "top": 201,
+      "right": 819,
+      "bottom": 222,
+      "left": 609
+    },
+    "foreground": [
+      125.0,
+      155.0,
+      216.0
+    ],
+    "minContrast": 2.4644710752319288,
+    "backgroundAtWorst": [
+      100,
+      89,
+      72
+    ],
+    "worstPixel": [
+      638,
+      209
+    ],
+    "glyphSamples": 530,
+    "samplesBelow4_5": 530
+  },
+  {
+    "text": "A secondary note.",
+    "kind": "P",
+    "theme": "night",
+    "material": "cardboard",
+    "color": "rgb(180, 166, 142)",
+    "rect": {
+      "x": 609,
+      "y": 234,
+      "width": 210,
+      "height": 21,
+      "top": 234,
+      "right": 819,
+      "bottom": 255,
+      "left": 609
+    },
+    "foreground": [
+      180.0,
+      166.0,
+      142.0
+    ],
+    "minContrast": 2.943501311087797,
+    "backgroundAtWorst": [
+      99,
+      87,
+      71
+    ],
+    "worstPixel": [
+      633,
+      248
+    ],
+    "glyphSamples": 472,
+    "samplesBelow4_5": 379
+  }
+]

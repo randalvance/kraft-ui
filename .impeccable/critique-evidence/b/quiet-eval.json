@@ -1,0 +1,11 @@
+{
+  "id": "525a058c-4d84-4af5-a7b3-69620ba86290",
+  "ok": true,
+  "result": {
+    "result": "{\"elements\":[{\"bg\":\"rgba(0, 0, 0, 0)\",\"bgImage\":\"none\",\"color\":\"rgb(42, 34, 25)\",\"font\":\"14px\",\"h\":21,\"outline\":\"rgb(42, 34, 25) none 3px\",\"text\":\"A sheet inside this theme boundary.\",\"texture\":\"none\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":604.796875},{\"bg\":\"rgb(59, 91, 154)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0) 55%), none, none\",\"color\":\"rgb(255, 255, 255)\",\"font\":\"13px\",\"h\":36,\"outline\":\"rgb(255, 255, 255) none 3px\",\"text\":\"Try the material\",\"texture\":\"none\",\"transform\":\"none\",\"transition\":\"0s, 0s\",\"w\":129},{\"bg\":\"rgb(59, 91, 154)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(255, 255, 255)\",\"font\":\"12px\",\"h\":40,\"outline\":\"rgb(255, 255, 255) none 3px\",\"text\":\"A printed mark\",\"texture\":\"none\",\"transform\":\"matrix(1, 0, 0, 1, 0, 0)\",\"transition\":\"0s\",\"w\":114.046875}],\"overflow\":[977,977],\"themes\":[{\"motion\":\"on\",\"theme\":\"paper\",\"tilt\":\"on\"},{\"motion\":\"off\",\"theme\":\"paper\",\"tilt\":\"off\"}],\"viewport\":[977,1024]}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-themeprovider--quiet&viewMode=story"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

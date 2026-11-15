@@ -1,0 +1,18 @@
+[
+  {
+    "text": "A printed mark",
+    "tone": "blue",
+    "color": "rgb(255, 255, 255)",
+    "theme": "paper",
+    "rect": {
+      "x": 227,
+      "y": 169,
+      "width": 114.046875,
+      "height": 40,
+      "top": 169,
+      "right": 341.046875,
+      "bottom": 209,
+      "left": 227
+    }
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "id": "dd90a2c5-8244-4fd5-a246-a17a16bdc031",
+  "ok": true,
+  "result": {
+    "result": "{\"elements\":[{\"bg\":\"rgb(111, 85, 48)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(239, 230, 211)\",\"font\":\"12px\",\"h\":25.59375,\"outline\":\"rgb(239, 230, 211) none 3px\",\"text\":\"neutral\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":59.234375},{\"bg\":\"rgb(125, 155, 216)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(28, 23, 18)\",\"font\":\"12px\",\"h\":25.59375,\"outline\":\"rgb(28, 23, 18) none 3px\",\"text\":\"blue\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":42.9765625},{\"bg\":\"rgb(85, 113, 80)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(255, 255, 255)\",\"font\":\"12px\",\"h\":25.59375,\"outline\":\"rgb(255, 255, 255) none 3px\",\"text\":\"sage\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":44.5546875},{\"bg\":\"rgb(145, 71, 54)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(255, 255, 255)\",\"font\":\"12px\",\"h\":25.59375,\"outline\":\"rgb(255, 255, 255) none 3px\",\"text\":\"danger\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":58.0625},{\"bg\":\"rgb(227, 181, 58)\",\"bgImage\":\"linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0) 55%), none\",\"color\":\"rgb(42, 34, 25)\",\"font\":\"12px\",\"h\":25.59375,\"outline\":\"rgb(42, 34, 25) none 3px\",\"text\":\"attention\",\"texture\":\"url(\\\"/src/assets/pulp-paper-night.png\\\")\",\"transform\":\"none\",\"transition\":\"0s\",\"w\":70.078125}],\"overflow\":[977,977],\"themes\":[{\"motion\":\"on\",\"theme\":\"night\",\"tilt\":\"on\"}],\"viewport\":[977,1024]}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-badge--tones&viewMode=story&globals=theme%3Anight"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

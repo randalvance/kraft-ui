@@ -1,0 +1,153 @@
+[
+  {
+    "theme": "paper",
+    "category": "keyboard",
+    "result": [
+      {
+        "name": "Keep",
+        "focusVisible": true,
+        "outline": "rgb(42, 34, 25) solid 2px",
+        "offset": "5px"
+      },
+      {
+        "name": "Add note",
+        "focusVisible": true,
+        "outline": "rgb(42, 34, 25) solid 2px",
+        "offset": "5px"
+      },
+      {
+        "name": "Notes",
+        "focusVisible": true,
+        "outline": "rgb(42, 34, 25) solid 2px",
+        "offset": "5px"
+      }
+    ],
+    "clicks": 2
+  },
+  {
+    "theme": "paper",
+    "category": "preferences",
+    "transition": "0s",
+    "transform": "matrix(1, 0, 0, 1, 2, 3)",
+    "forcedColors": true,
+    "border": "rgb(0, 0, 0)",
+    "color": "rgb(0, 0, 0)",
+    "background": "rgb(255, 255, 255)"
+  },
+  {
+    "theme": "paper",
+    "category": "reflow",
+    "viewport": 320,
+    "rootWidth": 312,
+    "measured": [
+      {
+        "class": "kraft-text kraft-type-body",
+        "width": 246,
+        "height": 63,
+        "scrollWidth": 246,
+        "clientWidth": 246
+      },
+      {
+        "class": "kraft-button",
+        "width": 246,
+        "height": 193.5,
+        "scrollWidth": 244,
+        "clientWidth": 244
+      },
+      {
+        "class": "kraft-sticker",
+        "width": 64,
+        "height": 64,
+        "scrollWidth": 64,
+        "clientWidth": 64
+      },
+      {
+        "class": "kraft-button kraft-icon-button",
+        "width": 28,
+        "height": 28,
+        "scrollWidth": 26,
+        "clientWidth": 26
+      }
+    ]
+  },
+  {
+    "theme": "night",
+    "category": "keyboard",
+    "result": [
+      {
+        "name": "Keep",
+        "focusVisible": true,
+        "outline": "rgb(239, 230, 211) solid 2px",
+        "offset": "5px"
+      },
+      {
+        "name": "Add note",
+        "focusVisible": true,
+        "outline": "rgb(239, 230, 211) solid 2px",
+        "offset": "5px"
+      },
+      {
+        "name": "Notes",
+        "focusVisible": true,
+        "outline": "rgb(239, 230, 211) solid 2px",
+        "offset": "5px"
+      }
+    ],
+    "clicks": 2
+  },
+  {
+    "theme": "night",
+    "category": "preferences",
+    "transition": "0s",
+    "transform": "matrix(1, 0, 0, 1, 2, 3)",
+    "forcedColors": true,
+    "border": "rgb(0, 0, 0)",
+    "color": "rgb(0, 0, 0)",
+    "background": "rgb(255, 255, 255)"
+  },
+  {
+    "theme": "night",
+    "category": "reflow",
+    "viewport": 320,
+    "rootWidth": 312,
+    "measured": [
+      {
+        "class": "kraft-text kraft-type-body",
+        "width": 246,
+        "height": 63,
+        "scrollWidth": 246,
+        "clientWidth": 246
+      },
+      {
+        "class": "kraft-button",
+        "width": 246,
+        "height": 193.5,
+        "scrollWidth": 244,
+        "clientWidth": 244
+      },
+      {
+        "class": "kraft-sticker",
+        "width": 64,
+        "height": 64,
+        "scrollWidth": 64,
+        "clientWidth": 64
+      },
+      {
+        "class": "kraft-button kraft-icon-button",
+        "width": 28,
+        "height": 28,
+        "scrollWidth": 26,
+        "clientWidth": 26
+      }
+    ]
+  },
+  {
+    "category": "isolation",
+    "foreignAlignBefore": "normal",
+    "foreignAlignAfter": "center",
+    "foreignWrap": "wrap",
+    "paper": "rgb(255, 255, 255)",
+    "night": "rgb(28, 23, 18)",
+    "nightTexture": "none"
+  }
+]

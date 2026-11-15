@@ -1,0 +1,11 @@
+{
+  "id": "e92eff56-55a6-4d4d-8c41-314d5ecb5281",
+  "ok": true,
+  "result": {
+    "result": "{\"before\":{\"client\":320,\"scroll\":320,\"width\":320},\"long\":{\"button\":0,\"client\":320,\"overflowWrap\":\"normal\",\"scroll\":320}}",
+    "origin": "http://127.0.0.1:6006/iframe.html?id=primitives-button--variants&viewMode=story"
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+storybook-static/
+coverage/
+*.tgz
+.impeccable/review/
+.DS_Store
+tests/__screenshots__/
+.vitest-attachments/

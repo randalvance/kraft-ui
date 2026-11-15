@@ -1,0 +1,83 @@
+{
+  "name": "@randalvance/kraft-ui",
+  "version": "0.0.0",
+  "description": "Tactile React primitives made of paper, cardboard, and stickers.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Randal Vance",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/randalvance/kraft-ui.git"
+  },
+  "homepage": "https://randalvance.github.io/kraft-ui/",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/kraft-ui.js"
+    },
+    "./styles.css": "./dist/kraft-ui.css",
+    "./tokens.json": "./dist/tokens.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "scripts": {
+    "dev": "storybook dev -p 6006 --no-open",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build": "npm run tokens && vite build && tsc -p tsconfig.build.json && node scripts/copy-tokens.mjs",
+    "typecheck": "tsc --noEmit",
+    "build-storybook": "storybook build",
+    "test": "vitest run --project unit",
+    "test:stories": "node scripts/test-stories.mjs",
+    "check": "npm run typecheck && npm test && npm run test:buttons && npm run test:contrast && npm run test:stories && npm run build && npm run build-storybook",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "npm run build && changeset publish",
+    "prepack": "npm run build",
+    "tokens": "node scripts/build-tokens.mjs",
+    "test:buttons": "vitest run --project buttons",
+    "test:contrast": "vitest run --project contrast"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.3",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/nunito": "5.3.0",
+    "@fontsource/caveat": "5.3.0",
+    "@storybook/addon-a11y": "10.6.6",
+    "@storybook/addon-docs": "10.6.6",
+    "@storybook/addon-vitest": "10.6.6",
+    "@storybook/react-vite": "10.6.6",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "5.1.0",
+    "@vitest/browser-playwright": "4.1.12",
+    "jsdom": "31.0.0",
+    "playwright": "1.65.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "storybook": "10.6.6",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.12"
+  },
+  "overrides": {
+    "@joshwooding/vite-plugin-react-docgen-typescript": {
+      "glob": "^14.0.2"
+    }
+  }
+}

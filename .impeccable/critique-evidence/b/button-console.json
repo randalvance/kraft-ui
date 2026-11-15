@@ -1,0 +1,28 @@
+{
+  "id": "75f13625-1d77-4df0-8560-f2af3e942b07",
+  "ok": true,
+  "result": {
+    "entries": [
+      {
+        "level": "debug",
+        "text": "[vite] connecting..."
+      },
+      {
+        "level": "debug",
+        "text": "[vite] connected."
+      },
+      {
+        "level": "info",
+        "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+      },
+      {
+        "level": "log",
+        "text": "%c[impeccable] No anti-patterns found. color: #22c55e; font-weight: bold"
+      }
+    ],
+    "truncated": false
+  },
+  "_meta": {
+    "runtimeId": "e6678be5-2594-43e7-91f9-6fcacc1ca3e1"
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "file": "dist/kraft-ui.js",
+    "bytes": 3481,
+    "gzipBytes": 1220,
+    "dataPngCount": 0
+  },
+  {
+    "file": "dist/kraft-ui.css",
+    "bytes": 126921,
+    "gzipBytes": 89673,
+    "dataPngCount": 4
+  }
+]

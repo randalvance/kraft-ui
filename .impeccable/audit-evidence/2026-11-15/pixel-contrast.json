@@ -1,0 +1,770 @@
+[
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 8.92352151239956,
+    "backgroundAtWorst": [
+      216,
+      193,
+      147
+    ],
+    "worstPixel": [
+      78,
+      66
+    ],
+    "glyphSamples": 214,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.688687924556131,
+    "backgroundAtWorst": [
+      94,
+      115,
+      166
+    ],
+    "worstPixel": [
+      142,
+      59
+    ],
+    "glyphSamples": 134,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.218795386569734,
+    "backgroundAtWorst": [
+      105,
+      130,
+      100
+    ],
+    "worstPixel": [
+      209,
+      62
+    ],
+    "glyphSamples": 157,
+    "samplesBelow4_5": 13
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.5099956181637175,
+    "backgroundAtWorst": [
+      166,
+      102,
+      86
+    ],
+    "worstPixel": [
+      282,
+      58
+    ],
+    "glyphSamples": 230,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 9.31915149784323,
+    "backgroundAtWorst": [
+      232,
+      196,
+      97
+    ],
+    "worstPixel": [
+      387,
+      64
+    ],
+    "glyphSamples": 269,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      239.0,
+      230.0,
+      211.0
+    ],
+    "minContrast": 4.18671868934644,
+    "backgroundAtWorst": [
+      125,
+      106,
+      78
+    ],
+    "worstPixel": [
+      59,
+      61
+    ],
+    "glyphSamples": 226,
+    "samplesBelow4_5": 21
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      28.0,
+      23.0,
+      18.0
+    ],
+    "minContrast": 6.3759901193950475,
+    "backgroundAtWorst": [
+      131,
+      154,
+      211
+    ],
+    "worstPixel": [
+      153,
+      66
+    ],
+    "glyphSamples": 121,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.3809126455837255,
+    "backgroundAtWorst": [
+      107,
+      126,
+      100
+    ],
+    "worstPixel": [
+      210,
+      61
+    ],
+    "glyphSamples": 157,
+    "samplesBelow4_5": 5
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 5.206251826629597,
+    "backgroundAtWorst": [
+      149,
+      95,
+      81
+    ],
+    "worstPixel": [
+      278,
+      62
+    ],
+    "glyphSamples": 230,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-badge--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 8.13415583445504,
+    "backgroundAtWorst": [
+      219,
+      183,
+      83
+    ],
+    "worstPixel": [
+      389,
+      62
+    ],
+    "glyphSamples": 269,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 8.92352151239956,
+    "backgroundAtWorst": [
+      216,
+      193,
+      147
+    ],
+    "worstPixel": [
+      84,
+      84
+    ],
+    "glyphSamples": 203,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 5.321588302483673,
+    "backgroundAtWorst": [
+      84,
+      106,
+      160
+    ],
+    "worstPixel": [
+      158,
+      77
+    ],
+    "glyphSamples": 145,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.619568207240883,
+    "backgroundAtWorst": [
+      97,
+      124,
+      92
+    ],
+    "worstPixel": [
+      245,
+      80
+    ],
+    "glyphSamples": 150,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.968642481416528,
+    "backgroundAtWorst": [
+      161,
+      94,
+      78
+    ],
+    "worstPixel": [
+      326,
+      81
+    ],
+    "glyphSamples": 228,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 9.341412630254299,
+    "backgroundAtWorst": [
+      233,
+      196,
+      96
+    ],
+    "worstPixel": [
+      431,
+      90
+    ],
+    "glyphSamples": 264,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      239.0,
+      230.0,
+      211.0
+    ],
+    "minContrast": 4.577714665671766,
+    "backgroundAtWorst": [
+      119,
+      100,
+      71
+    ],
+    "worstPixel": [
+      62,
+      80
+    ],
+    "glyphSamples": 210,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      28.0,
+      23.0,
+      18.0
+    ],
+    "minContrast": 6.3759901193950475,
+    "backgroundAtWorst": [
+      131,
+      154,
+      211
+    ],
+    "worstPixel": [
+      172,
+      84
+    ],
+    "glyphSamples": 139,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.7191863928159306,
+    "backgroundAtWorst": [
+      101,
+      121,
+      94
+    ],
+    "worstPixel": [
+      245,
+      80
+    ],
+    "glyphSamples": 150,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 5.546364187888996,
+    "backgroundAtWorst": [
+      146,
+      90,
+      75
+    ],
+    "worstPixel": [
+      326,
+      81
+    ],
+    "glyphSamples": 228,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-sticker--tones",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 8.15735349979798,
+    "backgroundAtWorst": [
+      220,
+      183,
+      83
+    ],
+    "worstPixel": [
+      431,
+      90
+    ],
+    "glyphSamples": 265,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 6.146951847660127,
+    "backgroundAtWorst": [
+      184,
+      159,
+      115
+    ],
+    "worstPixel": [
+      91,
+      71
+    ],
+    "glyphSamples": 249,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.955896787920124,
+    "backgroundAtWorst": [
+      90,
+      111,
+      163
+    ],
+    "worstPixel": [
+      166,
+      64
+    ],
+    "glyphSamples": 174,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 5.657411812426199,
+    "backgroundAtWorst": [
+      139,
+      162,
+      130
+    ],
+    "worstPixel": [
+      255,
+      71
+    ],
+    "glyphSamples": 170,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.729912177434562,
+    "backgroundAtWorst": [
+      162,
+      99,
+      81
+    ],
+    "worstPixel": [
+      314,
+      68
+    ],
+    "glyphSamples": 273,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 7.601791796466324,
+    "backgroundAtWorst": [
+      211,
+      177,
+      87
+    ],
+    "worstPixel": [
+      432,
+      70
+    ],
+    "glyphSamples": 324,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "neutral",
+    "text": "neutral",
+    "foreground": [
+      239.0,
+      230.0,
+      211.0
+    ],
+    "minContrast": 7.295614742095272,
+    "backgroundAtWorst": [
+      83,
+      71,
+      53
+    ],
+    "worstPixel": [
+      101,
+      68
+    ],
+    "glyphSamples": 260,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "blue",
+    "text": "blue",
+    "foreground": [
+      28.0,
+      23.0,
+      18.0
+    ],
+    "minContrast": 5.629809817011232,
+    "backgroundAtWorst": [
+      123,
+      144,
+      198
+    ],
+    "worstPixel": [
+      178,
+      71
+    ],
+    "glyphSamples": 157,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "sage",
+    "text": "sage",
+    "foreground": [
+      239.0,
+      230.0,
+      211.0
+    ],
+    "minContrast": 5.101547854063977,
+    "backgroundAtWorst": [
+      81,
+      101,
+      77
+    ],
+    "worstPixel": [
+      247,
+      73
+    ],
+    "glyphSamples": 184,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "danger",
+    "text": "danger",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 11.108585007332579,
+    "backgroundAtWorst": [
+      85,
+      51,
+      40
+    ],
+    "worstPixel": [
+      340,
+      68
+    ],
+    "glyphSamples": 273,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-button--variants",
+    "requestedTheme": "night",
+    "actualTheme": "night",
+    "tone": "attention",
+    "text": "attention",
+    "foreground": [
+      42.0,
+      34.0,
+      25.0
+    ],
+    "minContrast": 6.644374270485623,
+    "backgroundAtWorst": [
+      199,
+      165,
+      75
+    ],
+    "worstPixel": [
+      432,
+      70
+    ],
+    "glyphSamples": 324,
+    "samplesBelow4_5": 0
+  },
+  {
+    "story": "primitives-themeprovider--quiet",
+    "requestedTheme": "paper",
+    "actualTheme": "paper",
+    "tone": "blue",
+    "text": "A printed mark",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.363325215215254,
+    "backgroundAtWorst": [
+      101,
+      120,
+      169
+    ],
+    "worstPixel": [
+      244,
+      184
+    ],
+    "glyphSamples": 433,
+    "samplesBelow4_5": 21
+  },
+  {
+    "story": "primitives-themeprovider--quiet",
+    "requestedTheme": "night",
+    "actualTheme": "paper",
+    "tone": "blue",
+    "text": "A printed mark",
+    "foreground": [
+      255.0,
+      255.0,
+      255.0
+    ],
+    "minContrast": 4.363325215215254,
+    "backgroundAtWorst": [
+      101,
+      120,
+      169
+    ],
+    "worstPixel": [
+      244,
+      184
+    ],
+    "glyphSamples": 433,
+    "samplesBelow4_5": 21
+  }
+]

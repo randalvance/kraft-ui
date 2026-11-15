@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 /Users/randal/orca/workspaces/kraft-ui/doliolid
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  23:49:20
+   Duration  1.06s (transform 0ms, setup 0ms, import 55ms, tests 625ms, environment 0ms)
