@@ -8,9 +8,11 @@ const CloseIcon = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 const meta = {
   title: 'Compositions/PaperPanel',
   component: PaperPanel,
-  parameters: { docs: { description: { component: 'A titled paper workspace with a persistent blank body. Put app-specific controls, navigation, and footer content into the named slots. The title labels its section; choose titleAs to match the page heading hierarchy. Use --kraft-panel-body-min-height to size an empty body.' } } },
+  parameters: { controls: { include: ['title', 'titleAs'] }, docs: { description: { component: 'A titled paper workspace with a persistent blank body. Put app-specific controls, navigation, and footer content into the named slots. The title labels its section; choose titleAs to match the page heading hierarchy. Use --kraft-panel-body-min-height to size an empty body.' } } },
+  argTypes: { titleAs: { control: 'select', options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] } },
   args: {
     title: 'A fresh conversation',
+    titleAs: 'h2',
     leading: <Badge tone="attention">New</Badge>,
     controls: <><Button size="sm">Rename</Button><IconButton size="sm" aria-label="Close panel"><CloseIcon /></IconButton></>,
     style: { maxWidth: 850 },
