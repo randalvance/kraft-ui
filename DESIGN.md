@@ -404,6 +404,12 @@ Paper carries content; kraft warms a paper-like panel; cardboard supplies suppor
 
 Branches expand and collapse; leaves select by default. A branch can opt into selection too. Arrow keys follow visible rows and enter or leave branches, Home/End reach the edges, and typing jumps to a matching label. The tree needs a name, stable unique node IDs, and a label for every item. Application code supplies navigation, filtering, menus, and drag and drop outside tree rows.
 
+### Dialog
+
+`Dialog` lifts a paper sheet above the desk with a quiet ink veil. Its compact header carries a title, optional mark and short supporting line, and a 44px close target. Dotted rules separate the content and optional action footer. The sheet stays upright, centers within the viewport, and scrolls its body when content is long. Paper and Night keep the same material relationship; forced colors replace the sheet edge and shadow with system colors.
+
+The native modal dialog owns the focus boundary and makes the page behind it inert. The title is the default initial focus point; callers can focus a task-specific control instead. Escape, the close target, and a backdrop click request dismissal unless `dismissible` is false. The application owns `open` state, decisions, and action labels. Use a short description for a simple message; keep structured content in the body without repeating it in the dialog description.
+
 ### Links and separators
 
 `Link` remains a native anchor, blue and underlined, with a thicker underline on hover and the same visible focus treatment as buttons. `Separator` renders horizontal or vertical dashed divisions and exposes separator semantics unless decorative.

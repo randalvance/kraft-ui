@@ -43,6 +43,7 @@ export function Note() {
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle` |
 | Hierarchy | `TreeView` |
+| Overlay | `Dialog` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons; links stay anchors. `IconButton` requires `aria-label`. `Button` defaults to `type="button"`; loading disables activation, exposes `aria-busy`, and retains its label. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
@@ -67,6 +68,24 @@ function Choices() {
 Text inputs, selects, radios, and other complex widgets are not yet included.
 
 `PaperPanel` standardizes a titled sheet with a blank paper body. It accepts `leading`, `controls`, `navigation`, and `footer` slots around `children`. The title labels the section, and `titleAs` selects its heading level. The body has a default minimum height of 220px; override `--kraft-panel-body-min-height` when a workspace needs more room. Override `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted frame, checking header text contrast against the chosen color. Application controls and navigation keep their own behavior.
+
+`Dialog` is a controlled modal paper sheet. Pass `open`, `onOpenChange`, and a `title`; a short `description`, leading mark, and footer are optional. It uses native `<dialog>` so focus stays inside while open and returns to the opener on close. Escape, the close button, and a backdrop click request dismissal. Set `dismissible={false}` when the user must choose an action inside the dialog. The title receives initial focus by default; pass `initialFocusRef` to focus a task-specific element. Set `--kraft-dialog-width` to change its maximum width, and keep long content in the scrolling body.
+
+```tsx
+import { useState } from 'react';
+import { Button, Dialog, Text } from '@randalvance/kraft-ui';
+
+export function KeepIdea() {
+  const [open, setOpen] = useState(false);
+  return <>
+    <Button onClick={() => setOpen(true)}>Keep idea</Button>
+    <Dialog open={open} onOpenChange={setOpen} title="Keep this idea?"
+      footer={<><Button onClick={() => setOpen(false)}>Cancel</Button><Button variant="blue" onClick={() => setOpen(false)}>Keep</Button></>}>
+      <Text>This idea will stay on your shelf.</Text>
+    </Dialog>
+  </>;
+}
+```
 
 `TreeView` renders a named hierarchy from nodes with unique, stable `id` values. Branches expand and collapse; leaves select unless disabled. Set `selectable: true` on a branch when it should select too. Nodes can show a description, decorative `leading` mark, and noninteractive `trailing` content. Arrow keys navigate visible items, Home/End jump to the edges, typing finds a label, and Enter/Space activates the focused item. Expansion and selection can be uncontrolled (`defaultExpandedIds`, `defaultSelectedId`) or controlled (`expandedIds`, `selectedId`) with change callbacks. Use `selectionMode="none"` for an exploration-only tree. Keep menus, links, filtering, and drag and drop in the application rather than nesting interactive controls inside a tree row.
 
