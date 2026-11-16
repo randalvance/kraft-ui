@@ -19,7 +19,7 @@ const preview: Preview = {
  parameters: {
   layout: 'fullscreen', controls: { expanded: true },
   a11y: { test: 'error' },
-  options: { storySort: { order: ['Start here', 'Foundations', 'Primitives', 'Compositions'] } },
+  options: { storySort: { order: ['Start here', 'Foundations', 'Primitives', 'Components', 'Compositions'] } },
  },
 };
 export default preview;

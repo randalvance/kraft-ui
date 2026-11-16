@@ -398,6 +398,12 @@ Paper carries content; kraft warms a paper-like panel; cardboard supplies suppor
 
 `PaperPanel` standardizes a workspace sheet. Its board-colored header holds a title, optional leading mark, and controls; optional navigation sits directly below. The paper body has a thin dividing edge, a 24px inset, and a 220px minimum height even when empty. An optional footer returns to the frame material. The title labels the section, and `titleAs` follows the page's heading order. Callers supply control behavior and content. Size the empty body through `--kraft-panel-body-min-height` when the surrounding layout needs more space. Change `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted workspace frame, then validate ink contrast against that tint in both themes.
 
+### Tree view
+
+`TreeView` gives nested paper items a single keyboard focus. A board-colored branch row holds its label, secondary text, decorative leading mark, and noninteractive trailing detail. Child rows sit beside a dashed connector. The selected row uses a highlighter face; focus has a separate ink outline, so the two states remain distinct in Paper and Night. Disabled rows retain their shape and hierarchy without responding to input.
+
+Branches expand and collapse; leaves select by default. A branch can opt into selection too. Arrow keys follow visible rows and enter or leave branches, Home/End reach the edges, and typing jumps to a matching label. The tree needs a name, stable unique node IDs, and a label for every item. Application code supplies navigation, filtering, menus, and drag and drop outside tree rows.
+
 ### Links and separators
 
 `Link` remains a native anchor, blue and underlined, with a thicker underline on hover and the same visible focus treatment as buttons. `Separator` renders horizontal or vertical dashed divisions and exposes separator semantics unless decorative.

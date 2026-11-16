@@ -109,12 +109,37 @@
 .kraft-choice-input:focus-visible + .kraft-checkbox-box, .kraft-choice-input:focus-visible + .kraft-toggle-track { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track { background: var(--kraft-paper-2); border-color: var(--kraft-control-disabled-edge); color: var(--kraft-control-disabled-edge); box-shadow: none; }
 .kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { background: var(--kraft-control-disabled-edge); border-color: var(--kraft-control-disabled-edge); box-shadow: none; }
+.kraft-tree { min-width: 0; margin: 0; padding: 0; list-style: none; color: var(--kraft-ink); font: 400 13px/1.35 var(--kraft-font-sans); }
+.kraft-tree-item { min-width: 0; margin: 0; padding: 0; list-style: none; outline: none; }
+.kraft-tree-row { display: flex; align-items: center; gap: var(--kraft-space-8); min-width: 0; min-height: 36px; margin-block-end: var(--kraft-space-4); padding: 6px var(--kraft-space-8); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); cursor: pointer; }
+.kraft-tree-item[data-branch] > .kraft-tree-row { background-color: var(--kraft-board); border-color: var(--kraft-board-2); font-weight: 800; }
+.kraft-tree-item[aria-selected="true"] > .kraft-tree-row { background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-highlighter); border-color: var(--kraft-highlighter-2); }
+.kraft-tree-item[aria-selected="true"] > .kraft-tree-row .kraft-tree-description { color: var(--kraft-ink); }
+.kraft-tree-item:focus-visible > .kraft-tree-row { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
+.kraft-tree-item:not([aria-disabled="true"]) > .kraft-tree-row:hover { border-color: var(--kraft-ink); }
+.kraft-tree-item[aria-disabled="true"] > .kraft-tree-row { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
+.kraft-tree-chevron { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 14px; height: 16px; }
+.kraft-tree-chevron svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-tree-item[aria-expanded="true"] > .kraft-tree-row .kraft-tree-chevron svg { transform: rotate(90deg); }
+.kraft-tree-item[aria-expanded="false"]:dir(rtl) > .kraft-tree-row .kraft-tree-chevron svg { transform: rotate(180deg); }
+.kraft-tree-leading, .kraft-tree-trailing { display: inline-flex; flex: none; align-items: center; }
+.kraft-tree-leading svg { width: 18px; height: 18px; }
+.kraft-tree-content { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.kraft-tree-label { font-weight: 800; }
+.kraft-tree-description { color: var(--kraft-text-muted-paper); font-size: 12px; font-weight: 400; }
+.kraft-tree-item[data-branch] > .kraft-tree-row .kraft-tree-description { color: var(--kraft-ink); }
+.kraft-tree-trailing { max-width: 45%; overflow-wrap: anywhere; font: 700 11px/1.2 var(--kraft-font-sans); }
+.kraft-tree-group { min-width: 0; margin: 0 0 var(--kraft-space-8) var(--kraft-space-10); padding: 0 0 0 var(--kraft-space-12); border-inline-start: 1px dashed var(--kraft-line); list-style: none; }
+.kraft-tree-group:dir(rtl) { margin-inline-start: var(--kraft-space-10); margin-inline-end: 0; padding-inline-start: var(--kraft-space-12); padding-inline-end: 0; }
 @media (prefers-reduced-motion: reduce) {
   .kraft-root { --kraft-motion-duration: 0ms; }
-  .kraft-button, .kraft-checkbox-box, .kraft-checkbox-box svg, .kraft-toggle-track, .kraft-toggle-knob { transition: none; }
+  .kraft-button, .kraft-checkbox-box, .kraft-checkbox-box svg, .kraft-toggle-track, .kraft-toggle-knob, .kraft-tree-chevron svg { transition: none; }
 }
 @media (forced-colors: active) {
   .kraft-button, .kraft-surface, .kraft-paper-panel, .kraft-badge, .kraft-sticker { border: 1px solid CanvasText; box-shadow: none; }
+  .kraft-tree-row { border-color: CanvasText; background: Canvas; box-shadow: none; }
+  .kraft-tree-item[aria-selected="true"] > .kraft-tree-row { background: Highlight; color: HighlightText; }
+  .kraft-tree-item[aria-selected="true"] > .kraft-tree-row .kraft-tree-description { color: HighlightText; }
   .kraft-checkbox-box, .kraft-toggle-track, .kraft-toggle-knob { border-color: CanvasText; background: Canvas; box-shadow: none; }
   .kraft-checkbox-box { color: HighlightText; }
   .kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box, .kraft-choice-input:checked + .kraft-toggle-track { border-color: Highlight; background: Highlight; }
