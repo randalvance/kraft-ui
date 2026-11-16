@@ -45,7 +45,7 @@ export function Note() {
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Navigation | `Tabs` |
-| Overlays and panes | `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
+| Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons; links stay anchors. `IconButton` requires `aria-label`. `Button` defaults to `type="button"`; loading disables activation, exposes `aria-busy`, and retains its label. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
@@ -86,6 +86,19 @@ function AgentFields() {
 `RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.
 
 `Select` is a single choice field with a button and listbox. It supports `name`, `required`, disabled options, typeahead, and controlled or initial values. `Menu` is for actions; give it an accessible `label`, an array of actions and separators, and an `onAction` callback. `Popover` holds small structured content with a required title and a close button. Pass a ref forwarding button as a menu or popover `trigger`. These anchored surfaces keep the current theme by default; when an ancestor clips them, pass `portalContainer` pointing to a suitable element within the same theme scope.
+
+`Tooltip` shows a short, noninteractive paper label on hover or keyboard focus. Give its `trigger` an accessible name of its own; the tooltip's `content` supplies supporting text. It closes on Escape or activation and keeps focus on the trigger. One tooltip works alone; wrap neighboring tooltips in `TooltipProvider` to share the hover delay. `delayDuration` adjusts an individual tooltip, while the provider also accepts `skipDelayDuration`. It follows the current theme and accepts `portalContainer` for a theme-scoped portal outside a clipping ancestor. Use `Popover` for content with buttons or links.
+
+```tsx
+import { IconButton, Tooltip, TooltipProvider } from '@randalvance/kraft-ui';
+
+function Rail() {
+  return <TooltipProvider>
+    <Tooltip trigger={<IconButton aria-label="New session">+</IconButton>}
+      content="Start a new session" side="right" />
+  </TooltipProvider>;
+}
+```
 
 ```tsx
 import { Button, Menu, RadioGroup, Select } from '@randalvance/kraft-ui';

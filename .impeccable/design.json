@@ -1668,6 +1668,14 @@
       "description": "A split layout with a draggable, keyboard adjustable divider and a paper side pane.",
       "html": "<div class=\"ds-resizable-pane\" data-side=\"end\"><main class=\"ds-pane-main\">Session</main><div class=\"ds-pane-separator\" role=\"separator\" tabindex=\"0\" aria-label=\"Resize side pane\" aria-orientation=\"vertical\" aria-valuemin=\"240\" aria-valuemax=\"720\" aria-valuenow=\"360\"></div><div class=\"ds-pane-side\">Side panel</div></div>",
       "css": ".ds-resizable-pane { position: relative; display: flex; flex-direction: row; min-width: 0; min-height: 0; width: 100%; }\n.ds-pane-main { order: 0; flex: 1 1 0; min-width: 0; min-height: 0; }\n.ds-pane-separator { position: relative; order: 1; flex: none; width: 10px; min-height: 44px; outline: none; cursor: col-resize; touch-action: none; }\n.ds-pane-separator::before { content: ''; position: absolute; inset-block: 0; inset-inline-start: 4px; border-inline-start: 2px dashed var(--kraft-line); }\n.ds-pane-separator:hover::before, .ds-pane-separator:focus-visible::before { border-color: var(--kraft-ink); }\n.ds-pane-separator:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }\n.ds-pane-side { order: 2; flex: none; width: var(--kraft-pane-size, 360px); max-width: calc(100% - 160px); min-width: 0; min-height: 0; }\n.ds-resizable-pane[data-side=\"start\"] .ds-pane-side { order: 0; }\n.ds-resizable-pane[data-side=\"start\"] .ds-pane-main { order: 2; }"
+    },
+    {
+      "name": "Tooltip",
+      "kind": "custom",
+      "refersTo": "tooltip",
+      "description": "A brief noninteractive card-paper label with a cut edge and shallow shadow.",
+      "html": "<div class=\"ds-tooltip\" role=\"tooltip\">Start a new session</div>",
+      "css": ".ds-tooltip { z-index: 70; box-sizing: border-box; max-width: min(240px, calc(100vw - 20px)); padding: 7px 10px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-card); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-2); font: 800 12px/1.35 var(--kraft-font-sans); overflow-wrap: anywhere; }\n@media (forced-colors: active) { .ds-tooltip { color: CanvasText; background: Canvas; border-color: CanvasText; box-shadow: none; } }"
     }
   ],
   "narrative": {

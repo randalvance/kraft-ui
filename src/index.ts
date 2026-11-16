@@ -9,3 +9,4 @@ export * from './radio-group.js';
 export * from './overlays.js';
 export * from './actionable-list.js';
 export * from './drawer.js';
+export * from './tooltip.js';

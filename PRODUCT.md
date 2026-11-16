@@ -20,7 +20,7 @@ Provide reusable primitives inspired by paper, cardboard, and stickers. Develope
 
 ## Capabilities and Constraints
 
-The first release includes tokens, scoped Paper and Night themes, Box, Stack, Inline, Text, Heading, Surface, PaperPanel, Button, IconButton, Link, Separator, Badge, Sticker, Checkbox, Toggle, FormField, TextField, Textarea, SearchField, RadioGroup, Select, ActionableList, ActionableListItem, TreeView, Tabs, Popover, Menu, Dialog, Drawer, and ResizablePane. Components support native props and refs where applicable, server rendering, and current evergreen browsers. Applications control font loading. Texture, motion, and paper decoration tilt are configurable. Stickers always remain upright, and round stickers and small icon buttons use equal width and height.
+The first release includes tokens, scoped Paper and Night themes, Box, Stack, Inline, Text, Heading, Surface, PaperPanel, Button, IconButton, Link, Separator, Badge, Sticker, Checkbox, Toggle, FormField, TextField, Textarea, SearchField, RadioGroup, Select, ActionableList, ActionableListItem, TreeView, Tabs, Tooltip, TooltipProvider, Popover, Menu, Dialog, Drawer, and ResizablePane. Components support native props and refs where applicable, server rendering, and current evergreen browsers. Applications control font loading. Texture, motion, and paper decoration tilt are configurable. Stickers always remain upright, and round stickers and small icon buttons use equal width and height.
 
 ## Brand Commitments
 

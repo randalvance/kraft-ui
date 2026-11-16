@@ -408,6 +408,8 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 
 `Popover` is a small, upright paper sheet with a short title, an optional handwritten line, a close target, and a tape mark. It stays nonmodal and returns focus to its trigger after dismissal. `Menu` is a compact paper action list with a printed division and quiet disabled actions; destructive actions use red ink. Both follow the trigger, avoid viewport edges, and support keyboard navigation and Escape. Their interactive behavior comes from unstyled primitives while Kraft owns the materials and spacing.
 
+`Tooltip` is a smaller upright slip of card paper with a thin cut edge and a short shadow. It has no tape, arrow, or controls. The trigger keeps its own accessible name; the slip adds a brief description on hover or keyboard focus. Escape or trigger activation closes it without moving focus. `TooltipProvider` shares a short hover delay across neighboring marks. Longer or interactive content belongs in a Popover.
+
 ### Actionable lists and side panes
 
 `ActionableList` makes flat rows from paper strips. One primary native button or link takes most of the row; optional row actions sit beside it without nesting controls. Leading marks are decorative, while descriptive and trailing text remain part of the primary target's name. A current row takes the highlighter face. Use `TreeView` for nested items and `Select` for a listbox.
