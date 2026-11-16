@@ -242,6 +242,20 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.radius-10}"
     contentPadding: "{spacing.space-24}"
+  checkbox:
+    backgroundColor: "{colors.card}"
+    checkedColor: "{colors.blue}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.radius-4}"
+    width: "20px"
+    height: "20px"
+  toggle:
+    backgroundColor: "{colors.rail}"
+    checkedColor: "{colors.blue}"
+    knobColor: "{colors.knob}"
+    rounded: "{rounded.radius-pill}"
+    width: "44px"
+    height: "26px"
   link:
     textColor: "{colors.link-paper}"
   badge:
@@ -369,6 +383,14 @@ Tactile and dependable. `Button` has neutral, blue, sage, danger, and attention 
 `IconButton` shares Button behavior and requires an accessible label. Its sizing and corner treatment differ from the text button; small icon buttons are exactly 28×28px with 16px glyphs; other icon sizes use 20px glyphs. During loading, the busy mark replaces the action icon. Small controls need suitable spacing or another WCAG 2.2 AA target-size accommodation in their composition.
 
 **The Dependable Press Rule.** Buttons depress toward their cut edge and never tilt. Stickers stay upright in every shape; decorative rotation is reserved for paper.
+
+### Checkboxes and toggles
+
+Small, printed, and native. `Checkbox` is a 20px paper box with a recessed face and a muted ink edge; checking fills it with blue and a hand-weight check, and `indeterminate` shows a dash. Checked boxes gain a crisp cut edge down and right. `Toggle` is a native checkbox with `role="switch"`: a 44×26px recessed rail carrying a round paper knob that slides toward the end when on. The rail turns blue when on; Night uses the deeper blue-2 so the knob keeps contrast against it, and the knob travels toward the start in right-to-left text.
+
+Both wrap the input in a label so the box and its text form one target. Focus draws the ink outline around the box or rail. Hover darkens the unchecked edge; press nudges the box down and right. Disabled uses the quiet paper face with a softened but visible edge, and the check or knob position still shows the state. An optional description sits under the label in secondary ink and is announced as the input's description rather than being part of its name. Use `Toggle` for settings that apply immediately and `Checkbox` for choices submitted later; pressed actions remain `Button` with `aria-pressed`.
+
+**The Visible State Rule.** Checked, mixed, and on states change shape as well as color: a check, a dash, or a knob position.
 
 ### Surfaces
 

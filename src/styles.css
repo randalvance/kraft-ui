@@ -80,10 +80,44 @@
 .kraft-sticker { transform: none; min-height: 40px; padding: 10px 14px; box-shadow: var(--kraft-sticker); }
 .kraft-sticker[data-shape="round"] { box-sizing: border-box; flex: none; width: var(--kraft-sticker-size, 64px); height: var(--kraft-sticker-size, 64px); min-width: 0; min-height: 0; max-width: none; padding: 8px; aspect-ratio: 1; border-radius: 50%; text-align: center; }
 .kraft-sticker[data-shape="square"] { border-radius: var(--kraft-radius-10); }
+.kraft-choice { --kraft-control-on: var(--kraft-blue); --kraft-control-on-edge: var(--kraft-blue-2); --kraft-control-on-ink: var(--kraft-on-blue); --kraft-control-edge: var(--kraft-mute); --kraft-control-disabled-edge: color-mix(in srgb, var(--kraft-mute) 65%, var(--kraft-paper-2)); display: inline-flex; align-items: flex-start; gap: var(--kraft-space-10); max-width: 100%; min-height: 24px; color: var(--kraft-content-ink, var(--kraft-ink)); font: 400 14px/1.5 var(--kraft-font-sans); cursor: pointer; }
+:root, [data-kraft-theme="paper"] { --kraft-toggle-on: var(--kraft-blue); --kraft-toggle-on-edge: var(--kraft-blue-2); }
+[data-kraft-theme="night"] { --kraft-toggle-on: var(--kraft-blue-2); --kraft-toggle-on-edge: var(--kraft-blue); }
+.kraft-toggle { --kraft-control-on: var(--kraft-toggle-on); --kraft-control-on-edge: var(--kraft-toggle-on-edge); }
+.kraft-choice-control { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; min-height: 21px; }
+.kraft-choice-input { position: absolute; inset: -2px; z-index: 1; width: calc(100% + 4px); height: calc(100% + 4px); margin: 0; opacity: 0; cursor: inherit; }
+.kraft-choice-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.kraft-choice-label { font-weight: 700; }
+.kraft-choice-description { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; line-height: 1.4; }
+.kraft-choice:has(.kraft-choice-input:disabled) { cursor: not-allowed; }
+.kraft-choice:has(.kraft-choice-input:disabled) .kraft-choice-text { color: var(--kraft-faint); }
+.kraft-choice:has(.kraft-choice-input:disabled) .kraft-choice-description { color: var(--kraft-faint); }
+.kraft-checkbox-box { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; color: var(--kraft-control-on-ink); background: var(--kraft-card); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-recess); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-checkbox-box svg { grid-area: 1 / 1; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.6); transition: opacity var(--kraft-motion-duration, 150ms) var(--kraft-ease), transform var(--kraft-motion-duration, 150ms) var(--kraft-ease-pop); }
+.kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box { background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-control-on); border-color: var(--kraft-control-on-edge); box-shadow: 1px 2px 0 var(--kraft-control-on-edge); }
+.kraft-choice-input:checked:not(:indeterminate) + .kraft-checkbox-box .kraft-checkbox-check, .kraft-choice-input:indeterminate + .kraft-checkbox-box .kraft-checkbox-mixed { opacity: 1; transform: none; }
+.kraft-choice-input:hover:enabled:not(:checked):not(:indeterminate) + .kraft-checkbox-box { border-color: var(--kraft-ink); }
+.kraft-choice-input:active:enabled + .kraft-checkbox-box { transform: translate(1px, 1px); box-shadow: var(--kraft-recess); }
+.kraft-toggle .kraft-choice-text { padding-top: 2px; }
+.kraft-toggle-track { position: relative; display: inline-flex; align-items: center; width: 44px; height: 26px; padding: 3px; background: var(--kraft-rail); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-recess); transition: background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-toggle-knob { width: 17px; height: 17px; background: linear-gradient(135deg, var(--kraft-gloss), transparent 60%), var(--kraft-knob); border: 1px solid var(--kraft-control-edge); border-radius: 50%; box-shadow: 1px 2px 0 var(--kraft-edge-2), 2px 3px 4px var(--kraft-amb-2); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-choice-input:checked + .kraft-toggle-track { background: var(--kraft-control-on); border-color: var(--kraft-control-on-edge); }
+.kraft-choice-input:checked + .kraft-toggle-track .kraft-toggle-knob { border-color: var(--kraft-control-on-edge); transform: translateX(18px); }
+.kraft-choice-input:checked + .kraft-toggle-track:dir(rtl) .kraft-toggle-knob { transform: translateX(-18px); }
+.kraft-choice-input:hover:enabled:not(:checked) + .kraft-toggle-track { border-color: var(--kraft-ink); }
+.kraft-choice-input:active:enabled + .kraft-toggle-track .kraft-toggle-knob { box-shadow: var(--kraft-press-paper); }
+.kraft-choice-input:focus-visible + .kraft-checkbox-box, .kraft-choice-input:focus-visible + .kraft-toggle-track { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+.kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track { background: var(--kraft-paper-2); border-color: var(--kraft-control-disabled-edge); color: var(--kraft-control-disabled-edge); box-shadow: none; }
+.kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { background: var(--kraft-control-disabled-edge); border-color: var(--kraft-control-disabled-edge); box-shadow: none; }
 @media (prefers-reduced-motion: reduce) {
   .kraft-root { --kraft-motion-duration: 0ms; }
-  .kraft-button { transition: none; }
+  .kraft-button, .kraft-checkbox-box, .kraft-checkbox-box svg, .kraft-toggle-track, .kraft-toggle-knob { transition: none; }
 }
 @media (forced-colors: active) {
   .kraft-button, .kraft-surface, .kraft-paper-panel, .kraft-badge, .kraft-sticker { border: 1px solid CanvasText; box-shadow: none; }
+  .kraft-checkbox-box, .kraft-toggle-track, .kraft-toggle-knob { border-color: CanvasText; background: Canvas; box-shadow: none; }
+  .kraft-checkbox-box { color: HighlightText; }
+  .kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box, .kraft-choice-input:checked + .kraft-toggle-track { border-color: Highlight; background: Highlight; }
+  .kraft-choice-input:checked + .kraft-toggle-track .kraft-toggle-knob { background: HighlightText; border-color: HighlightText; }
+  .kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track, .kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { border-color: GrayText; }
 }
