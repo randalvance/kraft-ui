@@ -39,6 +39,7 @@ export function Note() {
 | Layout | `Box`, `Stack`, `Inline` |
 | Typography | `Text`, `Heading` |
 | Material | `Surface` |
+| Structured sheet | `PaperPanel` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
@@ -47,6 +48,8 @@ Layout, typography, and surfaces accept `as` to select the semantic HTML element
 Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. Stickers are upright and noninteractive; use `decorative` for redundant marks. Round stickers are true 64px circles; customize `--kraft-sticker-size` for another diameter and use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
 
 Form controls and complex widgets are outside the initial release.
+
+`PaperPanel` standardizes a titled sheet with a blank paper body. It accepts `leading`, `controls`, `navigation`, and `footer` slots around `children`. The title labels the section, and `titleAs` selects its heading level. The body has a default minimum height of 220px; override `--kraft-panel-body-min-height` when a workspace needs more room. Override `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted frame, checking header text contrast against the chosen color. Application controls and navigation keep their own behavior.
 
 ## Themes and customization
 

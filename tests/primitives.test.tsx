@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { Button, IconButton, ThemeProvider, Surface, Heading, Sticker, Separator, Link, Box } from '../src';
+import { Button, IconButton, ThemeProvider, Surface, Heading, Sticker, Separator, Link, Box, PaperPanel, Text } from '../src';
 
 describe('native interaction contracts', () => {
  it('supports keyboard activation and forwards its native ref', async () => {
@@ -43,5 +43,18 @@ describe('composition and server rendering', () => {
  it('keeps decorative stickers and rules out of the accessibility tree', () => {
   const { container } = render(<><Sticker decorative>Extra</Sticker><Sticker>Ready</Sticker><Separator decorative /><Separator orientation="vertical" /></>);
   expect(screen.getByText('Extra')).toHaveAttribute('aria-hidden','true'); expect(screen.getByText('Ready')).not.toHaveAttribute('aria-hidden'); expect(screen.getAllByRole('separator')).toHaveLength(1); expect(container.querySelector('[aria-orientation="vertical"]')).toBeTruthy();
+ });
+ it('labels a blank paper panel and keeps controls and content in their slots', () => {
+  const ref = createRef<HTMLElement>();
+  const { container } = render(<PaperPanel ref={ref} title="Workshop" titleAs="h3" controls={<Button>Close</Button>} footer={<Text>Ready</Text>} data-testid="workshop"><Text>Notes</Text></PaperPanel>);
+  const region = screen.getByRole('region', { name: 'Workshop' });
+  expect(ref.current).toBe(region);
+  expect(region).toHaveAttribute('data-testid', 'workshop');
+  expect(screen.getByRole('heading', { level: 3, name: 'Workshop' })).toBeInTheDocument();
+  expect(container.querySelector('.kraft-paper-panel-controls button')).toHaveTextContent('Close');
+  expect(container.querySelector('.kraft-paper-panel-body')).toHaveTextContent('Notes');
+  expect(container.querySelector('.kraft-paper-panel-footer')).toHaveTextContent('Ready');
+  const blank = renderToString(<PaperPanel title="Blank" />);
+  expect(blank).toContain('kraft-paper-panel-body');
  });
 });

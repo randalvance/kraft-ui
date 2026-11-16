@@ -236,6 +236,12 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.radius-10}"
     padding: "{spacing.space-24}"
+  paper-panel:
+    backgroundColor: "{colors.board}"
+    contentColor: "{colors.sheet-warm}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.radius-10}"
+    contentPadding: "{spacing.space-24}"
   link:
     textColor: "{colors.link-paper}"
   badge:
@@ -367,6 +373,8 @@ Tactile and dependable. `Button` has neutral, blue, sage, danger, and attention 
 ### Surfaces
 
 Paper carries content; kraft warms a paper-like panel; cardboard supplies support. `Surface` offers paper, cardboard, and kraft materials, elevations 0–3, and padding. Compose its contents with Stack or Inline when flex layout is needed. Elevation 0 removes the shadow for all materials; elevations 2 and 3 deepen only paper and kraft. It does not make a surface interactive.
+
+`PaperPanel` standardizes a workspace sheet. Its board-colored header holds a title, optional leading mark, and controls; optional navigation sits directly below. The paper body has a thin dividing edge, a 24px inset, and a 220px minimum height even when empty. An optional footer returns to the frame material. The title labels the section, and `titleAs` follows the page's heading order. Callers supply control behavior and content. Size the empty body through `--kraft-panel-body-min-height` when the surrounding layout needs more space. Change `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted workspace frame, then validate ink contrast against that tint in both themes.
 
 ### Links and separators
 
