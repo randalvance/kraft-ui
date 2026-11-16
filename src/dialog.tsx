@@ -27,6 +27,7 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(function Dialog
   const id = useId();
   const localRef = useRef<HTMLDialogElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const propCloseEvents = useRef(0);
   const setRef = useCallback((node: HTMLDialogElement | null) => {
     localRef.current = node;
     if (typeof forwardedRef === 'function') forwardedRef(node);
@@ -39,14 +40,20 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(function Dialog
     if (open && !dialog.open) {
       dialog.showModal();
       (initialFocusRef?.current ?? titleRef.current)?.focus();
-    } else if (!open && dialog.open) dialog.close();
+    } else if (!open && dialog.open) {
+      propCloseEvents.current += 1;
+      dialog.close();
+    }
   }, [open, initialFocusRef]);
 
   return <dialog {...props} ref={setRef} className={className ? `kraft-dialog ${className}` : 'kraft-dialog'}
     aria-label={ariaLabel} aria-labelledby={ariaLabelledBy ?? (ariaLabel ? undefined : `${id}-title`)}
     aria-describedby={[ariaDescribedBy, description ? `${id}-description` : undefined].filter(Boolean).join(' ') || undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
-    onClose={() => { if (open) onOpenChange(false); }}
+    onClose={() => {
+      if (propCloseEvents.current > 0) { propCloseEvents.current -= 1; return; }
+      if (open) onOpenChange(false);
+    }}
     onClick={event => {
       onClick?.(event);
       if (!dismissible || event.defaultPrevented || event.target !== event.currentTarget) return;

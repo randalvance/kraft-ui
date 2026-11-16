@@ -40,9 +40,11 @@ export const Dismissal: Story = { render: args => <IdeaDialog title={args.title}
   await waitFor(() => expect(dialog).not.toBeVisible());
   await expect(trigger).toHaveFocus();
   await userEvent.click(trigger);
+  await waitFor(() => expect(dialog).toBeVisible());
   await userEvent.click(within(dialog).getByRole('button', { name: 'Close dialog' }));
   await waitFor(() => expect(dialog).not.toBeVisible());
   await userEvent.click(trigger);
+  await waitFor(() => expect(dialog).toBeVisible());
   await fireEvent(dialog, new MouseEvent('click', { bubbles: true, clientX: 0, clientY: 0 }));
   await waitFor(() => expect(dialog).not.toBeVisible());
 } };
