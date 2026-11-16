@@ -41,11 +41,11 @@ export function Note() {
 | Material | `Surface` |
 | Structured sheet | `PaperPanel` |
 | Controls | `Button`, `IconButton`, `Link` |
-| Form choices | `Checkbox`, `Toggle` |
+| Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
-| Hierarchy | `TreeView` |
+| Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Navigation | `Tabs` |
-| Overlay | `Dialog` |
+| Overlays and panes | `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons; links stay anchors. `IconButton` requires `aria-label`. `Button` defaults to `type="button"`; loading disables activation, exposes `aria-busy`, and retains its label. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
@@ -83,7 +83,32 @@ function AgentFields() {
 }
 ```
 
-Selects, radios, and other complex widgets are not yet included.
+`RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.
+
+`Select` is a single choice field with a button and listbox. It supports `name`, `required`, disabled options, typeahead, and controlled or initial values. `Menu` is for actions; give it an accessible `label`, an array of actions and separators, and an `onAction` callback. `Popover` holds small structured content with a required title and a close button. Pass a ref forwarding button as a menu or popover `trigger`. These anchored surfaces keep the current theme by default; when an ancestor clips them, pass `portalContainer` pointing to a suitable element within the same theme scope.
+
+```tsx
+import { Button, Menu, RadioGroup, Select } from '@randalvance/kraft-ui';
+
+function WorkChoices() {
+  return <>
+    <RadioGroup label="Effort" name="effort" defaultValue="medium" options={[
+      { value: 'low', label: 'Low' }, { value: 'medium', label: 'Medium' },
+      { value: 'high', label: 'High' },
+    ]} />
+    <Select label="Workspace" name="workspace" options={[
+      { value: 'desk', label: 'Desk' }, { value: 'shelf', label: 'Shelf' },
+    ]} />
+    <Menu label="Note actions" trigger={<Button>Actions</Button>} items={[
+      { id: 'copy', label: 'Copy note' }, { id: 'delete', label: 'Delete note', destructive: true },
+    ]} onAction={id => { /* Handle the chosen action. */ }} />
+  </>;
+}
+```
+
+`ActionableList` names a flat collection. Each `ActionableListItem` has one primary button or link, with optional descriptive copy, noninteractive trailing detail, and separate `actions`. Use `current` for the active destination and `disabled` for an unavailable row. Use `TreeView` for hierarchy and `Select` for one choice from a listbox.
+
+`Drawer` is a titled paper side sheet with optional description and footer. Render it as the `pane` in `ResizablePane`, with `main` beside it. The caller owns `open` and `onClose`; resizing can be uncontrolled with `defaultSize` or controlled with `size` and `onSizeChange`. The divider accepts pointer dragging, Left/Right arrows, Home, and End. On narrow screens, the open pane fills the layout. Keep focus return in the application action that closes a pane.
 
 `PaperPanel` standardizes a titled sheet with a blank paper body. It accepts `leading`, `controls`, `navigation`, and `footer` slots around `children`. The title labels the section, and `titleAs` selects its heading level. The body has a default minimum height of 220px; override `--kraft-panel-body-min-height` when a workspace needs more room. Override `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted frame, checking header text contrast against the chosen color. Application controls and navigation keep their own behavior.
 

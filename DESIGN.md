@@ -398,6 +398,22 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 
 `FormField` places a bold label and a short handwritten hint above one native control. A validation message sits below it in red ink while the control gains a dashed red lower edge. The label names the control; hints and errors describe it, and an error also sets its invalid state. Applications decide when validation appears. A field can be used without the wrapper when an external label or accessible name is supplied.
 
+### Radio choices and select
+
+`RadioGroup` lays native radio inputs on individual paper rows. The chosen row carries a highlighter face and a filled ink dot, so its state remains legible without colour. Descriptions sit below their option labels and are announced separately. The group name comes from a visible fieldset legend. Native arrow navigation, validation, and form submission remain intact.
+
+`Select` uses a paper trigger and a paper listbox. The trigger has a cut edge and an ink chevron; the open list highlights the focused and chosen options. Option descriptions add context while the short label remains the accessible option name. Use it for one value, including a form value. Menus express actions instead.
+
+### Popovers and menus
+
+`Popover` is a small, upright paper sheet with a short title, an optional handwritten line, a close target, and a tape mark. It stays nonmodal and returns focus to its trigger after dismissal. `Menu` is a compact paper action list with a printed division and quiet disabled actions; destructive actions use red ink. Both follow the trigger, avoid viewport edges, and support keyboard navigation and Escape. Their interactive behavior comes from unstyled primitives while Kraft owns the materials and spacing.
+
+### Actionable lists and side panes
+
+`ActionableList` makes flat rows from paper strips. One primary native button or link takes most of the row; optional row actions sit beside it without nesting controls. Leading marks are decorative, while descriptive and trailing text remain part of the primary target's name. A current row takes the highlighter face. Use `TreeView` for nested items and `Select` for a listbox.
+
+`Drawer` is a titled side sheet with a thin dividing rule, scrollable body, and optional footer. `ResizablePane` sets that sheet beside the main content. Its dashed ink divider moves with pointer drag and keyboard arrows, with Home and End reaching size limits. Narrow layouts present the side pane across the available width. The application decides when it opens and where focus goes when it closes.
+
 ### Surfaces
 
 Paper carries content; kraft warms a paper-like panel; cardboard supplies support. `Surface` offers paper, cardboard, and kraft materials, elevations 0–3, and padding. Compose its contents with Stack or Inline when flex layout is needed. Elevation 0 removes the shadow for all materials; elevations 2 and 3 deepen only paper and kraft. It does not make a surface interactive.
