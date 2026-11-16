@@ -404,6 +404,12 @@ Paper carries content; kraft warms a paper-like panel; cardboard supplies suppor
 
 Branches expand and collapse; leaves select by default. A branch can opt into selection too. Arrow keys follow visible rows and enter or leave branches, Home/End reach the edges, and typing jumps to a matching label. The tree needs a name, stable unique node IDs, and a label for every item. Application code supplies navigation, filtering, menus, and drag and drop outside tree rows.
 
+### Tabs and panes
+
+`Tabs` joins kraft index tabs to a paper sheet. Unselected tabs use the warmer board face; the active tab shares the pane's paper face and gains a red cut edge. The strip scrolls horizontally when tabs exceed its width. A vertical arrangement places tabs against the sheet's side. Tabs and panes stay upright in both themes. The sheet can hold plain copy or application controls without imposing a content layout.
+
+A named tab list contains one tab stop. Each tab is linked to its pane; the active pane is keyboard focusable, and inactive panes stay mounted but hidden. Arrow keys, Home, and End move focus among enabled tabs. Selection follows focus for immediate content; manual activation waits for Enter or Space when showing a pane takes time. Focus remains distinct from selection, especially in manual mode. Callers provide unique stable IDs, labels, and pane content; they own any data loading within a pane.
+
 ### Dialog
 
 `Dialog` lifts a paper sheet above the desk with a quiet ink veil. Its compact header carries a title, optional mark and short supporting line, and a 44px close target. Dotted rules separate the content and optional action footer. The sheet stays upright, centers within the viewport, and scrolls its body when content is long. Paper and Night keep the same material relationship; forced colors replace the sheet edge and shadow with system colors.

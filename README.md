@@ -43,6 +43,7 @@ export function Note() {
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle` |
 | Hierarchy | `TreeView` |
+| Navigation | `Tabs` |
 | Overlay | `Dialog` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
@@ -102,6 +103,21 @@ const pages: TreeNode[] = [
 export function Pages({ onOpen }: { onOpen: (id: string) => void }) {
   return <TreeView aria-label="Pages" items={pages} defaultExpandedIds={['ideas']}
     onSelectionChange={onOpen} />;
+}
+```
+
+`Tabs` attaches a named tab strip to paper panes. Give each item a unique, stable `id`, a `label`, and `content`; optional `leading` and `trailing` marks sit beside the label. The first enabled tab is selected unless `defaultValue` or controlled `value` chooses another. Use `onValueChange` to respond to selection. Arrow keys move between enabled tabs, Home/End reach the edges, and Tab enters the active pane. Selection follows focus by default; use `activationMode="manual"` when opening a pane involves a noticeable delay. Set `orientation="vertical"` for tabs down the side. Hidden panes stay mounted, so local pane state survives selection changes. Set `--kraft-tabs-panel-min-height` when the sheet needs a different minimum height.
+
+```tsx
+import { Tabs, Text, type TabItem } from '@randalvance/kraft-ui';
+
+const sections: TabItem[] = [
+  { id: 'notes', label: 'Notes', content: <Text>Fresh thoughts.</Text> },
+  { id: 'sketches', label: 'Sketches', content: <Text>Drawn ideas.</Text> },
+];
+
+export function IdeaSections() {
+  return <Tabs aria-label="Idea sections" items={sections} defaultValue="notes" />;
 }
 ```
 
