@@ -4,3 +4,4 @@ export * from './controls.js';
 export * from './tree-view.js';
 export * from './dialog.js';
 export * from './tabs.js';
+export * from './form-fields.js';

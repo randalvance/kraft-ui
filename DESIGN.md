@@ -392,6 +392,12 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 
 **The Visible State Rule.** Checked, mixed, and on states change shape as well as color: a check, a dash, or a knob position.
 
+### Form fields
+
+`TextField`, `Textarea`, and `SearchField` are paper strips with a thin cut edge and a shallow shadow. Their ink and placeholders stay readable in Paper and Night. The search mark sits inside the start edge and reverses naturally in right-to-left layouts. A multiline field keeps the browser's vertical resize affordance. Focus draws the same offset ink outline as other controls; disabled fields use quiet tinted paper without a lifted edge.
+
+`FormField` places a bold label and a short handwritten hint above one native control. A validation message sits below it in red ink while the control gains a dashed red lower edge. The label names the control; hints and errors describe it, and an error also sets its invalid state. Applications decide when validation appears. A field can be used without the wrapper when an external label or accessible name is supplied.
+
 ### Surfaces
 
 Paper carries content; kraft warms a paper-like panel; cardboard supplies support. `Surface` offers paper, cardboard, and kraft materials, elevations 0–3, and padding. Compose its contents with Stack or Inline when flex layout is needed. Elevation 0 removes the shadow for all materials; elevations 2 and 3 deepen only paper and kraft. It does not make a surface interactive.

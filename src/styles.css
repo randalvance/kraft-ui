@@ -126,6 +126,25 @@
 .kraft-choice-input:focus-visible + .kraft-checkbox-box, .kraft-choice-input:focus-visible + .kraft-toggle-track { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track { background: var(--kraft-paper-2); border-color: var(--kraft-control-disabled-edge); color: var(--kraft-control-disabled-edge); box-shadow: none; }
 .kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { background: var(--kraft-control-disabled-edge); border-color: var(--kraft-control-disabled-edge); box-shadow: none; }
+.kraft-form-field { --kraft-form-error-ink: var(--kraft-red-2); display: flex; flex-direction: column; gap: var(--kraft-space-8); min-width: 0; max-width: 100%; color: var(--kraft-ink); }
+[data-kraft-theme="night"] .kraft-form-field { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-form-field-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--kraft-space-4) var(--kraft-space-12); min-width: 0; }
+.kraft-form-field-label { font: 800 13px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }
+.kraft-form-field-description { color: var(--kraft-text-muted-paper); font: 500 15px/1.25 var(--kraft-font-hand); overflow-wrap: anywhere; }
+.kraft-form-field-error { color: var(--kraft-form-error-ink); font: 700 13px/1.35 var(--kraft-font-sans); overflow-wrap: anywhere; }
+.kraft-field-input { --kraft-form-error-ink: var(--kraft-red-2); box-sizing: border-box; display: block; width: 100%; min-width: 0; min-height: 40px; margin: 0; padding: 8px 12px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); font: 400 14px/1.5 var(--kraft-font-sans); caret-color: currentColor; }
+[data-kraft-theme="night"] .kraft-field-input { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-field-input::placeholder { color: var(--kraft-faint); opacity: 1; }
+.kraft-field-input:hover:not(:disabled):not(:focus) { border-color: var(--kraft-mute); }
+.kraft-field-input:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+.kraft-field-input:disabled { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
+.kraft-field-input:disabled::placeholder { color: var(--kraft-faint); }
+.kraft-field-input[aria-invalid="true"] { border-bottom: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
+.kraft-textarea { resize: vertical; }
+.kraft-search-field { position: relative; display: block; width: 100%; min-width: 0; }
+.kraft-search-mark { position: absolute; z-index: 1; inset-block-start: 50%; inset-inline-start: 12px; width: 16px; height: 16px; color: var(--kraft-mute); pointer-events: none; transform: translateY(-50%); }
+.kraft-search-input { padding-inline-start: 38px; }
+.kraft-search-field:has(.kraft-search-input:disabled) .kraft-search-mark { color: var(--kraft-faint); }
 .kraft-tree { min-width: 0; margin: 0; padding: 0; list-style: none; color: var(--kraft-ink); font: 400 13px/1.35 var(--kraft-font-sans); }
 .kraft-tree-item { min-width: 0; margin: 0; padding: 0; list-style: none; outline: none; }
 .kraft-tree-row { display: flex; align-items: center; gap: var(--kraft-space-8); min-width: 0; min-height: 36px; margin-block-end: var(--kraft-space-4); padding: 6px var(--kraft-space-8); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); cursor: pointer; }
@@ -181,6 +200,10 @@
   .kraft-tree-item[aria-selected="true"] > .kraft-tree-row .kraft-tree-description { color: HighlightText; }
   .kraft-tab, .kraft-tab-panel { color: CanvasText; background: Canvas; border-color: CanvasText; box-shadow: none; }
   .kraft-tab[aria-selected="true"], .kraft-tabs[data-orientation="vertical"] .kraft-tab[aria-selected="true"] { border-color: CanvasText; border-top-color: Highlight; border-inline-start-color: Highlight; }
+  .kraft-field-input { color: FieldText; background: Field; border-color: FieldText; box-shadow: none; }
+  .kraft-field-input:disabled, .kraft-field-input:disabled::placeholder, .kraft-search-field:has(.kraft-search-input:disabled) .kraft-search-mark { color: GrayText; border-color: GrayText; }
+  .kraft-field-input[aria-invalid="true"] { border-bottom-color: Highlight; }
+  .kraft-form-field-error { color: CanvasText; }
   .kraft-checkbox-box, .kraft-toggle-track, .kraft-toggle-knob { border-color: CanvasText; background: Canvas; box-shadow: none; }
   .kraft-checkbox-box { color: HighlightText; }
   .kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box, .kraft-choice-input:checked + .kraft-toggle-track { border-color: Highlight; background: Highlight; }

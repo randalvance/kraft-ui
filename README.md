@@ -42,6 +42,7 @@ export function Note() {
 | Structured sheet | `PaperPanel` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle` |
+| Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Hierarchy | `TreeView` |
 | Navigation | `Tabs` |
 | Overlay | `Dialog` |
@@ -66,7 +67,23 @@ function Choices() {
 }
 ```
 
-Text inputs, selects, radios, and other complex widgets are not yet included.
+`TextField`, `Textarea`, and `SearchField` keep native input behavior, including refs, controlled or initial values, validation, and form submission. Put one control inside `FormField` to connect a visible `label`, optional `description`, and `error` to that control automatically. An error draws a dashed red field edge, sets `aria-invalid`, and becomes part of its accessible description; application code decides when to show it. Set `controlId` on `FormField` when another element needs the input ID. Each control can also stand alone with an external `<label>` and `id`, or an `aria-label`. `className` and `style` on a control apply to its native input or textarea; on `FormField` they apply to the wrapper.
+
+```tsx
+import { FormField, SearchField, Textarea, TextField } from '@randalvance/kraft-ui';
+
+function AgentFields() {
+  return <form>
+    <FormField label="Agent name" description="Shown in sessions">
+      <TextField name="name" required placeholder="Name this agent" />
+    </FormField>
+    <FormField label="Description"><Textarea name="description" rows={3} /></FormField>
+    <FormField label="Find notes"><SearchField name="query" placeholder="Search notes…" /></FormField>
+  </form>;
+}
+```
+
+Selects, radios, and other complex widgets are not yet included.
 
 `PaperPanel` standardizes a titled sheet with a blank paper body. It accepts `leading`, `controls`, `navigation`, and `footer` slots around `children`. The title labels the section, and `titleAs` selects its heading level. The body has a default minimum height of 220px; override `--kraft-panel-body-min-height` when a workspace needs more room. Override `--kraft-panel-frame` and `--kraft-panel-frame-edge` together for a tinted frame, checking header text contrast against the chosen color. Application controls and navigation keep their own behavior.
 
