@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Sticker, Link, Text, Stack, Surface, ThemeProvider, type Theme } from '../src';
+import { Badge, Button, Icon, iconNames, Sticker, Link, Text, Stack, Surface, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
 import '../src/styles.css';
 
@@ -36,7 +36,7 @@ function contrast(a: number[], b: number[]) {
 
 // Actual screenshots locate glyphs, then compare their specified foreground with
 // the composited background beneath them. Anti-aliased ink is not the foreground.
-async function verifyPaintedContrast(matrix: HTMLElement) {
+async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5) {
   await document.fonts.load('800 12px "Nunito Variable"');
   await document.fonts.load('400 14px "Nunito Variable"');
   await document.fonts.ready;
@@ -74,13 +74,27 @@ async function verifyPaintedContrast(matrix: HTMLElement) {
         }
       }
     }
-    expect(glyphs, `${name}: glyph mask must contain rendered text`).toBeGreaterThan(0);
-    if (minimum < 4.5) failures.push(`${name}: ${minimum.toFixed(3)}:1`);
+    expect(glyphs, `${name}: glyph mask must contain rendered ink`).toBeGreaterThan(0);
+    if (minimum < requiredContrast) failures.push(`${name}: ${minimum.toFixed(3)}:1`);
   }
-  expect(failures, 'Normal text must reach 4.5:1 on the actual painted material').toEqual([]);
+  expect(failures, `Ink must reach ${requiredContrast}:1 on the actual painted material`).toEqual([]);
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps every icon readable on materials and controls with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 880, padding: 24 }}>
+      <Stack gap={24}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>{materials.map(material => <Surface key={material} material={material} padding={16}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 24px)', gap: 12 }}>
+            {iconNames.map(name => <Icon key={name} name={name} size={24} label={name} data-contrast={`${material}-${name}`} />)}
+          </div>
+        </Surface>)}</div>
+        <div style={{ display: 'flex', gap: 16 }}>{tones.map(tone => <Button key={tone} variant={tone}><Icon name="microphone" data-contrast={`button-${tone}`} />Record</Button>)}</div>
+        <div style={{ display: 'flex', gap: 16 }}>{tones.map(tone => <Badge key={tone} tone={tone}><Icon name="pin" data-contrast={`badge-icon-${tone}`} />Pinned</Badge>)}</div>
+      </Stack>
+    </ThemeProvider>);
+    await verifyPaintedContrast(view.getByTestId('contrast-matrix'), 3);
+  });
   it('keeps printed-label ink readable across the entire gloss gradient', () => {
     const view = render(<ThemeProvider theme={theme}>{tones.map(tone => <Badge key={tone} tone={tone}>{tone}</Badge>)}</ThemeProvider>);
     for (const mark of view.container.querySelectorAll<HTMLElement>('.kraft-badge')) {

@@ -1,8 +1,8 @@
 import { expect, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { IconButton } from '../src';
-const plus = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>;
+import { Icon, IconButton } from '../src';
+const plus = <Icon name="plus" />;
 const meta = { title: 'Primitives/IconButton', component: IconButton, args: { 'aria-label': 'Add note', children: plus }, parameters: { docs: { description: { component: 'A named native button with an icon. aria-label is required. Default 44px target; the small 28px disc needs adequate separation from other controls.' } } }, argTypes: { size: { control: 'select', options: ['sm','md','lg'] }, variant: { control: 'select', options: ['neutral','blue','sage','danger','attention'] } } } satisfies Meta<typeof IconButton>;
 export default meta;
 type Story = StoryObj<typeof meta>;
