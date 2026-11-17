@@ -9,6 +9,7 @@
 .kraft-root *, .kraft-root *::before, .kraft-root *::after { box-sizing: border-box; }
 .kraft-root ::selection { background: var(--kraft-marker); color: var(--kraft-ink); }
 .kraft-root { scrollbar-color: var(--kraft-mute) var(--kraft-desk); }
+.kraft-icon { display: inline-block; width: 1em; height: 1em; flex: none; vertical-align: -.125em; }
 .kraft-box { --kraft-padding: 0px; --kraft-gap: var(--kraft-space-8); box-sizing: border-box; min-width: 0; padding: var(--kraft-padding, 0); }
 .kraft-stack, .kraft-inline { display: flex; gap: var(--kraft-gap, var(--kraft-space-8)); }
 .kraft-stack { flex-direction: column; }

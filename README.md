@@ -38,6 +38,7 @@ export function Note() {
 | Theme | `ThemeProvider` |
 | Layout | `Box`, `Stack`, `Inline` |
 | Typography | `Text`, `Heading` |
+| Icons | `Icon`, `createIcon`, `iconNames`, individual glyph definitions (such as `searchIcon`) |
 | Material | `Surface` |
 | Structured sheet | `PaperPanel` |
 | Controls | `Button`, `IconButton`, `Link` |
@@ -174,6 +175,33 @@ const sections: TabItem[] = [
 export function IdeaSections() {
   return <Tabs aria-label="Idea sections" items={sections} defaultValue="notes" />;
 }
+```
+
+## Icons
+
+`Icon` renders the 29 original single-ink design-system glyphs and 19 additional application glyphs. Its required `name` is an `IconName` union, so unknown names are compile errors. `size` accepts pixels or a CSS length; omitted, it follows the surrounding text (`1em`) or the existing IconButton, Tabs, and list slot sizing. An explicit size overrides slot sizing. SVGs inherit `currentColor`, stay upright and static, and accept native SVG attributes, `className`, `style`, and an `SVGSVGElement` ref. `IconProps`, `IconDefinition`, and generic `NamedIconProps` are exported types.
+
+Icons are decorative (`aria-hidden`) and unfocusable by default. Use `label`, native `aria-label`, or `aria-labelledby` to expose a standalone image with `role="img"`; `label` takes precedence over `aria-label`. Empty labels stay decorative, and explicit `aria-hidden` can hide a named icon. Put actions inside a named Button or IconButton so keyboard operation and visible focus belong to the control.
+
+```tsx
+import { Button, Icon, IconButton } from '@randalvance/kraft-ui';
+
+<Button><Icon name="microphone" />Record</Button>;
+<IconButton aria-label="Close panel"><Icon name="close" /></IconButton>;
+<Icon name="pin" size={24} label="Pinned" />;
+```
+
+The original names are `agent`, `agents`, `background`, `branch`, `check`, `chevron-down`, `code`, `copy`, `factory`, `home`, `inbox`, `kanban`, `knowledge`, `mark`, `mcps`, `memory`, `pinwheel`, `plus`, `pull-requests`, `search`, `send`, `sessions`, `settings`, `share`, `skills`, `stop`, `trash`, `workflows`, and `workspaces`. Additional names are `microphone`, `close`, `pin`, `pencil`, `sync`, `folder`, `file`, `new-file`, `new-folder`, `grip`, `three-dots`, `terminal`, `clock`, `bolt`, `eye`, `link`, `chevron-left` (back), `power`, and `key`. `iconNames` lists the full catalogue.
+
+The ready-made `Icon` supports runtime name lookup and includes the full catalogue. To tree-shake unused glyphs, import individual definitions and create a local Icon once at module scope. Each definition is named by its camel-cased icon name plus `Icon`, such as `newFileIcon` or `chevronLeftIcon`. The resulting component has the same props and ref support, with `name` restricted to the supplied keys. This requires no registration, provider, network requests, or bundler plugin.
+
+```tsx
+import { createIcon, searchIcon, closeIcon } from '@randalvance/kraft-ui';
+
+const AppIcon = createIcon({ search: searchIcon, close: closeIcon });
+
+<AppIcon name="search" size={20} />;
+// <AppIcon name="folder" /> is a compile error; its glyph is absent from the bundle.
 ```
 
 ## Themes and customization

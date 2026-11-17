@@ -10,3 +10,6 @@ export * from './overlays.js';
 export * from './actionable-list.js';
 export * from './drawer.js';
 export * from './tooltip.js';
+export * from './icon.js';
+export * from './create-icon.js';
+export * from './icon-glyphs.js';

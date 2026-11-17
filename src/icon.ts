@@ -1,0 +1,60 @@
+import { createIcon, type NamedIconProps } from './create-icon.js';
+import * as glyphs from './icon-glyphs.js';
+
+const icons = {
+  agent: glyphs.agentIcon,
+  agents: glyphs.agentsIcon,
+  background: glyphs.backgroundIcon,
+  branch: glyphs.branchIcon,
+  check: glyphs.checkIcon,
+  'chevron-down': glyphs.chevronDownIcon,
+  code: glyphs.codeIcon,
+  copy: glyphs.copyIcon,
+  factory: glyphs.factoryIcon,
+  home: glyphs.homeIcon,
+  inbox: glyphs.inboxIcon,
+  kanban: glyphs.kanbanIcon,
+  knowledge: glyphs.knowledgeIcon,
+  mark: glyphs.markIcon,
+  mcps: glyphs.mcpsIcon,
+  memory: glyphs.memoryIcon,
+  pinwheel: glyphs.pinwheelIcon,
+  plus: glyphs.plusIcon,
+  'pull-requests': glyphs.pullRequestsIcon,
+  search: glyphs.searchIcon,
+  send: glyphs.sendIcon,
+  sessions: glyphs.sessionsIcon,
+  settings: glyphs.settingsIcon,
+  share: glyphs.shareIcon,
+  skills: glyphs.skillsIcon,
+  stop: glyphs.stopIcon,
+  trash: glyphs.trashIcon,
+  workflows: glyphs.workflowsIcon,
+  workspaces: glyphs.workspacesIcon,
+  microphone: glyphs.microphoneIcon,
+  close: glyphs.closeIcon,
+  pin: glyphs.pinIcon,
+  pencil: glyphs.pencilIcon,
+  sync: glyphs.syncIcon,
+  folder: glyphs.folderIcon,
+  file: glyphs.fileIcon,
+  'new-file': glyphs.newFileIcon,
+  'new-folder': glyphs.newFolderIcon,
+  grip: glyphs.gripIcon,
+  'three-dots': glyphs.threeDotsIcon,
+  terminal: glyphs.terminalIcon,
+  clock: glyphs.clockIcon,
+  bolt: glyphs.boltIcon,
+  eye: glyphs.eyeIcon,
+  link: glyphs.linkIcon,
+  'chevron-left': glyphs.chevronLeftIcon,
+  power: glyphs.powerIcon,
+  key: glyphs.keyIcon,
+} as const;
+
+export type IconName = keyof typeof icons;
+export type IconProps = NamedIconProps<IconName>;
+/** The full catalogue for pickers and documentation. */
+export const iconNames: readonly IconName[] = /* @__PURE__ */ Object.keys(icons) as IconName[];
+/** Full name lookup. Use createIcon with named glyph imports to bundle a smaller catalogue. */
+export const Icon = /* @__PURE__ */ createIcon(icons);
