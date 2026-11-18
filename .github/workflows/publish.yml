@@ -77,7 +77,15 @@ jobs:
       - name: Dry-run npm publish
         env:
           TARBALL: ${{ steps.pack.outputs.tarball }}
-        run: npm publish "./$TARBALL" --dry-run --access public --tag latest --registry https://registry.npmjs.org
+          DRY_RUN: ${{ inputs.dry_run }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$DRY_RUN" == 'true' ]] &&
+             [[ "$(npm view "@randalvance/kraft-ui@$RELEASE_VERSION" version --prefer-online --registry https://registry.npmjs.org 2>/dev/null)" == "$RELEASE_VERSION" ]]; then
+            echo 'This version is already on npm. The tarball is ready for inspection.'
+          else
+            npm publish "./$TARBALL" --dry-run --access public --tag latest --registry https://registry.npmjs.org
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: npm-package
