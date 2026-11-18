@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Button, Icon, iconNames, Sticker, Link, Text, Stack, Surface, ThemeProvider, type Theme } from '../src';
+import { Badge, Button, Icon, iconNames, Sticker, Link, Text, Stack, Surface, Tabs, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
 import '../src/styles.css';
 
@@ -150,5 +150,37 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       </Stack>
     </ThemeProvider>);
     await verifyPaintedContrast(view.getByTestId('contrast-matrix'));
+  });
+  it.each([true, false])('keeps tab labels, details, and counts readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 540, padding: 24 }}>
+      <Tabs aria-label="Notebook" panel="bare" activationMode="manual" items={[
+        { id: 'notes', label: 'Notes', description: 'New this week', trailing: <Badge tone="attention" data-contrast="selected-count">3</Badge>, content: <Text>Recent notes</Text> },
+        { id: 'sketches', label: 'Sketches', description: 'Ready to share', trailing: <Icon name="check" label="Complete" /> },
+        { id: 'inbox', label: 'Inbox', iconOnly: true, leading: <Icon name="inbox" />, trailing: <Badge tone="blue" data-contrast="icon-tab-count">12</Badge> },
+      ]} />
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    for (const sample of matrix.querySelectorAll<HTMLElement>('.kraft-tab-label, .kraft-tab-description')) {
+      sample.dataset.contrast = sample.textContent!;
+    }
+    await verifyPaintedContrast(matrix);
+    const tabs = view.getAllByRole('tab');
+    for (const tab of tabs) {
+      act(() => tab.focus());
+      const css = getComputedStyle(tab);
+      const ink = channels(css.outlineColor);
+      const fill = channels(css.backgroundColor);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(ink, fill), `${tab.textContent}: focus outline`).toBeGreaterThanOrEqual(3);
+      if (tab.getAttribute('aria-selected') === 'true') {
+        expect(contrast(channels(css.borderTopColor), fill), `${tab.textContent}: selection mark`).toBeGreaterThanOrEqual(3);
+      }
+    }
+    act(() => tabs.at(-1)?.blur());
+    for (const mark of matrix.querySelectorAll<SVGElement>('.kraft-tab svg')) {
+      const tab = mark.closest('.kraft-tab')!;
+      mark.dataset.contrast = `glyph-${tab.id}`;
+    }
+    await verifyPaintedContrast(matrix, 3);
   });
 });
