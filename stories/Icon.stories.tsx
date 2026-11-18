@@ -111,7 +111,8 @@ export const Controls: Story = {
     await expect(canvas.getByRole('button', { name: 'Searching' })).toHaveAttribute('aria-busy', 'true');
     const closing = canvas.getByRole('button', { name: 'Closing' });
     await expect(closing).toBeDisabled();
-    await expect(closing.querySelector('svg')).toBeNull();
+    await expect(closing.querySelector('.kraft-pinwheel svg')).toBeInTheDocument();
+    await expect(closing.querySelectorAll('svg')).toHaveLength(1);
     const pin = canvas.getByRole('button', { name: 'Pin note' });
     pin.focus();
     await userEvent.keyboard('{Enter}');

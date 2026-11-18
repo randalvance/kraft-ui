@@ -19,10 +19,23 @@ describe('native interaction contracts', () => {
   await userEvent.click(screen.getByText('Send')); expect(submit).toHaveBeenCalledOnce();
  });
  it('prevents busy and disabled controls from firing while retaining names', async () => {
-  const click = vi.fn(); render(<><Button loading onClick={click}>Saving</Button><Button disabled onClick={click}>Unavailable</Button></>);
+  const click = vi.fn();
+  render(<>
+    <Button loading onClick={click}>Saving</Button>
+    <IconButton loading onClick={click} aria-label="Refreshing"><svg data-testid="action-icon" /></IconButton>
+    <Button disabled onClick={click}>Unavailable</Button>
+  </>);
   const busy = screen.getByRole('button', { name: 'Saving' });
-  expect(busy).toHaveAttribute('aria-busy', 'true');
-  await userEvent.click(busy); await userEvent.click(screen.getByText('Unavailable')); expect(click).not.toHaveBeenCalled();
+  const iconButton = screen.getByRole('button', { name: 'Refreshing' });
+  for (const button of [busy, iconButton]) {
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(button).toBeDisabled();
+    expect(button.querySelector('.kraft-pinwheel')).toHaveAttribute('aria-hidden', 'true');
+    await userEvent.click(button);
+  }
+  expect(screen.queryByTestId('action-icon')).not.toBeInTheDocument();
+  await userEvent.click(screen.getByText('Unavailable'));
+  expect(click).not.toHaveBeenCalled();
  });
  it('exposes icon names and preserves anchor semantics', () => {
   render(<><IconButton aria-label="Add note"><svg aria-hidden="true" /></IconButton><Link href="/notes">Notes</Link></>);

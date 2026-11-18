@@ -37,7 +37,8 @@ export function Note() {
 | Layout | `Box`, `Stack`, `Inline` |
 | Typography | `Text`, `Heading` |
 | Icons | `Icon`, `createIcon`, `iconNames`, individual glyph definitions (such as `searchIcon`) |
-| Material | `Surface` |
+| Material | `Surface`, `Mat`, `Tape` |
+| Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
@@ -47,9 +48,37 @@ export function Note() {
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker` |
 
-Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons; links stay anchors. `IconButton` requires `aria-label`. `Button` defaults to `type="button"`; loading disables activation, exposes `aria-busy`, and retains its label. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
+Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
 
 Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. Stickers are upright and noninteractive; use `decorative` for redundant marks. Round stickers are true 64px circles; customize `--kraft-sticker-size` for another diameter and use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+
+### Mat, Tape, and Pinwheel
+
+- `Mat` frames its children in an inset paper sheet. Use `tone="kraft"` (default), `tone="amber"` for work awaiting review, or `tone="sage"` for finished work. Use `padding` to set the sheet's inner spacing (default `16`) and `as` to choose the frame's native element. The ref points to the frame.
+- `Tape` positions a masking-tape strip at `placement="top"` (default), `right`, `bottom`, `left`, or one of `top-left`, `top-right`, `bottom-left`, and `bottom-right`. Place it inside a `Mat` or another positioned ancestor.
+- `Pinwheel` is Kraft's standard loading indicator. Use `size="row"` (default, 24px) or `size="button"` (16px) for a compact space. It stays still when theme motion is off or the system prefers reduced motion.
+
+`Tape` and `Pinwheel` forward span props and refs. They are decorative by default. Pass `label`, `aria-label`, or `aria-labelledby` to expose Tape as a named image or Pinwheel as a named status. When visible status text supplies the meaning, leave the pinwheel decorative.
+
+```tsx
+import { Button, Heading, Inline, Mat, Pinwheel, Stack, Tape, Text } from '@randalvance/kraft-ui';
+
+function Proof({ saving }: { saving: boolean }) {
+  return <Mat as="article" tone="amber">
+    <Stack gap={12} align="start">
+      <Tape placement="top-right" />
+      <Heading>Proof ready for review</Heading>
+      <Inline role="status" gap={6}>
+        <Pinwheel />
+        <Text as="span">Updating the preview…</Text>
+      </Inline>
+      <Button loading={saving}>Save edits</Button>
+    </Stack>
+  </Mat>;
+}
+```
+
+### Interactive components and compositions
 
 `Checkbox` and `Toggle` are native `<input type="checkbox">` elements, so `name`, `value`, `checked`/`defaultChecked`, `onChange`, `required`, and form submission work as usual. The ref reaches the input; `className` and `style` apply to the surrounding label, which is the whole hit target. Pass the label as `children` (or `aria-label` without visible text) and optional supporting text as `description`, which becomes the input's accessible description. `Checkbox` accepts `indeterminate` for a mixed state; update it when the selection changes. `Toggle` has `role="switch"`: use it for settings that apply immediately, and `Checkbox` for choices submitted with a form.
 

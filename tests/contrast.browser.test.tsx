@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Button, Icon, iconNames, Sticker, Link, Text, Stack, Surface, Tabs, ThemeProvider, type Theme } from '../src';
+import { Badge, Button, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Tabs, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
 import '../src/styles.css';
 
@@ -81,6 +81,39 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps inset sheets and loading indicators legible with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 780, padding: 28 }}>
+      <Stack gap={24}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {(['kraft', 'amber', 'sage'] as const).map(tone => <Mat key={tone} tone={tone}>
+            <Tape placement="top-right" />
+            <Stack gap={8}>
+              <Text data-contrast={`${tone}-body`}>Review the proof.</Text>
+              <Text tone="muted" data-contrast={`${tone}-muted`}>Ready for print.</Text>
+              <Link href="#proof" data-contrast={`${tone}-link`}>Open the proof</Link>
+              <Pinwheel label="Preparing the proof" />
+            </Stack>
+          </Mat>)}
+        </div>
+        <Inline gap={16}>{tones.map(tone => <Button key={tone} variant={tone} loading>Save {tone}</Button>)}</Inline>
+        <Inline gap={16}>{tones.map(tone => <IconButton key={tone} variant={tone} size="sm" aria-label={`Refresh ${tone}`} loading>
+          <Icon name="sync" />
+        </IconButton>)}</Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await verifyPaintedContrast(matrix);
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll<SVGElement>('.kraft-pinwheel > svg').forEach((glyph, index) => {
+      glyph.dataset.contrast = `pinwheel-${index}`;
+      for (const animation of glyph.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await verifyPaintedContrast(matrix, 3);
+  });
+
   it.each([true, false])('keeps every icon readable on materials and controls with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 880, padding: 24 }}>
       <Stack gap={24}>

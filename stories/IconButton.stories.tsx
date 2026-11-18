@@ -22,6 +22,8 @@ export const SmallLoading: Story = { args: { size: 'sm', loading: true }, play: 
   const rect = button.getBoundingClientRect();
   await expect(rect.width).toBe(28);
   await expect(rect.height).toBe(28);
-  await expect(button.querySelector('svg')).toBeNull();
-  await expect(button.querySelector('.kraft-loading-mark')!.getBoundingClientRect().width).toBe(10);
+  const pinwheel = button.querySelector('.kraft-pinwheel')!;
+  await expect(pinwheel.getBoundingClientRect().width).toBe(16);
+  await expect(pinwheel).toHaveAttribute('aria-hidden', 'true');
+  await expect(button.querySelectorAll('svg')).toHaveLength(1);
 } };
