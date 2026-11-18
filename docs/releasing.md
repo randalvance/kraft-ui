@@ -20,11 +20,12 @@ No long-lived npm token is required by the publishing workflow. Node 24 includes
 
 1. Add a Changeset with `npm run changeset` for each consumer-facing change.
 2. Merge the implementation. The Prepare release workflow opens or updates a version PR with package version and changelog changes.
-3. Review and merge the version PR. Allow validation to pass.
-4. Run **Publish** on `main` with the exact version from `package.json`. Leave `dry_run` enabled to check the release candidate and download its tarball from the run’s `npm-package` artifact. Dry runs also work on other branches with their current manifest version, including `0.0.0`.
-5. To publish, run **Publish** on `main` with the same version and disable `dry_run`. Approve the `npm` deployment after the tarball job passes. The publishing job downloads that run’s verified tarball and sends it to npm with OIDC and provenance.
+3. Review and merge the version PR after validation passes. Merging `changeset-release/main` from this repository into `main` starts **Publish** for the merged commit.
+4. Approve the `npm` deployment after the tarball job passes. The publishing job downloads that run’s verified tarball and sends it to npm with OIDC and provenance.
 
-Every run checks the package version, runs `npm run check`, packs the build, and installs the tarball in separate React 18 and 19 projects. The smoke test checks TypeScript declarations, server rendering, and the CSS and token exports. The workflow then dry-runs npm publish and uploads the tarball.
+The workflow checks the package version, runs `npm run check`, packs the build, and installs the tarball in separate React 18 and 19 projects. The smoke test checks TypeScript declarations, server rendering, and the CSS and token exports. The workflow also runs npm’s publish preflight for new versions and uploads the tarball.
+
+For a manual dry run, dispatch **Publish** on any branch with its exact `package.json` version and leave `dry_run` enabled. Download the verified tarball from the `npm-package` artifact. For manual publishing, dispatch **Publish** on `main` with its exact version and disable `dry_run`, then approve the `npm` deployment.
 
 For the first release, use a successful `main` dry run to obtain the verified tarball. If the package does not exist on npm yet, publish that tarball from an authenticated maintainer session with 2FA, then register the trusted publisher for later releases. The placeholder `0.0.0` is reserved for dry runs.
 
