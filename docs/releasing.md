@@ -20,7 +20,7 @@ No long-lived npm token is required by the publishing workflow. Node 24 includes
 
 1. Add a Changeset with `npm run changeset` for each consumer-facing change.
 2. Merge the implementation. The Prepare release workflow opens or updates a version PR with package version and changelog changes.
-3. Review and merge the version PR after validation passes. Merging `changeset-release/main` from this repository into `main` starts **Publish** for the merged commit.
+3. Review and merge the version PR after validation passes. When `package.json` changes on `main`, **Publish** compares the old and new package versions. A version change starts packaging for that commit.
 4. Approve the `npm` deployment after the tarball job passes. The publishing job downloads that run’s verified tarball and sends it to npm with OIDC and provenance.
 
 The workflow checks the package version, runs `npm run check`, packs the build, and installs the tarball in separate React 18 and 19 projects. The smoke test checks TypeScript declarations, server rendering, and the CSS and token exports. The workflow also runs npm’s publish preflight for new versions and uploads the tarball.
