@@ -1,4 +1,5 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ComponentPropsWithRef, type CSSProperties, type ElementType, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+import { Pinwheel } from './material-marks.js';
 
 export type Space = 0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24;
 export type Theme = 'paper' | 'night';
@@ -41,10 +42,19 @@ export const Surface = forwardRef(function Surface({ as: Tag = 'div', material =
   return <Tag {...props} ref={ref} className={cx('kraft-box', 'kraft-surface', className)} data-material={material} data-elevation={elevation} style={layoutStyle({ padding }, style)} />;
 }) as PolymorphicComponent<SurfaceProps>;
 
+export type MatProps = Pick<SurfaceProps, 'padding' | 'children'> & { tone?: 'kraft' | 'amber' | 'sage' };
+export const Mat = forwardRef(function Mat({
+  as: Tag = 'div', tone = 'kraft', padding = 16, className, children, ...props
+}: PolymorphicProps<ElementType, MatProps>, ref: ForwardedRef<HTMLElement>) {
+  return <Tag {...props} ref={ref} className={cx('kraft-mat', className)} data-tone={tone}>
+    <Surface padding={padding}>{children}</Surface>
+  </Tag>;
+}) as PolymorphicComponent<MatProps>;
+
 export type ButtonProps = ComponentPropsWithoutRef<'button'> & { variant?: Tone; size?: 'sm' | 'md' | 'lg'; loading?: boolean };
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ variant = 'neutral', size = 'md', loading = false, disabled, type = 'button', className, children, ...props }, ref) {
   return <button {...props} ref={ref} type={type} disabled={disabled || loading} aria-busy={loading || props['aria-busy'] || undefined} className={cx('kraft-button', className)} data-variant={variant} data-size={size}>
-    {loading && <span className="kraft-loading-mark" aria-hidden="true" />}{children}
+    {loading && <Pinwheel size="button" />}{children}
   </button>;
 });
 export type IconButtonProps = Omit<ButtonProps, 'children' | 'aria-label'> & { 'aria-label': string; children: ReactNode };

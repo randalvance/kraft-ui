@@ -4,7 +4,8 @@
 .kraft-root { --kraft-content-ink: var(--kraft-ink); --kraft-content-muted: var(--kraft-text-muted-paper); --kraft-content-link: var(--kraft-link-paper); color: var(--kraft-content-ink); background: var(--kraft-desk); font: 400 14px/1.5 var(--kraft-font-sans); --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); --kraft-motion-duration: var(--kraft-dur-hover); --kraft-decoration-angle: -4deg; accent-color: var(--kraft-blue); caret-color: var(--kraft-ink); }
 [data-kraft-theme] { --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); }
 [data-kraft-texture="off"] { --kraft-texture-paper: none; --kraft-texture-board: none; }
-[data-kraft-motion="off"] { --kraft-motion-duration: 0ms; }
+[data-kraft-motion="on"] { --kraft-pinwheel-play-state: running; }
+[data-kraft-motion="off"] { --kraft-motion-duration: 0ms; --kraft-pinwheel-play-state: paused; }
 [data-kraft-tilt="off"] { --kraft-decoration-angle: 0deg; }
 .kraft-root *, .kraft-root *::before, .kraft-root *::after { box-sizing: border-box; }
 .kraft-root ::selection { background: var(--kraft-marker); color: var(--kraft-ink); }
@@ -41,6 +42,49 @@
 .kraft-surface[data-elevation="0"] { box-shadow: none; }
 .kraft-surface[data-elevation="2"]:not([data-material="cardboard"]) { box-shadow: var(--kraft-lift-paper-2); }
 .kraft-surface[data-elevation="3"]:not([data-material="cardboard"]) { box-shadow: var(--kraft-lift-paper-3); }
+.kraft-mat {
+  --kraft-mat-face: var(--kraft-kraft);
+  --kraft-mat-edge: var(--kraft-kraft-2);
+  position: relative;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--kraft-space-12);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-mat-face);
+  border: 1px solid var(--kraft-mat-edge);
+  border-radius: var(--kraft-radius-10);
+  box-shadow: 1px 2px 0 var(--kraft-mat-edge), 4px 6px 7px var(--kraft-amb);
+}
+.kraft-mat[data-tone="amber"] { --kraft-mat-face: var(--kraft-ochre-soft); --kraft-mat-edge: var(--kraft-ochre); }
+.kraft-mat[data-tone="sage"] { --kraft-mat-face: var(--kraft-mat-green); --kraft-mat-edge: var(--kraft-mat-green-2); }
+.kraft-tape {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 50%;
+  width: min(72px, 55%);
+  height: 22px;
+  translate: -50% -25%;
+  rotate: var(--kraft-decoration-angle, -4deg);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-tape);
+  clip-path: polygon(0 0, 100% 0, 97% 25%, 100% 47%, 96% 65%, 99% 100%, 0 100%, 3% 75%, 0 50%, 4% 25%);
+  pointer-events: none;
+}
+.kraft-tape[data-placement^="bottom"] { top: auto; bottom: 0; translate: -50% 25%; }
+.kraft-tape[data-placement$="-left"] { left: var(--kraft-space-12); translate: 0 -25%; }
+.kraft-tape[data-placement$="-right"] { left: auto; right: var(--kraft-space-12); translate: 0 -25%; }
+.kraft-tape[data-placement^="bottom-"] { translate: 0 25%; }
+.kraft-tape[data-placement="left"], .kraft-tape[data-placement="right"] {
+  top: 50%;
+  rotate: calc(90deg + var(--kraft-decoration-angle, -4deg));
+}
+.kraft-tape[data-placement="left"] { left: 5px; translate: -50% -50%; }
+.kraft-tape[data-placement="right"] { left: auto; right: 5px; translate: 50% -50%; }
+.kraft-pinwheel { display: inline-flex; flex: none; vertical-align: middle; }
+.kraft-pinwheel > svg {
+  animation: kraft-pinwheel-spin 1.2s linear infinite;
+  animation-play-state: var(--kraft-pinwheel-play-state, running);
+}
+@keyframes kraft-pinwheel-spin { to { transform: rotate(1turn); } }
 .kraft-paper-panel { --kraft-panel-frame: var(--kraft-board); --kraft-panel-frame-edge: var(--kraft-board-2); display: flex; flex-direction: column; box-sizing: border-box; min-width: 0; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-panel-frame); border: 1px solid color-mix(in srgb, var(--kraft-panel-frame-edge) 55%, var(--kraft-edge)); border-radius: var(--kraft-radius-10); box-shadow: var(--kraft-lift-paper-2); }
 .kraft-paper-panel-header { display: flex; align-items: center; flex-wrap: wrap; gap: var(--kraft-space-8) var(--kraft-space-16); min-height: 54px; padding: 10px var(--kraft-space-16); }
 .kraft-paper-panel-heading { display: flex; flex: 1 1 180px; align-items: center; gap: var(--kraft-space-8); min-width: 0; }
@@ -86,7 +130,6 @@
 .kraft-icon-button[data-size="lg"] { width: 48px; min-height: 48px; }
 .kraft-icon-button svg { width: 20px; height: 20px; flex-shrink: 0; }
 .kraft-icon-button[data-size="sm"] svg { width: 16px; height: 16px; }
-.kraft-loading-mark { flex-shrink: 0; width: 10px; height: 10px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }
 .kraft-link { color: var(--kraft-content-link, var(--kraft-link-paper)); text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
 .kraft-link:hover { text-decoration-thickness: 2px; }
 .kraft-separator { width: 100%; border: 0; border-top: 1px dashed var(--kraft-mute); }
@@ -217,9 +260,11 @@
 @media (prefers-reduced-motion: reduce) {
   .kraft-root { --kraft-motion-duration: 0ms; }
   .kraft-button, .kraft-checkbox-box, .kraft-checkbox-box svg, .kraft-toggle-track, .kraft-toggle-knob, .kraft-tree-chevron svg, .kraft-tab { transition: none; }
+  .kraft-pinwheel > svg { animation: none; }
 }
 @media (forced-colors: active) {
-  .kraft-button, .kraft-surface, .kraft-paper-panel, .kraft-dialog, .kraft-badge, .kraft-sticker { border: 1px solid CanvasText; box-shadow: none; }
+  .kraft-button, .kraft-surface, .kraft-mat, .kraft-paper-panel, .kraft-dialog, .kraft-badge, .kraft-sticker { border: 1px solid CanvasText; box-shadow: none; }
+  .kraft-tape { background: CanvasText; }
   .kraft-dialog::backdrop { background: color-mix(in srgb, CanvasText 50%, transparent); }
   .kraft-tree-row { border-color: CanvasText; background: Canvas; box-shadow: none; }
   .kraft-tree-item[aria-selected="true"] > .kraft-tree-row { background: Highlight; color: HighlightText; }

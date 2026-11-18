@@ -2,7 +2,7 @@
 import { build } from 'vite';
 import { rollup } from 'rollup';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { memoryIcon, microphoneIcon, searchIcon, type IconDefinition } from '../src';
+import { memoryIcon, microphoneIcon, pinwheelIcon, searchIcon, type IconDefinition } from '../src';
 import * as glyphs from '../src/icon-glyphs';
 
 let library: string;
@@ -50,6 +50,7 @@ async function bundleConsumer(source: string) {
 function pathData(definition: IconDefinition) {
   return definition.flatMap(([tag, props]) => tag === 'path' && 'd' in props ? [String(props.d)] : []);
 }
+const occurrences = (source: string, path: string) => source.split(path).length - 1;
 
 describe('Icon package tree shaking', () => {
   it('retains only selected glyphs when a consumer creates a named subset', async () => {
@@ -63,7 +64,6 @@ describe('Icon package tree shaking', () => {
     `);
     const selectedPaths = pathData(searchIcon);
     expect(selectedPaths.length).toBeGreaterThan(0);
-    const occurrences = (source: string, path: string) => source.split(path).length - 1;
     for (const path of selectedPaths) expect(occurrences(code, path)).toBe(occurrences(baseline, path) + 1);
     const unusedPaths = Object.values(glyphs).flatMap(pathData).filter(path => !selectedPaths.includes(path));
     expect(unusedPaths.length).toBeGreaterThan(40);
@@ -72,14 +72,14 @@ describe('Icon package tree shaking', () => {
     for (const path of unusedPaths) expect(occurrences(code, path), path).toBe(occurrences(baseline, path));
   });
 
-  it('removes the icon catalogue and renderer when the consumer does not use icons', async () => {
+  it('keeps only the loading glyph when a consumer uses Button', async () => {
     const code = await bundleConsumer(`
       import { Button } from '@randalvance/kraft-ui';
       export { Button };
     `);
+    for (const path of pathData(pinwheelIcon)) expect(occurrences(code, path), path).toBe(1);
     for (const definition of [memoryIcon, microphoneIcon, searchIcon]) {
-      for (const path of pathData(definition)) expect(code.includes(path), path).toBe(false);
+      for (const path of pathData(definition)) expect(occurrences(code, path), path).toBe(0);
     }
-    expect(/(['"])kraft-icon\1/.test(code)).toBe(false);
   });
 });

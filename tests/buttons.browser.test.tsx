@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { page } from 'vitest/browser';
+import { cdp, page } from 'vitest/browser';
 import { cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Button, IconButton, ThemeProvider, type Theme } from '../src';
+import { Button, IconButton, Pinwheel, ThemeProvider, type Theme } from '../src';
 import '../src/styles.css';
 
 afterEach(cleanup);
@@ -57,7 +57,7 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
       const button = view.getByRole('button') as HTMLButtonElement;
       assertFits(button, view.getByTestId('frame'));
       expect(button.textContent).toBe(label.text);
-      if (label.loading) expect(button.querySelector('.kraft-loading-mark')!.getBoundingClientRect().width).toBe(10);
+      if (label.loading) expect(button.querySelector('.kraft-pinwheel')!.getBoundingClientRect().width).toBe(16);
       view.unmount();
     }
   });
@@ -82,4 +82,28 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
     expect(getComputedStyle(normal).transform).toBe('matrix(1, 0, 0, 1, -1, -1)');
     expect(getComputedStyle(pinned).transform).toBe('matrix(1, 0, 0, 1, 2, 3)');
   });
+});
+
+it('stops the shared spinner for theme motion settings and system reduced motion', async () => {
+  const session = cdp();
+  await session.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
+  try {
+    const spinner = <Pinwheel label="Updating" />;
+    const view = render(<ThemeProvider motion={false}>
+      {spinner}
+      <ThemeProvider motion><Button loading>Save</Button></ThemeProvider>
+    </ThemeProvider>);
+    const row = view.getByRole('status', { name: 'Updating' }).querySelector('svg')!;
+    const button = view.getByRole('button', { name: 'Save' }).querySelector('svg')!;
+    expect(row.getBoundingClientRect().width).toBe(24);
+    expect(getComputedStyle(row).animationPlayState).toBe('paused');
+    expect(getComputedStyle(button).animationPlayState).toBe('running');
+    expect(getComputedStyle(button).animationName).toBe('kraft-pinwheel-spin');
+
+    await session.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    expect(getComputedStyle(row).animationName).toBe('none');
+    expect(getComputedStyle(button).animationName).toBe('none');
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
 });
