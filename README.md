@@ -44,6 +44,7 @@ export function Note() {
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
+| Data display | `Table`, `TableRowAction`, `DescriptionList` |
 | Navigation | `Tabs` |
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker` |
@@ -232,6 +233,39 @@ export function SeparateSheets() {
   </>;
 }
 ```
+
+### Tables and description lists
+
+`Table` renders a native `<table>` with column headers, dashed row rules, and a sticky head inside its scroll area. Name it with a visible `caption`, `aria-label`, or `aria-labelledby`. Native table props and the ref reach the `<table>`. `maxHeight` sets the scroll area's maximum height in pixels or as a CSS length. When the table overflows, the scroll area can receive keyboard focus and uses `scrollLabel` as its accessible name (default `Scrollable table`).
+
+- Each `TableColumn` has an `id`, `header`, optional `align="start" | "center" | "end"`, and optional `rowHeader` to render that column's body cells as row headers.
+- Supply `rows` or `groups`. A `TableRow` has an `id`, `cells` keyed by column ID, and optional `current` and `dimmed` states. Use `current` for the open detail row and `dimmed` for lower emphasis, alongside visible status text such as “Off”. Dimmed rows keep their controls available. A `TableGroup` has an `id`, optional `caption`, and `rows`. When there are no rows, `empty` replaces the default “No rows to display.” message.
+- Put a `TableRowAction` in the cell that names the row. It is a native button with native props and a ref, and defaults to `type="button"`. Use `onClick` to open details, `aria-expanded` to reflect an open drawer, and `aria-controls` to point to that drawer when it is mounted. The application owns the current row and focus return. Other cells can hold independent controls.
+
+`DescriptionList` renders a native `<dl>` with a `<dt>` and `<dd>` for each item. Pass `items` with stable `id` values, a `label`, a `value`, and an optional `action` beside the value. Use `layout="stacked"` (default) for the label above its value or `layout="inline"` for labels beside values. Use `columns={2}` to put pairs side by side when space permits. An item's `wide` prop lets it span both columns. The default is one column. Native list props and the ref reach the `<dl>`.
+
+```tsx
+import { DescriptionList, Link, Table, TableRowAction } from '@randalvance/kraft-ui';
+
+<Table caption="Connected servers"
+  columns={[
+    { id: 'server', header: 'Server', rowHeader: true },
+    { id: 'tools', header: 'Tools', align: 'end' },
+  ]}
+  rows={[{
+    id: 'docs', current: open, cells: {
+      server: <TableRowAction aria-expanded={open} onClick={openDetails}>Documentation</TableRowAction>,
+      tools: 8,
+    },
+  }]} />;
+
+<DescriptionList columns={2} items={[
+  { id: 'transport', label: 'Transport', value: 'HTTP' },
+  { id: 'workspace', label: 'Workspace', value: 'Product', action: <Link href="/settings">Change workspace</Link> },
+]} />;
+```
+
+The package exports `TableProps`, `TableColumn`, `TableRow`, `TableGroup`, `TableRowActionProps`, `DescriptionListProps`, and `DescriptionListItem`.
 
 ## Icons
 

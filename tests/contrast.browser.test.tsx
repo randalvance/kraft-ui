@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Button, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Tabs, ThemeProvider, type Theme } from '../src';
+import { Badge, Button, DescriptionList, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
 import '../src/styles.css';
 
@@ -22,7 +22,10 @@ async function imagePixels(source: string) {
   return context.getImageData(0, 0, img.width, img.height);
 }
 function pixels(base64: string) { return imagePixels(`data:image/png;base64,${base64}`); }
-function channels(color: string) { return color.match(/[\d.]+/g)!.map(Number); }
+function channels(color: string) {
+  const values = color.match(/[\d.]+/g)!.map(Number);
+  return color.startsWith('color(srgb ') ? values.map((value, index) => index < 3 ? value * 255 : value) : values;
+}
 function luminance(rgb: number[]) {
   return rgb.reduce((sum, channel, i) => {
     const value = channel / 255;
@@ -81,6 +84,51 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps table and description list states readable with decoration=%s', async decoration => {
+    const columns = [
+      { id: 'name', header: <span data-contrast="column-heading">Server</span>, rowHeader: true },
+      { id: 'status', header: 'Status' },
+    ];
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 540, padding: 24 }}>
+      <Stack gap={12}>
+        <Table caption={<span data-contrast="caption">Server inventory</span>} columns={columns} groups={[
+          { id: 'local', caption: <span data-contrast="group">Local</span>, rows: [
+            { id: 'online', cells: { name: <TableRowAction data-contrast="online">Documentation</TableRowAction> } },
+            { id: 'off', dimmed: true, cells: { name: <TableRowAction data-contrast="dimmed">Archive</TableRowAction> } },
+            { id: 'current', current: true, cells: {
+              name: <TableRowAction data-contrast="current">Build logs</TableRowAction>,
+              status: <Link href="#activity" data-contrast="current-link">View activity</Link>,
+            } },
+            { id: 'off-current', dimmed: true, current: true, cells: {
+              name: <TableRowAction data-contrast="dimmed-current">Calendar</TableRowAction>,
+              status: <Text tone="muted" data-contrast="current-muted">Turned off</Text>,
+            } },
+          ] },
+        ]} />
+        <Table aria-label="Filtered servers" columns={[{ id: 'name', header: 'Server' }]} rows={[]}
+          empty={<span data-contrast="empty">No matching servers</span>} />
+        <Surface padding={12}><DescriptionList columns={2} layout="inline" items={[
+          { id: 'workspace', label: <span data-contrast="term">Workspace</span>, value: <span data-contrast="value">Product</span>,
+            action: <Link href="#workspace" data-contrast="action">Change workspace</Link> },
+        ]} /></Surface>
+      </Stack>
+    </ThemeProvider>);
+    await verifyPaintedContrast(view.getByTestId('contrast-matrix'));
+    for (const button of view.getAllByRole('button')) {
+      act(() => button.focus());
+      const css = getComputedStyle(button);
+      const row = getComputedStyle(button.closest('tr')!);
+      const ground = row.backgroundColor === 'rgba(0, 0, 0, 0)'
+        ? getComputedStyle(button.closest('.kraft-table-scroll')!).backgroundColor : row.backgroundColor;
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), channels(ground))).toBeGreaterThanOrEqual(3);
+      if (button.closest('tr')?.hasAttribute('aria-current')) {
+        const marker = getComputedStyle(button.closest('th')!).borderInlineStartColor;
+        expect(contrast(channels(marker), channels(ground))).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
   it.each([true, false])('keeps inset sheets and loading indicators legible with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 780, padding: 28 }}>
       <Stack gap={24}>
