@@ -1,5 +1,9 @@
 name: Publish
 on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+    paths: [package.json]
   workflow_dispatch:
     inputs:
       version:
@@ -13,11 +17,15 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: npm-publish-${{ inputs.dry_run && github.ref || 'live' }}
-  cancel-in-progress: false
+  group: npm-publish-${{ inputs.dry_run && github.ref || github.head_ref || 'changeset-release/main' }}
+  queue: max
 jobs:
   package:
     name: Build and verify npm tarball
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged && github.head_ref == 'changeset-release/main' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -25,6 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -39,8 +48,11 @@ jobs:
           import { readFileSync } from 'node:fs';
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
           const dryRun = process.env.DRY_RUN === 'true';
-          if (pkg.name !== '@randalvance/kraft-ui' || pkg.version !== process.env.RELEASE_VERSION) {
-            throw new Error('The package identity or supplied version does not match package.json.');
+          if (pkg.name !== '@randalvance/kraft-ui') {
+            throw new Error('The package name does not match @randalvance/kraft-ui.');
+          }
+          if (process.env.GITHUB_EVENT_NAME === 'workflow_dispatch' && pkg.version !== process.env.RELEASE_VERSION) {
+            throw new Error('The supplied version does not match package.json.');
           }
           if (!dryRun && (process.env.GITHUB_REF !== 'refs/heads/main' || pkg.version === '0.0.0')) {
             throw new Error('Merge the version PR and run live publishing from main.');
