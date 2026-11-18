@@ -24,6 +24,8 @@ The first release includes tokens, scoped Paper and Night themes, Box, Stack, In
 
 Icon supplies 48 single-ink glyphs: the 29 original design-system icons and 19 application additions. Its props are a typed `name`, optional numeric or CSS-length `size`, optional accessible `label`, and native SVG attributes/ref. It inherits current text color and is decorative and unfocusable by default. Named images use `role="img"`; actions use the enclosing control's accessible name, keyboard handling, and focus. The full `Icon` and `iconNames` catalogue support runtime selection. `createIcon` plus individual definitions (for example `searchIcon`) builds a typed subset so unused glyphs are tree-shaken; `IconName`, `IconProps`, `IconDefinition`, and `NamedIconProps` describe these exports.
 
+`Tabs` and its exported `TabsProps` and `TabItem` support `panel="paper"`, `panel="bare"` for a Drawer or Dialog, and `panel="external"` for application-rendered content linked with `tabId` and `panelId`. Built-in panes take `content` and use `fill` to scroll independently within the available height. Tabs accept a `description` below the label and noninteractive `trailing` content for counts and status marks. `iconOnly` with a `leading` icon preserves the accessible label and reveals it in a tooltip. Overflow cues show where more tabs are available in either orientation.
+
 ## Brand Commitments
 
 The name is Kraft UI. Preserve its established paper, cardboard, and sticker identity. Its character is tactile, calm, and playful.

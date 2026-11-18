@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { Tabs, type TabItem } from '../src';
+import { Badge, Icon, Tabs, type TabItem } from '../src';
 
 const items: TabItem[] = [
   { id: 'notes', label: 'Notes', content: <p>A paper note</p> },
@@ -73,5 +73,62 @@ describe('Tabs', () => {
     screen.getByRole('tab', { name: 'Sketches' }).focus();
     await userEvent.keyboard('{ArrowRight}');
     expect(screen.getByRole('tab', { name: 'Notes' })).toHaveFocus();
+  });
+
+  it('links native tab buttons to application-owned panels and preserves the root ref', async () => {
+    const ref = createRef<HTMLDivElement>();
+    const onSubmit = vi.fn(event => event.preventDefault());
+    const external: TabItem[] = [
+      { id: 'notes', label: 'Notes', tabId: 'notes-tab', panelId: 'notes-panel' },
+      { id: 'sketches', label: 'Sketches', tabId: 'sketches-tab', panelId: 'sketches-panel' },
+    ];
+    render(<form onSubmit={onSubmit}>
+      <Tabs ref={ref} id="sections" className="custom" aria-label="Sections" items={external} value="notes" panel="external" />
+      <section id="notes-panel" aria-labelledby="notes-tab" role="tabpanel" tabIndex={0}>A note.</section>
+      <section id="sketches-panel" aria-labelledby="sketches-tab" role="tabpanel" tabIndex={0} hidden>A drawing.</section>
+    </form>);
+    const list = screen.getByRole('tablist', { name: 'Sections' });
+    expect(ref.current).toHaveAttribute('id', 'sections');
+    expect(ref.current).toHaveClass('custom');
+    expect(ref.current).toContainElement(list);
+    expect(within(ref.current!).queryByRole('tabpanel', { hidden: true })).toBeNull();
+    const tab = within(list).getByRole('tab', { name: 'Notes' });
+    const panel = screen.getByRole('tabpanel', { name: 'Notes' });
+    expect(tab).toBeInstanceOf(HTMLButtonElement);
+    expect(tab).toHaveAttribute('type', 'button');
+    expect(tab).toHaveAttribute('aria-controls', panel.id);
+    expect(panel).toHaveAttribute('aria-labelledby', tab.id);
+    await userEvent.tab();
+    await userEvent.keyboard(' ');
+    expect(onSubmit).not.toHaveBeenCalled();
+    await userEvent.tab();
+    expect(panel).toHaveFocus();
+  });
+
+  it('server-renders bare panes, icon names, counts, and distinct tab descriptions', () => {
+    const html = renderToString(<Tabs aria-label="Sections" panel="bare" fill items={[
+      { ...items[0], iconOnly: true, leading: <Icon name="file" />, trailing: <Badge>0</Badge> },
+      { ...items[2], description: 'Ready to share' },
+    ]} />);
+    const { container } = render(<div dangerouslySetInnerHTML={{ __html: html }} />);
+    const scope = within(container);
+    const notes = scope.getByRole('tab', { name: 'Notes 0' });
+    const sketches = scope.getByRole('tab', { name: 'Sketches' });
+    const panel = scope.getByRole('tabpanel', { name: 'Notes 0' });
+    expect(notes).toHaveAttribute('aria-controls', panel.id);
+    expect(sketches).toHaveAccessibleDescription('Ready to share');
+    expect(container.querySelector('[data-panel="bare"]')).toHaveAttribute('data-fill', 'true');
+    expect(scope.getAllByRole('tabpanel', { hidden: true })).toHaveLength(2);
+  });
+
+  it('server-renders external relationships without generating panes', () => {
+    const html = renderToString(<Tabs aria-label="Sections" panel="external" items={[
+      { id: 'notes', label: 'Notes', tabId: 'my-tab', panelId: 'my-panel', content: 'Unused built-in content' },
+    ]} />);
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('id="my-tab"');
+    expect(html).toContain('aria-controls="my-panel"');
+    expect(html).not.toContain('role="tabpanel"');
+    expect(html).not.toContain('Unused built-in content');
   });
 });

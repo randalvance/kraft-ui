@@ -162,7 +162,14 @@ export function Pages({ onOpen }: { onOpen: (id: string) => void }) {
 }
 ```
 
-`Tabs` attaches a named tab strip to paper panes. Give each item a unique, stable `id`, a `label`, and `content`; optional `leading` and `trailing` marks sit beside the label. The first enabled tab is selected unless `defaultValue` or controlled `value` chooses another. Use `onValueChange` to respond to selection. Arrow keys move between enabled tabs, Home/End reach the edges, and Tab enters the active pane. Selection follows focus by default; use `activationMode="manual"` when opening a pane involves a noticeable delay. Set `orientation="vertical"` for tabs down the side. Hidden panes stay mounted, so local pane state survives selection changes. Set `--kraft-tabs-panel-min-height` when the sheet needs a different minimum height.
+`Tabs` renders a tab list named by `aria-label` and accepts native div props and a ref. Give each `TabItem` a unique, stable `id` and a `label`. The first enabled tab is selected unless `defaultValue` or controlled `value` chooses another. Use `onValueChange` to respond to selection. Arrow keys move between enabled tabs, Home/End reach the edges, and Tab enters the active pane in document order. Selection follows focus by default. Use `activationMode="manual"` to select on Enter or Space when opening a pane involves a noticeable delay. Set `orientation="vertical"` for tabs down the side. Arrows at the strip edges indicate more tabs in the scroll direction.
+
+- `panel="paper"` is the default. It wraps each item's `content` in a paper pane. Set `--kraft-tabs-panel-min-height` to change its minimum height.
+- `panel="bare"` renders the same linked panes flush with a surrounding Drawer, Dialog, or other surface. Bare panes have zero padding and no paper styling or minimum height. Hidden built-in panes stay mounted in both layouts.
+- `panel="external"` renders just the strip. Set each item's `tabId` and `panelId` to unique DOM IDs and render its panel with `id={panelId}`, `role="tabpanel"`, and `aria-labelledby={tabId}`. Use controlled selection to keep the active panel visible. Put the panels after the strip in document order and give them `tabIndex={0}` if focus should enter the panel itself.
+- `fill` lets a paper or bare pane scroll inside the remaining height while the strip stays in place. Give Tabs or its container a definite height.
+
+Use `description` for a second line with an accessible description. Use `trailing` for a noninteractive count `Badge` or a tick. Give a meaningful tick an accessible label, such as `<Icon name="check" label="Complete" />`. With `iconOnly` and a `leading` icon, the `label` becomes visually hidden and appears in a tooltip on hover or keyboard focus. `TabsProps` and `TabItem` are exported.
 
 ```tsx
 import { Tabs, Text, type TabItem } from '@randalvance/kraft-ui';
@@ -174,6 +181,28 @@ const sections: TabItem[] = [
 
 export function IdeaSections() {
   return <Tabs aria-label="Idea sections" items={sections} defaultValue="notes" />;
+}
+```
+
+```tsx
+import { useId, useState } from 'react';
+import { Surface, Tabs } from '@randalvance/kraft-ui';
+
+export function SeparateSheets() {
+  const prefix = useId();
+  const [value, setValue] = useState(sections[0].id);
+  const tabs = sections.map(({ id, label }) => ({
+    id, label, tabId: `${prefix}-tab-${id}`, panelId: `${prefix}-panel-${id}`,
+  }));
+
+  return <>
+    <Tabs aria-label="Idea sections" items={tabs} panel="external" value={value} onValueChange={setValue} />
+    {tabs.map(({ id, tabId, panelId }, index) => (
+      <div key={id} id={panelId} role="tabpanel" aria-labelledby={tabId} tabIndex={0} hidden={value !== id}>
+        <Surface padding={24}>{sections[index].content}</Surface>
+      </div>
+    ))}
+  </>;
 }
 ```
 
