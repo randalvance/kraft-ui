@@ -1,0 +1,240 @@
+/* Long-form reading: Prose rhythm, inline code, code blocks, quotes, and todo items. */
+
+.kraft-prose {
+  max-inline-size: 72ch;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  font: 400 15px/1.65 var(--kraft-font-sans);
+  overflow-wrap: anywhere;
+}
+
+.kraft-prose > :first-child { margin-block-start: 0; }
+.kraft-prose > :last-child { margin-block-end: 0; }
+.kraft-prose :is(p, ul, ol, dl, figure, table:not([class]), pre:not([class]), blockquote, .kraft-code-block, .kraft-table-scroll) {
+  margin-block: 0 1em;
+}
+
+.kraft-prose :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.6em .5em;
+  color: inherit;
+  font-family: var(--kraft-font-serif);
+  font-weight: 600;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.kraft-prose h1 { font-size: 26px; }
+.kraft-prose h2 { font-size: 20px; }
+.kraft-prose h3 { font-size: 17px; }
+.kraft-prose :is(h4, h5, h6) { font-size: 15px; }
+.kraft-prose :is(h1, h2, h3, h4, h5, h6) + * { margin-block-start: 0; }
+
+.kraft-prose :is(strong, b) { font-weight: 800; }
+
+.kraft-prose a:not([class]) {
+  color: var(--kraft-content-link, var(--kraft-link-paper));
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+.kraft-prose a:not([class]):hover { text-decoration-thickness: 2px; }
+.kraft-prose a:not([class]):focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 3px; border-radius: var(--kraft-radius-2); }
+
+.kraft-prose :is(ul, ol) { padding-inline-start: 1.5em; }
+.kraft-prose li { padding-inline-start: .25em; }
+.kraft-prose li + li, .kraft-prose li > :is(ul, ol) { margin-block-start: .3em; }
+.kraft-prose li > :is(ul, ol) { margin-block-end: 0; }
+.kraft-prose li > p { margin-block: 0 .5em; }
+.kraft-prose li::marker { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); }
+.kraft-prose ul > li::marker { content: "–  "; }
+
+.kraft-prose hr {
+  block-size: 0;
+  margin-block: 2em;
+  border: 0;
+  border-block-start: 1px dashed var(--kraft-mute);
+}
+
+.kraft-prose table:not([class]) {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.kraft-prose table:not([class]) > caption {
+  padding-block-end: var(--kraft-space-8);
+  font: 600 15px/1.25 var(--kraft-font-serif);
+  text-align: start;
+}
+.kraft-prose table:not([class]) :is(th, td) {
+  padding: var(--kraft-space-6) var(--kraft-space-12);
+  text-align: start;
+  vertical-align: top;
+}
+.kraft-prose table:not([class]) :is(th, td):first-child { padding-inline-start: 0; }
+.kraft-prose table:not([class]) thead th {
+  border-block-end: 2px solid var(--kraft-content-ink, var(--kraft-ink));
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-caps: all-small-caps;
+  letter-spacing: .05em;
+}
+.kraft-prose table:not([class]) tbody tr + tr > * { border-block-start: 1px dashed var(--kraft-line); }
+.kraft-prose table:not([class]) [align="center"] { text-align: center; }
+.kraft-prose table:not([class]) [align="right"] { text-align: end; }
+
+/* Inline code: a chip on a faint strip. */
+.kraft-code, .kraft-prose :not(pre) > code:not([class]) {
+  padding: .1em .35em;
+  border: 1px solid color-mix(in srgb, var(--kraft-content-ink, var(--kraft-ink)) 14%, transparent);
+  border-radius: var(--kraft-radius-3);
+  background: color-mix(in srgb, var(--kraft-content-ink, var(--kraft-ink)) 7%, transparent);
+  color: inherit;
+  font-family: var(--kraft-font-mono);
+  font-size: .9em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Code blocks: a recessed mono well. Plain `pre` inside Prose shares the well. */
+.kraft-code-block, .kraft-prose pre:not([class]) {
+  --kraft-code-ground: var(--kraft-paper-2);
+  min-inline-size: 0;
+  color: var(--kraft-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-code-ground);
+  border: 1px solid var(--kraft-line);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-recess);
+}
+[data-kraft-theme="night"] :is(.kraft-code-block, .kraft-prose pre:not([class])),
+:is(.kraft-code-block, .kraft-prose pre:not([class]))[data-kraft-theme="night"] { --kraft-code-ground: var(--kraft-paper); }
+[data-kraft-theme="paper"] :is(.kraft-code-block, .kraft-prose pre:not([class])) { --kraft-code-ground: var(--kraft-paper-2); }
+
+.kraft-prose pre:not([class]) {
+  padding: var(--kraft-space-12) var(--kraft-space-16);
+  overflow-x: auto;
+  font: 400 13px/1.6 var(--kraft-font-mono);
+  tab-size: 2;
+}
+.kraft-prose pre:not([class]) > code { font: inherit; }
+
+.kraft-code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kraft-space-8);
+  min-block-size: 36px;
+  padding: var(--kraft-space-4) var(--kraft-space-6) var(--kraft-space-4) var(--kraft-space-12);
+  border-block-end: 1px dashed var(--kraft-line);
+}
+.kraft-code-block-language {
+  color: var(--kraft-text-muted-paper);
+  font: 800 13px/1.2 var(--kraft-font-sans);
+  font-variant-caps: all-small-caps;
+  letter-spacing: .06em;
+}
+.kraft-code-block-copy { margin-inline-start: auto; }
+
+.kraft-code-block-scroll, .kraft-prose pre:not([class]) { direction: ltr; text-align: left; }
+.kraft-code-block-scroll {
+  margin: 0;
+  padding-block: var(--kraft-space-12);
+  overflow: auto;
+  font: 400 13px/1.6 var(--kraft-font-mono);
+  font-variant-numeric: tabular-nums;
+  tab-size: 2;
+}
+.kraft-code-block-scroll:focus-visible, .kraft-prose pre:not([class]):focus-visible {
+  outline: 2px solid var(--kraft-ink);
+  outline-offset: 2px;
+  border-radius: var(--kraft-radius-3);
+}
+.kraft-code-block-code {
+  display: block;
+  inline-size: max-content;
+  min-inline-size: 100%;
+  font: inherit;
+}
+
+.kraft-code-line {
+  display: flex;
+  min-block-size: 1lh;
+  padding-inline: var(--kraft-space-16);
+  color: inherit;
+  text-decoration: none;
+  white-space: pre;
+}
+.kraft-code-line-text { flex: 1 0 auto; }
+.kraft-code-line-number {
+  flex: none;
+  inline-size: var(--kraft-code-gutter, 2ch);
+  margin-inline-end: var(--kraft-space-16);
+  color: var(--kraft-text-muted-paper);
+  text-align: end;
+  user-select: none;
+}
+.kraft-code-line-number::before { content: attr(data-line); }
+
+/* Added and removed lines change their sign and edge as well as their tint. */
+.kraft-code-block:has(ins.kraft-code-line, del.kraft-code-line) .kraft-code-line::before {
+  content: "";
+  flex: none;
+  inline-size: 2ch;
+  user-select: none;
+}
+.kraft-code-line::before { order: 1; }
+.kraft-code-line > .kraft-code-line-text { order: 2; }
+ins.kraft-code-line {
+  background: color-mix(in srgb, var(--kraft-green) 20%, transparent);
+  box-shadow: inset 3px 0 0 var(--kraft-st-green);
+}
+del.kraft-code-line {
+  background: color-mix(in srgb, var(--kraft-red) 16%, transparent);
+  box-shadow: inset 3px 0 0 var(--kraft-st-red);
+}
+.kraft-code-block:has(ins.kraft-code-line, del.kraft-code-line) ins.kraft-code-line::before { content: "+" / ""; font-weight: 700; }
+.kraft-code-block:has(ins.kraft-code-line, del.kraft-code-line) del.kraft-code-line::before { content: "−" / ""; font-weight: 700; }
+
+/* Blockquote: the quote beside a thick highlighter rule. */
+.kraft-blockquote, .kraft-prose blockquote:not([class]) {
+  margin-inline: 0;
+  padding: var(--kraft-space-4) 0 var(--kraft-space-4) var(--kraft-space-16);
+  border-inline-start: 6px solid var(--kraft-highlighter-2);
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  font: italic 500 16px/1.55 var(--kraft-font-serif);
+}
+.kraft-blockquote > :first-child, .kraft-prose blockquote > :first-child { margin-block-start: 0; }
+.kraft-blockquote > :last-child, .kraft-prose blockquote > :last-child { margin-block-end: 0; }
+.kraft-blockquote > p + p { margin-block-start: .75em; }
+
+/* Todo items: a checkbox at the start of a list item strikes the item when ticked. */
+.kraft-prose :is(ul, ol):has(> li > input[type="checkbox"], > li > label input[type="checkbox"], > li > p:first-child > input[type="checkbox"]) {
+  padding-inline-start: 0;
+  list-style: none;
+}
+.kraft-prose li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"]) { padding-inline-start: 0; }
+.kraft-prose li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"])::marker { content: none; }
+.kraft-prose :is(li > input, li > label > input, li > p:first-child > input)[type="checkbox"] {
+  inline-size: 16px;
+  block-size: 16px;
+  margin: 0 .5em 0 0;
+  vertical-align: -.15em;
+  accent-color: var(--kraft-blue);
+}
+.kraft-prose :is(li > input, li > label > input, li > p:first-child > input)[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--kraft-ink);
+  outline-offset: 2px;
+}
+.kraft-prose li:has(> input[type="checkbox"]:checked, > label input[type="checkbox"]:checked, > p:first-child > input[type="checkbox"]:checked) {
+  color: var(--kraft-content-muted, var(--kraft-text-muted-paper));
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+@media (forced-colors: active) {
+  .kraft-code, .kraft-prose :not(pre) > code:not([class]) { border-color: CanvasText; }
+  .kraft-code-block, .kraft-prose pre:not([class]) { border-color: CanvasText; box-shadow: none; }
+  ins.kraft-code-line, del.kraft-code-line { box-shadow: none; border-inline-start: 3px solid Highlight; }
+  .kraft-blockquote, .kraft-prose blockquote:not([class]) { border-inline-start-color: CanvasText; }
+  .kraft-code-block-scroll:focus-visible, .kraft-prose a:not([class]):focus-visible { outline-color: Highlight; }
+}

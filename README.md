@@ -45,6 +45,7 @@ export function Note() {
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
+| Long-form content | `Prose`, `CodeBlock`, `Code`, `Blockquote` |
 | Navigation | `Tabs` |
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker` |
@@ -266,6 +267,31 @@ import { DescriptionList, Link, Table, TableRowAction } from '@randalvance/kraft
 ```
 
 The package exports `TableProps`, `TableColumn`, `TableRow`, `TableGroup`, `TableRowActionProps`, `DescriptionListProps`, and `DescriptionListItem`.
+
+### Long-form content
+
+`Prose` sets reading rhythm for content placed inside it, such as a note, a report, or rendered markdown. Headings, paragraphs, lists, links, rules, tables, inline code, `pre` blocks, and quotes take their spacing and marks from it without extra components. Choose `as="div"` (default), `"article"`, or `"section"`; native props and the ref reach that element. Prose styles only unclassed links, tables, `code`, `pre`, and `blockquote`, so Kraft components and your own classed elements keep their styles.
+
+- A list item that starts with a checkbox becomes a todo item and is struck through when ticked. The checkbox can be a bare `<input type="checkbox">` (as markdown renderers emit), one inside a `<label>`, or a Kraft `Checkbox`. Give each checkbox an accessible name, for example by wrapping it and its text in a `<label>`.
+- `Code` draws inline code as a chip on a faint strip. Bare `<code>` inside Prose looks the same. Native props and the ref reach the `<code>`.
+- `CodeBlock` is a recessed monospaced block for the `code` string. `language` shows a short label above it. `copyable` adds a button that copies `code` and announces “Copied” or “Copy failed” in a status message; `copyLabel` sets its accessible name (default `Copy code`). `lineNumbers` adds a gutter that is not selected or copied. `added` and `removed` take 1-based line numbers, render those lines as native `<ins>` and `<del>`, and mark them with a + or − sign, an edge, and a tint. When the code overflows, the block can receive keyboard focus and uses `scrollLabel` as its accessible name (default “*language* code” or “Code”). Native props and the ref reach the outer element.
+- `Blockquote` renders a native `<blockquote>` beside a thick highlighter rule. Native props, including `cite`, and the ref reach it. Put an attribution outside the quote, for example in a `<figcaption>`.
+
+```tsx
+import { Blockquote, Code, CodeBlock, Prose } from '@randalvance/kraft-ui';
+
+<Prose as="article">
+  <h2>Setting up the theme</h2>
+  <p>Wrap the application in <Code>ThemeProvider</Code>.</p>
+  <CodeBlock language="tsx" copyable lineNumbers added={[2]} code={source} />
+  <Blockquote><p>Paper carries words.</p></Blockquote>
+  <ul>
+    <li><label><input type="checkbox" defaultChecked /> Write the changeset</label></li>
+  </ul>
+</Prose>;
+```
+
+The package exports `ProseProps`, `CodeProps`, `CodeBlockProps`, and `BlockquoteProps`.
 
 ## Icons
 
