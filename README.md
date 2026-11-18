@@ -10,8 +10,6 @@ Cardboard holds things. Paper carries words. Stickers mark things. Kraft UI brin
 npm install @randalvance/kraft-ui
 ```
 
-The package is being prepared for its first release. For local evaluation, run `npm pack` in this repository and install the resulting archive in your application.
-
 ```tsx
 import { ThemeProvider, Stack, Surface, Heading, Text, Button } from '@randalvance/kraft-ui';
 import '@randalvance/kraft-ui/styles.css';

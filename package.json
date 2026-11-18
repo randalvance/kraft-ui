@@ -43,7 +43,7 @@
     "test:stories": "node scripts/test-stories.mjs",
     "check": "npm run typecheck && npm test && npm run test:buttons && npm run test:contrast && npm run test:stories && npm run build && npm run build-storybook",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && npm install --package-lock-only --ignore-scripts --no-audit --no-fund",
     "release": "npm run build && changeset publish",
     "prepack": "npm run build",
     "tokens": "node scripts/build-tokens.mjs",
