@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { Blockquote, Checkbox, Code, CodeBlock, Prose, Surface } from '../src';
+import { ActionableList, ActionableListItem, Blockquote, Checkbox, Code, CodeBlock, Heading, Prose, Surface } from '../src';
 
 const meta = {
   title: 'Components/Prose',
@@ -84,6 +84,32 @@ export const Todos: Story = {
     await expect(paper).toBeChecked();
     await expect(getComputedStyle(item).textDecorationLine).toBe('line-through');
     await expect(getComputedStyle(canvas.getByRole('checkbox', { name: 'Masking tape' }).closest('li')!).textDecorationLine).toBe('line-through');
+  },
+};
+
+export const WithKraftComponents: Story = {
+  render: () => <Prose>
+    <h2>Plain heading</h2>
+    <Heading>Kraft heading</Heading>
+    <ul><li>Plain list item</li></ul>
+    <ActionableList aria-label="Sessions">
+      <ActionableListItem label="Plan the release" onActivate={() => {}} />
+      <ActionableListItem label="Review the copy" onActivate={() => {}} />
+    </ActionableList>
+  </Prose>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(getComputedStyle(canvas.getByRole('heading', { name: 'Plain heading' })).fontSize).toBe('20px');
+    const heading = getComputedStyle(canvas.getByRole('heading', { name: 'Kraft heading' }));
+    await expect(heading.fontSize).toBe('17px');
+    await expect(heading.marginTop).toBe('0px');
+    const plain = canvas.getByText('Plain list item').closest('ul')!;
+    await expect(parseFloat(getComputedStyle(plain).paddingInlineStart)).toBeGreaterThan(0);
+    const list = canvas.getByRole('list', { name: 'Sessions' });
+    await expect(getComputedStyle(list).paddingInlineStart).toBe('0px');
+    const [, second] = within(list).getAllByRole('listitem');
+    await expect(getComputedStyle(second).marginTop).toBe('0px');
+    await expect(getComputedStyle(second).paddingInlineStart).toBe('0px');
   },
 };
 
