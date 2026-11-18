@@ -1,0 +1,21 @@
+# @randalvance/kraft-ui
+
+## 0.1.0
+
+### Minor Changes
+
+- 1383ac9: Add a generic TreeView with hierarchical ARIA semantics, keyboard navigation, controlled or uncontrolled expansion and selection, optional row details, and Paper and Night styling.
+- c0651eb: Introduce Kraft UI: paper, cardboard, and sticker primitives; scoped Paper and Night themes; token-based layout and typography; accessible native controls; and component documentation.
+- 5e88af4: Add PaperPanel, a titled paper workspace with controls, navigation, footer, and an empty content state.
+- b13ceb7: Add Checkbox and Toggle, native form choices with labels, optional descriptions, an indeterminate checkbox state, and an on/off switch drawn as a knob in a recessed rail.
+- 28e13c3: Add native paper text, search, and multiline fields with connected labels, hints, and validation messages.
+- 73369e3: Add radio choices, popover, action menu, single choice select, actionable list rows, and a resizable drawer layout.
+- 2d8cdbb: Add paper Tabs with linked panes, controlled and uncontrolled selection, horizontal and vertical layouts, and keyboard navigation.
+- 228bc5b: Add a theme-aware Tooltip and a provider for shared hover timing across nearby controls.
+- b7b9c37: Add a controlled modal Dialog with native focus containment, Escape and backdrop dismissal, optional description and footer, and Paper and Night styling.
+- 8daf5ca: Add Icon with 48 typed, single-ink glyphs, configurable sizing, native SVG refs, and decorative-by-default accessibility. Export individual glyph definitions and createIcon for tree-shaken application subsets, with Storybook examples for controls, tabs, badges, and list rows.
+- 37cc0db: Let Tabs link to application-rendered panes, sit flush inside a Drawer or Dialog, or scroll a pane within a fixed height. Add named icon tabs with tooltips, second-line descriptions, and directional cues when the tab strip overflows. Use the trailing slot for count badges and status ticks.
+
+### Patch Changes
+
+- c0651eb: Fix painted text contrast on badges, stickers, and material surfaces. Add material-aware foreground roles and bounded mark gloss while preserving the base material colors and textures. Add browser screenshot and full-texture contrast regressions.
