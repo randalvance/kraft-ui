@@ -1,5 +1,12 @@
 # @randalvance/kraft-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- edbb5a3: Add Mat for inset paper sheets, Tape for decorative edge and corner accents, and Pinwheel for row and button loading states. Button and IconButton now share the motion-aware Pinwheel while loading.
+- 82b59db: Add Table and TableRowAction for native paper tables with sticky column heads, row groups, current and dimmed rows, and an empty state. Add DescriptionList for stacked or inline label-value pairs with one or two columns and optional actions.
+
 ## 0.1.0
 
 ### Minor Changes
