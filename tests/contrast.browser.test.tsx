@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Button, DescriptionList, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
+import { Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
 import '../src/styles.css';
 
@@ -84,6 +84,57 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps prose, code, quotes, and ticked todos readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 640, padding: 24 }}>
+      <Surface padding={24}>
+        <Prose>
+          <h2 data-contrast="heading">Release notes</h2>
+          <p><span data-contrast="body">Run</span> <Code data-contrast="inline-code">npm run check</Code> <span>and read the</span> <a href="#guide" data-contrast="link">guide</a>.</p>
+          <p>Bare <code data-contrast="bare-code">code</code> too.</p>
+          <ul>
+            <li><span data-contrast="list">Pinned notes stay on top.</span></li>
+            <li><label><input type="checkbox" defaultChecked /> <span data-contrast="todo-done">Write the changeset</span></label></li>
+            <li><label><input type="checkbox" /> <span data-contrast="todo-open">Publish</span></label></li>
+          </ul>
+          <table>
+            <thead><tr><th data-contrast="table-head">Theme</th></tr></thead>
+            <tbody><tr><td data-contrast="table-cell">Paper</td></tr></tbody>
+          </table>
+          <Blockquote><p data-contrast="quote">Paper carries words.</p></Blockquote>
+          <blockquote><p data-contrast="bare-quote">Stickers mark things.</p></blockquote>
+          <pre><code data-contrast="bare-pre">npm test</code></pre>
+          <CodeBlock language="tsx" lineNumbers copyable added={[2]} removed={[3]} code={'const a = 1;\nconst b = 2;\nconst c = 3;'} />
+        </Prose>
+      </Surface>
+    </ThemeProvider>);
+    const block = view.container.querySelector('.kraft-code-block')!;
+    block.querySelector('.kraft-code-block-language')!.setAttribute('data-contrast', 'language');
+    block.querySelectorAll('.kraft-code-line-text').forEach((line, index) => line.setAttribute('data-contrast', ['line', 'line-added', 'line-removed'][index]));
+    block.querySelector('.kraft-code-line-number')!.setAttribute('data-contrast', 'line-number');
+    await verifyPaintedContrast(view.getByTestId('contrast-matrix'));
+    const ground = (el: Element) => {
+      for (let node: Element | null = el; node; node = node.parentElement) {
+        const color = getComputedStyle(node).backgroundColor;
+        if (color !== 'rgba(0, 0, 0, 0)') return channels(color);
+      }
+      throw new Error('No painted ground');
+    };
+    for (const control of [...view.getAllByRole('checkbox'), view.getByRole('link'), view.getByRole('button', { name: 'Copy code' })]) {
+      act(() => control.focus());
+      const css = getComputedStyle(control);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), ground(control.parentElement!))).toBeGreaterThanOrEqual(3);
+    }
+    const quote = getComputedStyle(view.container.querySelector('.kraft-blockquote')!);
+    expect(parseFloat(quote.borderInlineStartWidth)).toBeGreaterThanOrEqual(6);
+    const added = getComputedStyle(block.querySelector('ins')!, '::before');
+    const removed = getComputedStyle(block.querySelector('del')!, '::before');
+    expect(added.content).toContain('+');
+    expect(removed.content).toContain('−');
+    expect(getComputedStyle(view.getByText('Write the changeset').closest('li')!).textDecorationLine).toBe('line-through');
+    expect(getComputedStyle(view.getByText('Publish').closest('li')!).textDecorationLine).toBe('none');
+  });
+
   it.each([true, false])('keeps table and description list states readable with decoration=%s', async decoration => {
     const columns = [
       { id: 'name', header: <span data-contrast="column-heading">Server</span>, rowHeader: true },

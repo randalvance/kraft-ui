@@ -11,6 +11,8 @@ export * from './overlays.js';
 export * from './actionable-list.js';
 export * from './table.js';
 export * from './description-list.js';
+export * from './prose.js';
+export * from './code-block.js';
 export * from './drawer.js';
 export * from './tooltip.js';
 export * from './icon.js';
