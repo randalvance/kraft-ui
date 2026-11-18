@@ -9,11 +9,13 @@
 
 .kraft-prose > :first-child { margin-block-start: 0; }
 .kraft-prose > :last-child { margin-block-end: 0; }
-.kraft-prose :is(p, ul, ol, dl, figure, table:not([class]), pre:not([class]), blockquote, .kraft-code-block, .kraft-table-scroll) {
+/* Prose styles only unclassed elements, so Kraft components and classed
+   application elements placed inside it keep their own appearance. */
+.kraft-prose :is(:is(p, ul, ol, dl, figure, blockquote, table, pre):not([class]), .kraft-code-block, .kraft-table-scroll) {
   margin-block: 0 1em;
 }
 
-.kraft-prose :is(h1, h2, h3, h4, h5, h6) {
+.kraft-prose :is(h1, h2, h3, h4, h5, h6):not([class]) {
   margin-block: 1.6em .5em;
   color: inherit;
   font-family: var(--kraft-font-serif);
@@ -21,13 +23,13 @@
   line-height: 1.25;
   text-wrap: balance;
 }
-.kraft-prose h1 { font-size: 26px; }
-.kraft-prose h2 { font-size: 20px; }
-.kraft-prose h3 { font-size: 17px; }
-.kraft-prose :is(h4, h5, h6) { font-size: 15px; }
-.kraft-prose :is(h1, h2, h3, h4, h5, h6) + * { margin-block-start: 0; }
+.kraft-prose h1:not([class]) { font-size: 26px; }
+.kraft-prose h2:not([class]) { font-size: 20px; }
+.kraft-prose h3:not([class]) { font-size: 17px; }
+.kraft-prose :is(h4, h5, h6):not([class]) { font-size: 15px; }
+.kraft-prose :is(h1, h2, h3, h4, h5, h6):not([class]) + * { margin-block-start: 0; }
 
-.kraft-prose :is(strong, b) { font-weight: 800; }
+.kraft-prose :is(strong, b):not([class]) { font-weight: 800; }
 
 .kraft-prose a:not([class]) {
   color: var(--kraft-content-link, var(--kraft-link-paper));
@@ -38,15 +40,16 @@
 .kraft-prose a:not([class]):hover { text-decoration-thickness: 2px; }
 .kraft-prose a:not([class]):focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 3px; border-radius: var(--kraft-radius-2); }
 
-.kraft-prose :is(ul, ol) { padding-inline-start: 1.5em; }
-.kraft-prose li { padding-inline-start: .25em; }
-.kraft-prose li + li, .kraft-prose li > :is(ul, ol) { margin-block-start: .3em; }
-.kraft-prose li > :is(ul, ol) { margin-block-end: 0; }
-.kraft-prose li > p { margin-block: 0 .5em; }
-.kraft-prose li::marker { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); }
-.kraft-prose ul > li::marker { content: "–  "; }
+.kraft-prose :is(ul, ol):not([class]) { padding-inline-start: 1.5em; }
+.kraft-prose :is(ul, ol):not([class]) > li { padding-inline-start: .25em; }
+.kraft-prose :is(ul, ol):not([class]) > li + li,
+.kraft-prose :is(ul, ol):not([class]) > li > :is(ul, ol):not([class]) { margin-block-start: .3em; }
+.kraft-prose :is(ul, ol):not([class]) > li > :is(ul, ol):not([class]) { margin-block-end: 0; }
+.kraft-prose :is(ul, ol):not([class]) > li > p:not([class]) { margin-block: 0 .5em; }
+.kraft-prose :is(ul, ol):not([class]) > li::marker { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); }
+.kraft-prose ul:not([class]) > li::marker { content: "–  "; }
 
-.kraft-prose hr {
+.kraft-prose hr:not([class]) {
   block-size: 0;
   margin-block: 2em;
   border: 0;
@@ -208,24 +211,28 @@ del.kraft-code-line {
 .kraft-blockquote > p + p { margin-block-start: .75em; }
 
 /* Todo items: a checkbox at the start of a list item strikes the item when ticked. */
-.kraft-prose :is(ul, ol):has(> li > input[type="checkbox"], > li > label input[type="checkbox"], > li > p:first-child > input[type="checkbox"]) {
+.kraft-prose :is(ul, ol):not([class]):has(> li > input[type="checkbox"], > li > label input[type="checkbox"], > li > p:first-child > input[type="checkbox"]) {
   padding-inline-start: 0;
   list-style: none;
 }
-.kraft-prose li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"]) { padding-inline-start: 0; }
-.kraft-prose li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"])::marker { content: none; }
-.kraft-prose :is(li > input, li > label > input, li > p:first-child > input)[type="checkbox"] {
+.kraft-prose :is(ul, ol):not([class]) > li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"]) { padding-inline-start: 0; }
+.kraft-prose :is(ul, ol):not([class]) > li:has(> input[type="checkbox"], > label input[type="checkbox"], > p:first-child > input[type="checkbox"])::marker { content: none; }
+.kraft-prose :is(ul, ol):not([class]) > li > input[type="checkbox"],
+.kraft-prose :is(ul, ol):not([class]) > li > label > input[type="checkbox"],
+.kraft-prose :is(ul, ol):not([class]) > li > p:first-child > input[type="checkbox"] {
   inline-size: 16px;
   block-size: 16px;
   margin: 0 .5em 0 0;
   vertical-align: -.15em;
   accent-color: var(--kraft-blue);
 }
-.kraft-prose :is(li > input, li > label > input, li > p:first-child > input)[type="checkbox"]:focus-visible {
+.kraft-prose :is(ul, ol):not([class]) > li > input[type="checkbox"]:focus-visible,
+.kraft-prose :is(ul, ol):not([class]) > li > label > input[type="checkbox"]:focus-visible,
+.kraft-prose :is(ul, ol):not([class]) > li > p:first-child > input[type="checkbox"]:focus-visible {
   outline: 2px solid var(--kraft-ink);
   outline-offset: 2px;
 }
-.kraft-prose li:has(> input[type="checkbox"]:checked, > label input[type="checkbox"]:checked, > p:first-child > input[type="checkbox"]:checked) {
+.kraft-prose :is(ul, ol):not([class]) > li:has(> input[type="checkbox"]:checked, > label input[type="checkbox"]:checked, > p:first-child > input[type="checkbox"]:checked) {
   color: var(--kraft-content-muted, var(--kraft-text-muted-paper));
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;

@@ -270,7 +270,7 @@ The package exports `TableProps`, `TableColumn`, `TableRow`, `TableGroup`, `Tabl
 
 ### Long-form content
 
-`Prose` sets reading rhythm for content placed inside it, such as a note, a report, or rendered markdown. Headings, paragraphs, lists, links, rules, tables, inline code, `pre` blocks, and quotes take their spacing and marks from it without extra components. Choose `as="div"` (default), `"article"`, or `"section"`; native props and the ref reach that element. Prose styles only unclassed links, tables, `code`, `pre`, and `blockquote`, so Kraft components and your own classed elements keep their styles.
+`Prose` sets reading rhythm for content placed inside it, such as a note, a report, or rendered markdown. Headings, paragraphs, lists, links, rules, tables, inline code, `pre` blocks, and quotes take their spacing and marks from it without extra components. Choose `as="div"` (default), `"article"`, or `"section"`; native props and the ref reach that element. Prose styles only elements without a `class`, so Kraft components such as `Heading` and `ActionableList`, and your own classed elements, keep their own styles. It adds only block spacing around `CodeBlock` and `Table`.
 
 - A list item that starts with a checkbox becomes a todo item and is struck through when ticked. The checkbox can be a bare `<input type="checkbox">` (as markdown renderers emit), one inside a `<label>`, or a Kraft `Checkbox`. Give each checkbox an accessible name, for example by wrapping it and its text in a `<label>`.
 - `Code` draws inline code as a chip on a faint strip. Bare `<code>` inside Prose looks the same. Native props and the ref reach the `<code>`.
