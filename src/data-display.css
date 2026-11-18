@@ -1,0 +1,134 @@
+.kraft-table-scroll {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  min-inline-size: 0;
+  overflow: auto;
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border: 1px solid var(--kraft-line);
+  border-radius: var(--kraft-radius-4);
+  color: var(--kraft-content-ink);
+}
+
+.kraft-table {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font: 400 14px/1.5 var(--kraft-font-sans);
+  overflow-wrap: anywhere;
+}
+
+.kraft-table > caption {
+  padding: var(--kraft-space-12);
+  font: 600 17px/1.25 var(--kraft-font-serif);
+  text-align: start;
+}
+
+.kraft-table > thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+}
+
+.kraft-table > :is(thead, tbody) > tr > :is(th, td) {
+  padding: var(--kraft-space-8) var(--kraft-space-12);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.kraft-table > thead > tr > th,
+.kraft-table-group > th,
+.kraft-description-item > dt {
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-caps: all-small-caps;
+  letter-spacing: .05em;
+}
+
+.kraft-table > thead > tr > th { border-block-end: 2px solid var(--kraft-ink); }
+.kraft-table > :is(thead, tbody) > tr > [data-align="center"] { text-align: center; }
+.kraft-table > :is(thead, tbody) > tr > [data-align="end"] { text-align: end; }
+.kraft-table > tbody > tr + tr > * { border-block-start: 1px dashed var(--kraft-line); }
+.kraft-table > tbody + tbody > tr:first-child > * { border-block-start: 1px dashed var(--kraft-line); }
+.kraft-table > :is(thead, tbody) > tr > :first-child { border-inline-start: 3px solid transparent; }
+.kraft-table > tbody > tr[aria-current="true"] {
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), color-mix(in srgb, var(--kraft-highlighter) 50%, var(--kraft-sheet));
+}
+.kraft-table > tbody > tr[aria-current="true"] > :first-child { border-inline-start-color: var(--kraft-ink); }
+.kraft-table > tbody > tr[data-dimmed] { color: var(--kraft-content-muted); }
+.kraft-table-group { background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet-warm); }
+.kraft-table > tbody > tr > .kraft-table-empty {
+  padding: var(--kraft-space-24) var(--kraft-space-12);
+  color: var(--kraft-content-muted);
+  text-align: center;
+}
+
+.kraft-table-action {
+  min-inline-size: 24px;
+  min-block-size: 28px;
+  padding: var(--kraft-space-4) var(--kraft-space-6);
+  border: 0;
+  border-radius: var(--kraft-radius-3);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 800;
+  text-align: start;
+  text-decoration: underline;
+  text-underline-offset: .16em;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.kraft-table-action:disabled { opacity: .65; cursor: default; }
+.kraft-table-action:hover:enabled { text-decoration-thickness: 2px; }
+.kraft-table-action:focus-visible, .kraft-table-scroll:focus-visible {
+  outline: 2px solid var(--kraft-ink);
+  outline-offset: 2px;
+}
+
+.kraft-description-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--kraft-space-16);
+  margin: 0;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  font: 400 14px/1.5 var(--kraft-font-sans);
+  overflow-wrap: anywhere;
+}
+
+.kraft-description-item {
+  flex: 0 0 100%;
+  min-inline-size: 0;
+  padding-block: var(--kraft-space-8);
+  border-block-end: 1px dashed var(--kraft-line);
+}
+
+.kraft-description-list[data-columns="2"] > .kraft-description-item:not([data-wide]) {
+  flex-basis: min(100%, max(13rem, calc((100% - var(--kraft-space-16)) / 2)));
+}
+
+.kraft-description-list[data-layout="inline"] > .kraft-description-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: baseline;
+  column-gap: var(--kraft-space-12);
+}
+
+.kraft-description-item > dt { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); }
+.kraft-description-item > dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kraft-space-4) var(--kraft-space-8);
+  margin: 0;
+  font-weight: 600;
+}
+
+.kraft-description-value, .kraft-description-action { min-inline-size: 0; }
+
+@media (forced-colors: active) {
+  .kraft-table > tbody > tr[aria-current="true"] > :first-child { border-inline-start-color: Highlight; }
+  .kraft-table-action:focus-visible, .kraft-table-scroll:focus-visible { outline-color: Highlight; }
+}

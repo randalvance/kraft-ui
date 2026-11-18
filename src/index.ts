@@ -9,6 +9,8 @@ export * from './form-fields.js';
 export * from './radio-group.js';
 export * from './overlays.js';
 export * from './actionable-list.js';
+export * from './table.js';
+export * from './description-list.js';
 export * from './drawer.js';
 export * from './tooltip.js';
 export * from './icon.js';
