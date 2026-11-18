@@ -3,43 +3,94 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Exact version approved for publication (must match package.json)
+        description: Exact package.json version
         required: true
         type: string
+      dry_run:
+        description: Build and verify the tarball without publishing to npm
+        type: boolean
+        default: true
 permissions:
   contents: read
 concurrency:
-  group: npm-publish
+  group: npm-publish-${{ inputs.dry_run && github.ref || 'live' }}
   cancel-in-progress: false
 jobs:
-  publish:
-    if: github.ref == 'refs/heads/main'
+  package:
+    name: Build and verify npm tarball
     runs-on: ubuntu-latest
-    environment: npm
-    permissions:
-      contents: read
-      id-token: write
+    timeout-minutes: 20
+    outputs:
+      tarball: ${{ steps.pack.outputs.tarball }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
-          registry-url: https://registry.npmjs.org
-      - name: Verify release identity
+      - name: Verify release version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
           node --input-type=module <<'JS'
           import { readFileSync } from 'node:fs';
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-          if (pkg.name !== '@randalvance/kraft-ui' || pkg.version !== process.env.RELEASE_VERSION || pkg.version === '0.0.0') {
-            throw new Error('Package identity or approved version does not match. Merge the version PR first.');
+          const dryRun = process.env.DRY_RUN === 'true';
+          if (pkg.name !== '@randalvance/kraft-ui' || pkg.version !== process.env.RELEASE_VERSION) {
+            throw new Error('The package identity or supplied version does not match package.json.');
+          }
+          if (!dryRun && (process.env.GITHUB_REF !== 'refs/heads/main' || pkg.version === '0.0.0')) {
+            throw new Error('Merge the version PR and run live publishing from main.');
           }
           JS
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run check
-      - run: npm pack --dry-run
+      - name: Pack the checked build
+        id: pack
+        run: |
+          npm pack --ignore-scripts --json > "$RUNNER_TEMP/kraft-ui-pack.json"
+          node --input-type=module - "$RUNNER_TEMP/kraft-ui-pack.json" <<'JS' >> "$GITHUB_OUTPUT"
+          import { readFileSync } from 'node:fs';
+          const [pack] = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+          console.log('tarball=' + pack.filename);
+          JS
+      - name: Smoke-test the installed tarball
+        env:
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: node scripts/smoke-package.mjs "$TARBALL"
+      - name: Dry-run npm publish
+        env:
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: npm publish "./$TARBALL" --dry-run --access public --tag latest --registry https://registry.npmjs.org
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ steps.pack.outputs.tarball }}
+          if-no-files-found: error
+
+  publish:
+    name: Publish verified tarball to npm
+    needs: package
+    if: ${{ !inputs.dry_run && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package
       - name: Publish with npm OIDC
-        run: npm publish --access public --provenance
+        env:
+          TARBALL: ${{ needs.package.outputs.tarball }}
+        run: npm publish "./$TARBALL" --access public --provenance --tag latest
