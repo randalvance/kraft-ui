@@ -2,13 +2,15 @@
 @import './interactive.css';
 @import './data-display.css';
 @import './prose.css';
+@import './sticky-note.css';
 
 .kraft-root { --kraft-content-ink: var(--kraft-ink); --kraft-content-muted: var(--kraft-text-muted-paper); --kraft-content-link: var(--kraft-link-paper); color: var(--kraft-content-ink); background: var(--kraft-desk); font: 400 14px/1.5 var(--kraft-font-sans); --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); --kraft-motion-duration: var(--kraft-dur-hover); --kraft-decoration-angle: -4deg; accent-color: var(--kraft-blue); caret-color: var(--kraft-ink); }
 [data-kraft-theme] { --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); }
 [data-kraft-texture="off"] { --kraft-texture-paper: none; --kraft-texture-board: none; }
 [data-kraft-motion="on"] { --kraft-pinwheel-play-state: running; }
 [data-kraft-motion="off"] { --kraft-motion-duration: 0ms; --kraft-pinwheel-play-state: paused; }
-[data-kraft-tilt="off"] { --kraft-decoration-angle: 0deg; }
+[data-kraft-tilt="on"] { --kraft-tilt-factor: 1; }
+[data-kraft-tilt="off"] { --kraft-decoration-angle: 0deg; --kraft-tilt-factor: 0; }
 .kraft-root *, .kraft-root *::before, .kraft-root *::after { box-sizing: border-box; }
 .kraft-root ::selection { background: var(--kraft-marker); color: var(--kraft-ink); }
 .kraft-root { scrollbar-color: var(--kraft-mute) var(--kraft-desk); }

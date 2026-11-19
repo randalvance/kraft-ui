@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
+import { Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
 import '@fontsource-variable/nunito';
+import '@fontsource/caveat/500.css';
+import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 
 afterEach(cleanup);
@@ -84,6 +86,48 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps every sticky note tone and state readable with decoration=%s', async decoration => {
+    const noteTones = ['attention', 'blush', 'blue', 'sage', 'ochre'] as const;
+    const statuses = [undefined, 'waiting', 'done'] as const;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 920, padding: 24 }}>
+      <Surface material="cardboard" padding={16}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 16 }}>
+          {statuses.flatMap(status => noteTones.map((tone, index) => {
+            const name = `${tone}-${status ?? 'open'}`;
+            return <StickyNote key={name} as="button" aria-label={name} tone={tone} status={status}
+              selected={status === 'waiting'} tilt={index - 2}
+              header={<span data-contrast={`${name}-header`}>Print proof</span>}
+              footer={<span data-contrast={`${name}-footer`}>Tuesday</span>}>
+              Check the paper samples.
+            </StickyNote>;
+          }))}
+        </div>
+      </Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    for (const button of view.getAllByRole('button')) {
+      const name = button.getAttribute('aria-label');
+      // The body owns the strike-through, so hiding its ink removes both text and strike.
+      button.querySelector<HTMLElement>('.kraft-sticky-note-body')!.dataset.contrast = `${name}-body`;
+      const status = button.querySelector<HTMLElement>('.kraft-sticky-note-status');
+      if (status) status.dataset.contrast = `${name}-status`;
+    }
+    await verifyPaintedContrast(matrix);
+    for (const button of view.getAllByRole('button')) {
+      act(() => button.focus());
+      const css = getComputedStyle(button);
+      const ink = channels(css.outlineColor);
+      const face = channels(css.backgroundColor).slice(0, 3);
+      const name = button.getAttribute('aria-label');
+      expect(css.outlineStyle, `${name}: focus outline`).toBe('solid');
+      expect(contrast(ink, face), `${name}: focus contrast`).toBeGreaterThanOrEqual(3);
+      if (button.getAttribute('aria-pressed') === 'true') {
+        expect(contrast(channels(css.borderTopColor), face), `${name}: selected edge`).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
   it.each([true, false])('keeps prose, code, quotes, and ticked todos readable with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 640, padding: 24 }}>
       <Surface padding={24}>
