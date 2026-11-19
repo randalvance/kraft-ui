@@ -85,6 +85,25 @@ describe('AvatarGroup', () => {
 });
 
 describe('AvatarPicker', () => {
+  it.each([undefined, 'mochi'])('participates in an external form with defaultValue=%s', async defaultValue => {
+    const user = userEvent.setup();
+    render(<>
+      <form id="profile" aria-label="Profile"><button type="reset">Reset profile</button></form>
+      <AvatarPicker form="profile" label="Choose a helper" name="helper" options={options}
+        defaultValue={defaultValue} required />
+    </>);
+    const form = screen.getByRole('form', { name: 'Profile' }) as HTMLFormElement;
+    expect(new FormData(form).get('helper')).toBe(defaultValue ?? null);
+    expect(form.checkValidity()).toBe(defaultValue !== undefined);
+    await user.click(screen.getByRole('radio', { name: 'Pip' }));
+    expect(new FormData(form).get('helper')).toBe('pip');
+    expect(form.checkValidity()).toBe(true);
+    await user.click(screen.getByRole('button', { name: 'Reset profile' }));
+    expect(new FormData(form).get('helper')).toBe(defaultValue ?? null);
+    expect(form.checkValidity()).toBe(defaultValue !== undefined);
+    expect(screen.getByRole('radio', { name: 'Pip' })).not.toBeChecked();
+  });
+
   it('uses named native radios, separate descriptions, native form values and reset', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();

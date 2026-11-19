@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { AvatarPicker, Icon, Stack, Text, type AvatarOption } from '../src';
+import { AvatarPicker, Button, Icon, Stack, Text, type AvatarOption } from '../src';
 import cat from './assets/avatar-cat.svg';
 import dog from './assets/avatar-dog.svg';
 
@@ -44,5 +44,26 @@ export const Controlled: Story = { render: function Controlled(args) {
     <Text>Selected helper: {value}</Text>
   </Stack>;
 } };
+export const ExternalForm: Story = {
+  render: function ExternalForm(args) {
+    const formId = useId();
+    return <Stack gap={16}>
+      <AvatarPicker {...args} form={formId} defaultValue={undefined} required />
+      <form id={formId} aria-label="Profile"><Button type="reset">Reset profile</Button></form>
+    </Stack>;
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const form = canvas.getByRole('form', { name: 'Profile' }) as HTMLFormElement;
+    await expect(form.checkValidity()).toBe(false);
+    await userEvent.click(canvas.getByRole('radio', { name: 'Pip' }));
+    await expect(new FormData(form).get(args.name)).toBe('pip');
+    await expect(form.checkValidity()).toBe(true);
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset profile' }));
+    await expect(new FormData(form).get(args.name)).toBeNull();
+    await expect(form.checkValidity()).toBe(false);
+    await expect(canvas.getByRole('radio', { name: 'Pip' })).not.toBeChecked();
+  },
+};
 export const Night: Story = { ...Default, globals: { theme: 'night' } };
 export const Quiet: Story = { globals: { texture: 'off', motion: 'off', tilt: 'off' } };
