@@ -1,0 +1,104 @@
+.kraft-avatar, .kraft-avatar-more {
+  --kraft-avatar-face: var(--kraft-kraft);
+  --kraft-avatar-ink: var(--kraft-ink);
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--kraft-avatar-size, 36px);
+  block-size: var(--kraft-avatar-size, 36px);
+  border: clamp(1.5px, calc(var(--kraft-avatar-size, 36px) * .055), 4px) solid var(--kraft-white);
+  border-radius: 50%;
+  background: var(--kraft-avatar-face);
+  color: var(--kraft-avatar-ink);
+  /* A printed cut edge, without a cast shadow. */
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .18);
+  vertical-align: middle;
+  font: 900 calc(var(--kraft-avatar-size, 36px) * .44)/1 var(--kraft-font-sans);
+}
+.kraft-avatar { rotate: calc(var(--kraft-avatar-tilt, 0deg) * var(--kraft-tilt-factor, 1)); }
+.kraft-avatar[data-tone="blue"] { --kraft-avatar-face: var(--kraft-blue); --kraft-avatar-ink: var(--kraft-on-blue); }
+.kraft-avatar[data-tone="sage"] { --kraft-avatar-face: var(--kraft-st-green); --kraft-avatar-ink: var(--kraft-white); }
+.kraft-avatar[data-tone="danger"] { --kraft-avatar-face: var(--kraft-st-red); --kraft-avatar-ink: var(--kraft-white); }
+.kraft-avatar[data-tone="attention"] { --kraft-avatar-face: var(--kraft-attention); --kraft-avatar-ink: var(--kraft-on-attention); }
+.kraft-avatar-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-avatar-face);
+}
+.kraft-avatar-face > img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.kraft-avatar-initial { white-space: nowrap; }
+.kraft-avatar-glyph { display: inline-flex; align-items: center; justify-content: center; }
+.kraft-avatar-glyph > svg { inline-size: 1em; block-size: 1em; }
+.kraft-avatar-status {
+  position: absolute;
+  inset-inline-end: -5px;
+  inset-block-end: -5px;
+  box-sizing: border-box;
+  inline-size: clamp(8px, calc(var(--kraft-avatar-size, 36px) * .24), 12px);
+  block-size: clamp(8px, calc(var(--kraft-avatar-size, 36px) * .24), 12px);
+  border: 1.5px solid var(--kraft-blue-2);
+  border-radius: 50%;
+  background: var(--kraft-blue-2);
+  box-shadow: 0 0 0 2px var(--kraft-white);
+}
+.kraft-avatar-status[data-tone="waiting"] { background: var(--kraft-white); border-color: var(--kraft-st-amber); border-style: dashed; }
+.kraft-avatar-status[data-tone="blocked"] { background: var(--kraft-st-red); border-color: var(--kraft-st-red); border-radius: 2px; }
+.kraft-avatar-status[data-tone="done"] { background: var(--kraft-st-green); border-color: var(--kraft-st-green); }
+.kraft-avatar-status[data-tone="done"]::after {
+  content: '';
+  position: absolute;
+  inset: 0 1px 1px;
+  margin: auto;
+  inline-size: 3px;
+  block-size: 5px;
+  border: solid var(--kraft-white);
+  border-width: 0 1px 1px 0;
+  rotate: 45deg;
+}
+.kraft-avatar-status[data-tone="idle"] { background: var(--kraft-white); border-color: var(--kraft-st-amber); }
+.kraft-avatar-group { display: flex; align-items: center; inline-size: max-content; max-inline-size: 100%; margin: 0; padding: 2px; list-style: none; }
+.kraft-avatar-group > li { flex: none; }
+.kraft-avatar-group > li + li { margin-inline-start: calc(var(--kraft-avatar-size, 36px) * -.25); }
+.kraft-avatar-group .kraft-avatar { vertical-align: top; }
+.kraft-avatar-more { font-size: calc(var(--kraft-avatar-size, 36px) * .32); }
+.kraft-avatar-picker { min-inline-size: 0; margin: 0; padding: 0; border: 0; color: var(--kraft-content-ink, var(--kraft-ink)); }
+.kraft-avatar-picker-label { margin-block-end: 6px; padding: 0; font: 800 13px/1.3 var(--kraft-font-sans); }
+.kraft-avatar-picker-description { margin: 0 0 6px; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font: 400 13px/1.5 var(--kraft-font-sans); }
+.kraft-avatar-options { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.kraft-avatar-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding: 8px;
+  border-radius: var(--kraft-radius-4);
+  cursor: pointer;
+}
+.kraft-avatar-option > input { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; opacity: 0; cursor: inherit; }
+.kraft-avatar-option > .kraft-avatar { pointer-events: none; }
+.kraft-avatar-option:has(input:checked) > .kraft-avatar { box-shadow: 0 0 0 2px var(--kraft-blue-2), 0 0 0 4px var(--kraft-white); }
+.kraft-avatar-option:has(input:enabled):hover { background: var(--kraft-hover); }
+.kraft-avatar-option:has(input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
+.kraft-avatar-option:has(input:disabled) { cursor: not-allowed; }
+.kraft-avatar-option:has(input:disabled) > .kraft-avatar { filter: grayscale(1); }
+
+@media (forced-colors: active) {
+  .kraft-avatar, .kraft-avatar-more { border-color: CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
+  .kraft-avatar-face { background: Canvas; }
+  .kraft-avatar-status { background: CanvasText; border-color: CanvasText; box-shadow: 0 0 0 2px Canvas; }
+  .kraft-avatar-status[data-tone="waiting"], .kraft-avatar-status[data-tone="idle"] { background: Canvas; }
+  .kraft-avatar-status[data-tone="done"]::after { border-color: Canvas; }
+  .kraft-avatar-option:has(input:checked) > .kraft-avatar { outline: 3px solid Highlight; outline-offset: 2px; box-shadow: none; }
+  .kraft-avatar-option:has(input:focus-visible) { outline-color: CanvasText; }
+  .kraft-avatar-option:has(input:disabled) > .kraft-avatar { color: GrayText; border-color: GrayText; }
+}

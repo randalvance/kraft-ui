@@ -13,7 +13,7 @@ const preview: Preview = {
   theme: { description: 'Material theme', toolbar: { icon: 'paintbrush', items: ['paper', 'night'], dynamicTitle: true } },
   texture: { toolbar: { icon: 'photo', items: ['on', 'off'], dynamicTitle: true } },
   motion: { toolbar: { icon: 'play', items: ['on', 'off'], dynamicTitle: true } },
-  tilt: { description: 'Paper decoration tilt; stickers always stay upright', toolbar: { icon: 'contrast', items: ['on', 'off'], dynamicTitle: true } },
+  tilt: { description: 'Paper decoration and opt-in portrait tilt', toolbar: { icon: 'contrast', items: ['on', 'off'], dynamicTitle: true } },
  },
  decorators: [(Story, context) => <ThemeProvider theme={context.globals.theme} texture={context.globals.texture !== 'off'} motion={context.globals.motion !== 'off'} tilt={context.globals.tilt !== 'off'} className="story-stage"><Story /></ThemeProvider>],
  parameters: {
