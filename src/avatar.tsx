@@ -104,7 +104,7 @@ export const AvatarPicker = forwardRef<HTMLFieldSetElement, AvatarPickerProps>(f
         const { value: optionValue, label: optionLabel, description: optionDescription, disabled: optionDisabled, ...portrait } = option;
         const detail = [optionDescription, option.status?.label].filter(Boolean).join('. ');
         return <label key={optionValue} className="kraft-avatar-option">
-          <input type="radio" name={name} value={optionValue} disabled={optionDisabled} required={required}
+          <input type="radio" name={name} form={props.form} value={optionValue} disabled={optionDisabled} required={required}
             checked={controlled ? value === optionValue : undefined}
             defaultChecked={!controlled ? defaultValue === optionValue : undefined}
             aria-labelledby={`${id}-option-${index}-label`}

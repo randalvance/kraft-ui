@@ -82,6 +82,8 @@ import { Avatar, AvatarGroup, AvatarPicker, Icon } from '@randalvance/kraft-ui';
 ]} />;
 ```
 
+For a picker outside its form, set `form` to the form's `id`. The fieldset and every radio associate with that form, preserving submission, required validation, and reset.
+
 The package exports `AvatarProps`, `AvatarStatus`, `AvatarGroupProps`, `AvatarPickerProps`, and `AvatarOption`.
 
 ### Mat, Tape, and Pinwheel
