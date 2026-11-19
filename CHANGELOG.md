@@ -1,5 +1,13 @@
 # @randalvance/kraft-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- af6aef1: Add StickyNote with five paper tones, a curled corner, theme-controlled rotation, and header, body, and footer slots. Use a native button for pressable notes and show selection, waiting, and done states in Paper and Night themes.
+- 920d3ed: Add Avatar portraits, monograms, and glyphs with a white cut border, optional labelled corner status, and theme-controlled tilt. Add overlapping AvatarGroup lists with overflow counts and AvatarPicker native radio choices with selection rings and visible keyboard focus.
+- 7161127: Add Prose for long-form reading rhythm across headings, paragraphs, lists, links, rules, tables, inline code, code blocks, quotes, and todo items that strike through when ticked. Add CodeBlock for recessed monospaced code with an optional language label, copy button, line numbers, and added or removed line marks. Add Code for inline code chips and Blockquote for quotes beside a thick highlighter rule.
+
 ## 0.2.0
 
 ### Minor Changes
