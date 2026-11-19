@@ -40,6 +40,7 @@ export function Note() {
 | Material | `Surface`, `Mat`, `Tape` |
 | Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
+| Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
@@ -77,6 +78,25 @@ function Proof({ saving }: { saving: boolean }) {
       <Button loading={saving}>Save edits</Button>
     </Stack>
   </Mat>;
+}
+```
+
+### StickyNote
+
+`StickyNote` renders a handwritten paper note with a curled corner. Use `header` and `footer` for optional slots and `children` for the body. Its five tones are `attention` (yellow, the default), `blush` (pink), `blue`, `sage` (green), and `ochre` (orange). Set `tilt` in degrees per note (default `-2`). The note sits upright when the enclosing theme disables tilt.
+
+The default `as="article"` accepts rich content, including links and controls. Choose `as="button"` to make the whole note a native button, and use text or other noninteractive phrasing content in its slots. The button defaults to `type="button"`. Native props such as `onClick` and `disabled` and the ref reach the rendered element. Use `selected` for controlled selection, exposed as `aria-pressed`. The visible note text supplies the button's accessible name. If you set `aria-label` or `aria-labelledby`, keep the visible text in the accessible name.
+
+Use `status="waiting"` for a hatched top edge or `status="done"` to strike through the body. Both statuses include visible text and can coexist with selection. Override the default “Waiting” or “Done” with `statusLabel`.
+
+```tsx
+import { StickyNote } from '@randalvance/kraft-ui';
+
+function ProofNote({ selected, onSelect }: { selected: boolean; onSelect: () => void }) {
+  return <StickyNote as="button" tone="blush" tilt={2} selected={selected} onClick={onSelect}
+    header="Print studio" footer="Tuesday" status="waiting">
+    Review the poster proof.
+  </StickyNote>;
 }
 ```
 

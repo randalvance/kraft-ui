@@ -1,0 +1,94 @@
+.kraft-sticky-note {
+  --kraft-note-tint: var(--kraft-highlighter);
+  --kraft-note-tint-amount: 82%;
+  --kraft-note-face: color-mix(in srgb, var(--kraft-note-tint) var(--kraft-note-tint-amount), var(--kraft-sheet));
+  --kraft-note-edge: color-mix(in srgb, var(--kraft-note-face) 70%, var(--kraft-content-ink));
+  --kraft-note-hatch: none;
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-content-ink);
+  --kraft-content-link: var(--kraft-content-ink);
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kraft-space-4);
+  inline-size: min(100%, 13rem);
+  min-inline-size: 0;
+  min-block-size: 6.75rem;
+  margin: 0;
+  padding: var(--kraft-space-12) var(--kraft-space-14);
+  rotate: calc(var(--kraft-sticky-note-tilt) * var(--kraft-tilt-factor, 1));
+  color: var(--kraft-content-ink);
+  background: var(--kraft-note-hatch) top / 100% 5px no-repeat,
+    linear-gradient(170deg, var(--kraft-face), transparent 60%),
+    var(--kraft-texture-paper, var(--kraft-pulp-paper)),
+    var(--kraft-note-face);
+  border: 2px solid var(--kraft-note-edge);
+  border-radius: 2px 2px 15px 2px;
+  box-shadow: 1px 2px 0 var(--kraft-note-edge), 3px 5px 7px var(--kraft-amb-2);
+  font: 500 20px/1.2 var(--kraft-font-hand);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.kraft-sticky-note[data-tone="blush"] { --kraft-note-tint: var(--kraft-blush); --kraft-note-tint-amount: 64%; }
+.kraft-sticky-note[data-tone="blue"] { --kraft-note-tint: var(--kraft-blue); --kraft-note-tint-amount: 38%; }
+.kraft-sticky-note[data-tone="sage"] { --kraft-note-tint: var(--kraft-mat-green); --kraft-note-tint-amount: 62%; }
+.kraft-sticky-note[data-tone="ochre"] { --kraft-note-tint: var(--kraft-ochre); --kraft-note-tint-amount: 54%; }
+
+.kraft-sticky-note::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(135deg, var(--kraft-note-edge), var(--kraft-note-face) 67%, var(--kraft-gloss));
+  border-bottom-right-radius: 12px;
+  clip-path: polygon(16% 13%, 100% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+
+.kraft-sticky-note-header { font-weight: 600; }
+.kraft-sticky-note-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kraft-space-4) var(--kraft-space-8);
+  margin-block-start: auto;
+  padding-inline-end: var(--kraft-space-4);
+  font: 700 12px/1.3 var(--kraft-font-sans);
+}
+.kraft-sticky-note-status {
+  padding: 0 var(--kraft-space-4);
+  border: 1px solid currentColor;
+  border-radius: var(--kraft-radius-2);
+}
+.kraft-sticky-note[data-status="waiting"] {
+  --kraft-note-hatch: repeating-linear-gradient(135deg, var(--kraft-note-edge) 0 2px, transparent 2px 5px);
+}
+.kraft-sticky-note[data-status="waiting"] .kraft-sticky-note-status { border-style: dashed; }
+.kraft-sticky-note[data-status="done"] > .kraft-sticky-note-body { text-decoration: line-through; }
+
+button.kraft-sticky-note {
+  appearance: none;
+  cursor: pointer;
+  transition: box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease);
+}
+button.kraft-sticky-note:enabled:hover { border-color: currentColor; }
+button.kraft-sticky-note:enabled:active { box-shadow: 0 1px 0 var(--kraft-note-edge); }
+button.kraft-sticky-note[aria-pressed="true"] { border: 2px dashed currentColor; }
+button.kraft-sticky-note:focus-visible { outline: 2px solid currentColor; outline-offset: -5px; }
+button.kraft-sticky-note:disabled { cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  button.kraft-sticky-note { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .kraft-sticky-note { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .kraft-sticky-note::after { background: CanvasText; }
+  button.kraft-sticky-note[aria-pressed="true"] { border-color: Highlight; }
+  button.kraft-sticky-note:focus-visible { outline-color: Highlight; }
+  button.kraft-sticky-note:disabled { color: GrayText; border-color: GrayText; }
+}
