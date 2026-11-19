@@ -448,6 +448,12 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 `Link` remains a native anchor, blue and underlined, with a thicker underline on hover and the same visible focus treatment as buttons. `Separator` renders horizontal or vertical dashed divisions and exposes separator semantics unless decorative.
 
+### Avatars
+
+`Avatar` is a portrait sticker with a white cut border and no cast shadow. Images fill the circle; monograms and glyphs use the five shared tones with paper texture and readable ink. Diameters run from tiny 18px marks to 84px portraits. A labelled corner status uses a solid, dashed, square, checked, or hollow mark, carrying meaning beyond color. Portraits stay upright by default; their optional tilt follows the theme preference. This opt-in portrait tilt is the exception to the upright sticker rule.
+
+`AvatarGroup` overlaps portraits in a native list and finishes with a named count of those omitted. `AvatarPicker` places portraits inside native radio labels, rings the chosen portrait, and outlines the entire keyboard-focused target separately. Targets remain at least 44px, and the radio labels stay upright even when a portrait tilts. Portrait alt text, option labels, and status labels supply the accessible meaning.
+
 ### Badges and stickers
 
 `Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels.
@@ -464,7 +470,7 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 ### Don't:
 
-- **Don't** give stickers cast shadows or rotate them.
+- **Don't** give stickers cast shadows. Keep Sticker marks upright; only Avatar portraits can opt into tilt.
 - **Don't** rotate interactive buttons.
 - **Don't** use accent or material tokens as text colors without checking contrast against the actual background.
 - **Don't** treat catalogued token names as evidence of an implemented control.

@@ -41,6 +41,7 @@ export function Note() {
 | Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
+| Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
@@ -54,6 +55,34 @@ export function Note() {
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
 
 Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. Stickers are upright and noninteractive; use `decorative` for redundant marks. Round stickers are true 64px circles; customize `--kraft-sticker-size` for another diameter and use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+
+### Avatars
+
+`Avatar` shows one `src` image, `initial` monogram, or `glyph` (for example a decorative `Icon`) inside a white sticker cut border. `size` is the complete diameter in pixels (default `36`), including compact 18px marks and 84px portraits. `tone="neutral" | "blue" | "sage" | "danger" | "attention"` colors monograms and glyphs. `alt` is required for every meaningful portrait; use `decorative` when adjacent text already supplies its meaning. The complete portrait is exposed as one named image; its inner image or glyph is decorative. Native span props and the ref reach the outer span.
+
+Pass `status={{ tone: 'working', label: 'Working' }}` for a corner mark. Status tones are `working`, `waiting`, `blocked`, `done`, and `idle`; the required label joins the portrait's accessible name. Filled, dashed, square, checked, and hollow marks distinguish those states beyond color. These static corner marks serve portraits; standalone status components are tracked separately in issue #16. `tilt` is an optional rotation in degrees (default `0`) and follows `ThemeProvider`'s tilt preference. Avatars have no cast shadow or animation.
+
+`AvatarGroup` renders a named native list from `avatars` (an array of `AvatarProps`). `label` names the list, `size` sets every portrait's diameter (default `36`), and `max` limits visible portraits (default `4`). The remaining portraits become a named `+N` count. Use `max={0}` for just the count. Native list props and the ref reach the `<ul>`.
+
+`AvatarPicker` renders a `<fieldset>` with a `label` legend, `name`, and `options`. Each `AvatarOption` has a unique `value`, `label`, one of `src`, `initial`, or `glyph`, and optional `tone`, `tilt`, `status`, `description`, and `disabled`. Portraits are decorative inside the radios; the option label names the input, and its description and status label are announced separately. Choose `size` (default `36`), `defaultValue` for an uncontrolled form or `value` with `onValueChange(value, option)` for a controlled choice. Native radios provide arrow-key navigation, submission, reset, and `required` validation. `disabled` disables the entire fieldset; `hideLabel` visually hides its legend, and `description` adds group guidance. Selection rings the portrait and keyboard focus outlines the whole target, which remains at least 44×44px at small portrait sizes. Native fieldset props and the ref reach the `<fieldset>`.
+
+```tsx
+import { Avatar, AvatarGroup, AvatarPicker, Icon } from '@randalvance/kraft-ui';
+
+<Avatar src="/mochi.png" alt="Mochi" size={64} tilt={-3}
+  status={{ tone: 'working', label: 'Reviewing notes' }} />;
+<Avatar glyph={<Icon name="agent" />} alt="Desk helper" tone="blue" />;
+<AvatarGroup label="Desk helpers" max={2} avatars={[
+  { src: '/mochi.png', alt: 'Mochi' }, { initial: 'P', alt: 'Pip', tone: 'sage' },
+  { initial: 'K', alt: 'Kit' },
+]} />;
+<AvatarPicker label="Choose a helper" name="helper" defaultValue="mochi" options={[
+  { value: 'mochi', label: 'Mochi', src: '/mochi.png' },
+  { value: 'pip', label: 'Pip', initial: 'P', tone: 'sage' },
+]} />;
+```
+
+The package exports `AvatarProps`, `AvatarStatus`, `AvatarGroupProps`, `AvatarPickerProps`, and `AvatarOption`.
 
 ### Mat, Tape, and Pinwheel
 
@@ -342,7 +371,7 @@ const AppIcon = createIcon({ search: searchIcon, close: closeIcon });
 
 ## Themes and customization
 
-Use `<ThemeProvider theme="night" texture={false} motion={false} tilt={false}>` for a quieter Night interface. The tilt setting controls paper decoration; stickers never rotate. Providers are scoped, can nest, and do not mutate the document. Reduced-motion preferences always disable transitions. Theme selection is explicit: applications choose persistence and system-preference behavior.
+Use `<ThemeProvider theme="night" texture={false} motion={false} tilt={false}>` for a quieter Night interface. The tilt setting controls paper decoration and opt-in Avatar rotation; Sticker marks stay upright. Providers are scoped, can nest, and do not mutate the document. Reduced-motion preferences always disable transitions. Theme selection is explicit: applications choose persistence and system-preference behavior.
 
 CSS variables use the `--kraft-` prefix. Override them on an application scope, for example `style={{ '--kraft-font-sans': 'Your font, sans-serif' } as React.CSSProperties}`. Surfaces provide material-aware link and secondary-text ink. Nested surfaces and providers reset those roles for their own material/theme. Night kraft uses its readable primary ink for secondary copy. Raw foundation tokens are available from `@randalvance/kraft-ui/tokens.json`. The stylesheet has root token defaults; visual resets and typography are scoped to Kraft components and providers.
 

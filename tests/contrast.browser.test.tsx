@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme } from '../src';
+import { Avatar, AvatarGroup, AvatarPicker, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
@@ -86,6 +86,52 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps avatar ink, corner marks, selection, and focus readable with decoration=%s', async decoration => {
+    const statuses: AvatarStatus[] = ['working', 'waiting', 'blocked', 'done', 'idle'].map(tone => ({
+      tone: tone as AvatarStatus['tone'], label: tone,
+    }));
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 760, padding: 24 }}>
+      <Stack gap={24}>
+        {[18, 36, 84].map(size => <Inline key={size} gap={24}>
+          {tones.map((tone, index) => <Avatar key={tone} initial="M" alt={`${tone}-${size}`} tone={tone}
+            size={size} tilt={-4} status={statuses[index]} />)}
+        </Inline>)}
+        <Inline gap={24}>{tones.map(tone => <Avatar key={tone} glyph={<Icon name="agent" />}
+          alt={`${tone} helper`} tone={tone} size={36} />)}</Inline>
+        <AvatarGroup label="Team" max={1} avatars={[
+          { initial: 'P', alt: 'Pip' }, { initial: 'K', alt: 'Kit' }, { initial: 'M', alt: 'Mochi' },
+        ]} />
+        <AvatarPicker label="Choose a helper" name="helper" size={18} description="One helper per desk"
+          defaultValue="pip" options={[{ value: 'pip', label: 'Pip', initial: 'P' }, { value: 'kit', label: 'Kit', initial: 'K', disabled: true }]} />
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-avatar-initial, .kraft-avatar-glyph, .kraft-avatar-more, .kraft-avatar-picker-label, .kraft-avatar-picker-description')
+      .forEach((el, index) => { el.dataset.contrast = `avatar-ink-${index}`; });
+    await verifyPaintedContrast(matrix);
+    for (const dot of matrix.querySelectorAll('.kraft-avatar-status')) {
+      const css = getComputedStyle(dot);
+      expect(contrast(channels(css.borderTopColor), [255, 255, 255]), `status ${dot.getAttribute('data-tone')}`).toBeGreaterThanOrEqual(3);
+      expect(dot.getBoundingClientRect().width).toBeGreaterThanOrEqual(8);
+    }
+    const radio = view.getByRole('radio', { name: 'Pip' });
+    act(() => radio.focus());
+    const target = radio.closest('label')!;
+    const focus = getComputedStyle(target);
+    expect(focus.outlineStyle).toBe('solid');
+    expect(contrast(channels(focus.outlineColor), channels(getComputedStyle(matrix).backgroundColor))).toBeGreaterThanOrEqual(3);
+    expect(target.getBoundingClientRect().width).toBeGreaterThanOrEqual(44);
+    expect(target.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+    const selected = target.querySelector('.kraft-avatar')!;
+    const ring = getComputedStyle(selected).boxShadow.match(/rgba?\([^)]+\)/)![0];
+    expect(contrast(channels(ring), [255, 255, 255])).toBeGreaterThanOrEqual(3);
+    const portrait = matrix.querySelector('.kraft-avatar')!;
+    expect(getComputedStyle(portrait).rotate).toBe(decoration ? '-4deg' : '0deg');
+    expect(getComputedStyle(portrait.querySelector('.kraft-avatar-face')!).backgroundImage.includes('url(')).toBe(decoration);
+    expect(portrait.getAnimations()).toHaveLength(0);
+  });
+
   it.each([true, false])('keeps every sticky note tone and state readable with decoration=%s', async decoration => {
     const noteTones = ['attention', 'blush', 'blue', 'sage', 'ochre'] as const;
     const statuses = [undefined, 'waiting', 'done'] as const;
