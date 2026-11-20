@@ -40,6 +40,7 @@ export function Note() {
 | Material | `Surface`, `Mat`, `Tape` |
 | Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
+| Cards | `Card`, `CardProps`, `CardTone`, `CardAddTile`, `CardAddTileProps` |
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
@@ -111,6 +112,26 @@ function Proof({ saving }: { saving: boolean }) {
     </Stack>
   </Mat>;
 }
+```
+
+### Card and CardAddTile
+
+`Card` renders a paper article with `header`, `media`, `children` (body), `footer`, and `corner` slots. The corner sits beside the heading at the inline end. `tone` adds a spine in any `CardTone` (`neutral`, `blue`, `sage`, `danger`, `attention`, `ochre`, `teal`, `violet`, `plum`, `blush`, or `navy`). `off` dims the paper while keeping actions available. Supply a visible status such as “Paused” if the off state carries meaning. `selected` marks the edge and adds a check. `tilt` sets an optional rotation in degrees and follows `ThemeProvider`.
+
+Use `as="a"` with `href` for navigation or `as="button"` for an action. Give the primary target a name with `aria-labelledby` or `aria-label`. The whole paper surface activates that target, and controls inside slots have their own pointer and keyboard behavior. Custom interactive regions can opt into their own pointer hit area with `data-card-interactive`. With `selected`, the button reports `aria-pressed`, and the link defaults to `aria-current="true"`. The ref and native props reach the primary action (or the article in the static variant). `className` and `style` apply to the outer article.
+
+`CardAddTile` is a dashed button with a decorative plus and required handwritten `label`. It accepts native button props and a button ref. Both button components default to `type="button"`. Place the tile in the same grid as the cards to match its row height. The base height for both components can be set with `--kraft-card-min-height` (default `10rem`).
+
+```tsx
+import { Card, CardAddTile, Heading, Icon, IconButton } from '@randalvance/kraft-ui';
+
+<Card as="a" href="/workspaces/print" aria-labelledby="print-title" tone="teal"
+  header={<Heading as="h2" id="print-title">Print Studio</Heading>}
+  corner={<IconButton aria-label="Pin Print Studio" onClick={pinWorkspace}><Icon name="pin" /></IconButton>}
+  footer="4 agents · 2 boards">
+  Track packaging proofs and studio runs.
+</Card>;
+<CardAddTile label="Add workspace" onClick={addWorkspace} />;
 ```
 
 ### StickyNote

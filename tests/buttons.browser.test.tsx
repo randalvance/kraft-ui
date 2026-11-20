@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cdp, page } from 'vitest/browser';
 import { cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Button, IconButton, Pinwheel, ThemeProvider, type Theme } from '../src';
+import { Button, Card, CardAddTile, IconButton, Pinwheel, ThemeProvider, type Theme } from '../src';
 import '../src/styles.css';
 
 afterEach(cleanup);
@@ -60,6 +60,30 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
       if (label.loading) expect(button.querySelector('.kraft-pinwheel')!.getBoundingClientRect().width).toBe(16);
       view.unmount();
     }
+  });
+
+  it('lifts a pressable card on hover and leaves slot controls independently clickable', async () => {
+    const open = vi.fn();
+    const pin = vi.fn();
+    const view = render(<ThemeProvider theme={theme} motion={false} style={{ display: 'grid', gap: 16, padding: 16 }}>
+      <Card as="button" aria-label="Print studio" onClick={open} header="Print studio" tone="teal"
+        corner={<button type="button" onClick={pin}>Pin studio</button>}>
+        Review the proofs.
+      </Card>
+      <CardAddTile label="Add studio" />
+    </ThemeProvider>);
+    const target = view.getByRole('button', { name: 'Print studio' });
+    const frame = target.closest('article')!;
+    const restingShadow = getComputedStyle(frame).boxShadow;
+    const card = page.getByRole('button', { name: 'Print studio' });
+    await card.hover();
+    expect(target.matches(':hover')).toBe(true);
+    expect(getComputedStyle(frame).boxShadow).not.toBe(restingShadow);
+    await card.click();
+    expect(open).toHaveBeenCalledOnce();
+    await page.getByRole('button', { name: 'Pin studio' }).click();
+    expect(pin).toHaveBeenCalledOnce();
+    expect(open).toHaveBeenCalledOnce();
   });
 
   it('preserves pressed hover and normal active states with real pointer input', async () => {

@@ -1,0 +1,159 @@
+.kraft-card, .kraft-card-add-tile {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: var(--kraft-card-min-height, 10rem);
+  border-radius: var(--kraft-radius-7);
+  overflow-wrap: anywhere;
+}
+
+.kraft-card {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  --kraft-card-face: var(--kraft-card);
+  --kraft-card-spine-width: 0px;
+  --kraft-card-spine: color-mix(in srgb, var(--kraft-card-spine-tone) 54%, var(--kraft-ink));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: var(--kraft-content-ink);
+  text-align: start;
+  background: linear-gradient(145deg, var(--kraft-face), transparent 60%),
+    var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-card-face);
+  border: 1px solid var(--kraft-edge);
+  box-shadow: var(--kraft-lift-paper-1);
+  rotate: calc(var(--kraft-card-tilt) * var(--kraft-tilt-factor, 1));
+}
+
+.kraft-card[data-tone] { --kraft-card-spine-width: 6px; }
+.kraft-card[data-tone="neutral"] { --kraft-card-spine-tone: var(--kraft-board); }
+.kraft-card[data-tone="blue"] { --kraft-card-spine-tone: var(--kraft-blue); }
+.kraft-card[data-tone="sage"] { --kraft-card-spine-tone: var(--kraft-mat-green); }
+.kraft-card[data-tone="danger"] { --kraft-card-spine-tone: var(--kraft-mat-red); }
+.kraft-card[data-tone="attention"] { --kraft-card-spine-tone: var(--kraft-attention); }
+.kraft-card[data-tone="ochre"] { --kraft-card-spine-tone: var(--kraft-ochre); }
+.kraft-card[data-tone="teal"] { --kraft-card-spine-tone: var(--kraft-teal); }
+.kraft-card[data-tone="violet"] { --kraft-card-spine-tone: var(--kraft-violet); }
+.kraft-card[data-tone="plum"] { --kraft-card-spine-tone: var(--kraft-plum); }
+.kraft-card[data-tone="blush"] { --kraft-card-spine-tone: var(--kraft-blush); }
+.kraft-card[data-tone="navy"] { --kraft-card-spine-tone: var(--kraft-blue-2); }
+
+.kraft-card[data-tone]::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: var(--kraft-card-spine-width);
+  border-start-start-radius: calc(var(--kraft-radius-7) - 1px);
+  border-end-start-radius: calc(var(--kraft-radius-7) - 1px);
+  background: var(--kraft-card-spine);
+  pointer-events: none;
+}
+
+.kraft-card:has(> .kraft-card-target:disabled), .kraft-card[data-off] {
+  --kraft-card-face: var(--kraft-paper-2);
+  box-shadow: none;
+}
+
+.kraft-card[data-off] {
+  --kraft-card-spine: color-mix(in srgb, var(--kraft-card-spine-tone) 30%, var(--kraft-text-muted-paper));
+}
+
+.kraft-card:where(:has(> .kraft-card-target:not(:disabled))) { border-color: var(--kraft-mute); }
+.kraft-card[data-selected] { border-color: var(--kraft-ink); }
+.kraft-card[data-selected] > .kraft-card-slots > .kraft-card-top > .kraft-card-corner { color: var(--kraft-ink); }
+
+.kraft-card-slots {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--kraft-space-10);
+  min-inline-size: 0;
+  padding: var(--kraft-space-14) var(--kraft-space-16);
+  padding-inline-start: calc(var(--kraft-space-16) + var(--kraft-card-spine-width));
+}
+
+.kraft-card-top { display: flex; align-items: flex-start; gap: var(--kraft-space-8); }
+.kraft-card-header { flex: 1; min-inline-size: 0; font: 600 17px/1.25 var(--kraft-font-serif); }
+.kraft-card-corner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--kraft-space-4);
+  max-inline-size: 100%;
+  margin-inline-start: auto;
+}
+.kraft-card-media > :where(img, video, svg) {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--kraft-radius-4);
+}
+.kraft-card-footer {
+  margin-block-start: auto;
+  padding-block-start: var(--kraft-space-8);
+  border-block-start: 1px dashed var(--kraft-line);
+  color: var(--kraft-content-muted);
+  font-size: 13px;
+}
+
+.kraft-card-target {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  appearance: none;
+  cursor: pointer;
+}
+.kraft-card-target:disabled { pointer-events: none; }
+.kraft-card-target:focus-visible, .kraft-card-add-tile:focus-visible {
+  outline: 2px solid var(--kraft-ink);
+  outline-offset: 3px;
+}
+
+/* Let blank paper hit the primary target below the slots. Real controls keep their own hit areas. */
+.kraft-card:has(> .kraft-card-target:not(:disabled)) > .kraft-card-slots { pointer-events: none; }
+:where(.kraft-card:has(> .kraft-card-target:not(:disabled)) > .kraft-card-slots :is(
+  a[href], button, input, label, select, textarea, summary, iframe, audio[controls], video[controls],
+  [tabindex], [contenteditable]:not([contenteditable="false"]), [data-card-interactive]
+)) { pointer-events: auto; }
+
+.kraft-card:has(> .kraft-card-target:not(:disabled)), .kraft-card-add-tile {
+  transition: box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease);
+}
+@media (hover: hover) {
+  .kraft-card:has(> .kraft-card-target:hover), .kraft-card-add-tile:enabled:hover { box-shadow: var(--kraft-lift-paper-3); }
+}
+.kraft-card:has(> .kraft-card-target:active), .kraft-card-add-tile:enabled:active { box-shadow: var(--kraft-press-paper); }
+
+.kraft-card-add-tile {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--kraft-space-4);
+  padding: var(--kraft-space-16);
+  border: 2px dashed currentColor;
+  color: var(--kraft-text-muted-paper);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  font: 600 26px/1.2 var(--kraft-font-hand);
+  cursor: pointer;
+  appearance: none;
+}
+.kraft-card-add-tile:disabled { background-color: var(--kraft-paper-2); cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kraft-card:has(> .kraft-card-target:not(:disabled)), .kraft-card-add-tile { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .kraft-card, .kraft-card-add-tile { background: Canvas; border-color: CanvasText; }
+  .kraft-card-add-tile:disabled { color: GrayText; border-color: GrayText; }
+  .kraft-card[data-tone]::before { forced-color-adjust: none; background: CanvasText; }
+  .kraft-card[data-selected] { border-color: Highlight; }
+  .kraft-card-target:focus-visible, .kraft-card-add-tile:focus-visible { outline-color: Highlight; }
+}
