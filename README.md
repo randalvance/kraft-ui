@@ -47,6 +47,7 @@ export function Note() {
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
+| Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
 | Long-form content | `Prose`, `CodeBlock`, `Code`, `Blockquote` |
@@ -57,6 +58,51 @@ export function Note() {
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
 
 Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+
+### Edit pages
+
+`FormSection` groups `children` on a paper sheet. Pass a `title` and an optional `hint` for the handwritten note alongside it. The title names the native `<section>` by default. `titleAs` selects `h1` through `h6` and defaults to `h2`. Use `titleAs="h3"` for a section nested under an `h2` and adjust deeper sections to match the document hierarchy.
+
+`PageHeader` renders a native `<header>` with a `title`, `titleAs` (`h1` by default), and optional `back`, `leading`, `status`, and `actions` slots above a dashed rule. Use a `Link` in `back` and an `Avatar` or mark in `leading`. Both components forward native props and refs to their root elements.
+
+The header sticks at the top of its nearest scroll container. For edit forms, put the header and the independently scrolling body in separate rows of a bounded layout so focused fields stay visible. A submit `Button` in `actions` can use the native `form` attribute to submit the form below it.
+
+Keep a `role="status"` element mounted in the status slot so changes are announced. Use “All saved” at rest, “Unsaved changes” after edits, and “Saved” briefly after a successful save before returning to “All saved”. A setting row can pair the visible name and note with a `Toggle` through `aria-labelledby` and `aria-describedby`. Put optional metadata next to the switch.
+
+```tsx
+import { useId, type FormEvent } from 'react';
+import { Avatar, Button, FormSection, Inline, Link, PageHeader, Stack, Text, Toggle } from '@randalvance/kraft-ui';
+
+function ProfileSettings({ saveStatus, onSave, onEdit }: {
+  saveStatus: 'All saved' | 'Unsaved changes' | 'Saved';
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onEdit: () => void;
+}) {
+  const id = useId();
+  return <main style={{ display: 'grid', gridTemplateRows: 'auto minmax(0, 1fr)', blockSize: '100dvh' }}>
+    <PageHeader title="Edit Mochi’s profile"
+      back={<Link href="/profiles">All profiles</Link>}
+      leading={<Avatar initial="M" decorative />}
+      status={<span role="status">{saveStatus}</span>}
+      actions={<Button variant="blue" type="submit" form={id}>Save changes</Button>} />
+    <form id={id} aria-label="Profile settings" onSubmit={onSave} onChange={onEdit}
+      style={{ overflow: 'auto', padding: 16 }}>
+      <FormSection title="Notifications" hint="For the shelter team">
+        <Inline justify="between" wrap gap={16}>
+          <Stack gap={4}>
+            <Text id={`${id}-name`} variant="label">Adoption inquiries</Text>
+            <Text id={`${id}-note`} tone="muted">Receive messages about this profile.</Text>
+          </Stack>
+          <Inline gap={8}>
+            <Text as="span" variant="label-sm" tone="muted">Email</Text>
+            <Toggle name="inquiries" defaultChecked aria-labelledby={`${id}-name`} aria-describedby={`${id}-note`} />
+          </Inline>
+        </Inline>
+      </FormSection>
+    </form>
+  </main>;
+}
+```
 
 ### Avatars
 
