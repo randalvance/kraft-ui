@@ -460,6 +460,10 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 `AvatarGroup` overlaps portraits in a native list and finishes with a named count of those omitted. `AvatarPicker` places portraits inside native radio labels, rings the chosen portrait, and outlines the entire keyboard-focused target separately. Targets remain at least 44px, and the radio labels stay upright even when a portrait tilts. Portrait alt text, option labels, and status labels supply the accessible meaning.
 
+### Stamps
+
+`Stamp` is a transparent ink impression on paper with an outlined frame, Courier capitals, and an optional divided name cell. The toggle has a faded dashed frame when off and a solid impression when on. The ink tilts with the theme while the button target and its focus outline remain upright. An optional quick stamp-down animation respects theme motion and the system reduced-motion preference.
+
 ### Badges and stickers
 
 `Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels.
