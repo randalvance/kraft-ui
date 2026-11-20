@@ -51,7 +51,7 @@ export function Note() {
 | Long-form content | `Prose`, `CodeBlock`, `Code`, `Blockquote` |
 | Navigation | `Tabs` |
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
-| Marks | `Separator`, `Badge`, `Sticker` |
+| Marks | `Separator`, `Badge`, `Sticker`, `Stamp`, `StampProps`, `StampSize` |
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
 
@@ -129,6 +129,23 @@ function ProofNote({ selected, onSelect }: { selected: boolean; onSelect: () => 
     header="Print studio" footer="Tuesday" status="waiting">
     Review the poster proof.
   </StickyNote>;
+}
+```
+
+### Stamp
+
+`Stamp` prints its text `children` in outlined, typewriter capitals on the underlying paper. Pass `signature` to add a name in a second cell. `tone` accepts `neutral` (default), `blue`, `sage`, `danger`, or `attention`. `StampSize` supports `sm`, `md` (default), and `lg`.
+
+The default `as="span"` renders a static impression. Use `as="button"` for a native toggle with a faded dashed outline when off and a solid ink impression when on. Pass `pressed` (default `false`) and update it from `onClick`. The stamp text and signature form the button's accessible name. Native props and refs reach the chosen element, and the button defaults to `type="button"`.
+
+Pass `animate` for a brief stamp-down motion on mount for a static stamp, or when the toggle shows its pressed impression. Motion respects the theme setting and the system preference for reduced motion. The theme tilt setting controls the ink impression.
+
+```tsx
+import { Stamp } from '@randalvance/kraft-ui';
+
+function ApprovalStamp({ approved, onToggle }: { approved: boolean; onToggle: () => void }) {
+  return <Stamp as="button" tone="sage" size="sm" signature="Mara" animate
+    pressed={approved} onClick={onToggle}>Done</Stamp>;
 }
 ```
 

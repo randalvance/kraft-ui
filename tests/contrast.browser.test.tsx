@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { page } from 'vitest/browser';
+import { cdp, page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Avatar, AvatarGroup, AvatarPicker, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
+import { Avatar, AvatarGroup, AvatarPicker, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
@@ -50,7 +50,7 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
   const samples = [...matrix.querySelectorAll<HTMLElement>('[data-contrast]')].map(el => ({
     el, name: el.dataset.contrast!, style: el.getAttribute('style'),
     rect: el.getBoundingClientRect(),
-    foreground: getComputedStyle(el).color.match(/[\d.]+/g)!.slice(0, 3).map(Number),
+    foreground: channels(getComputedStyle(el).color).slice(0, 3),
   }));
   const original = await pixels((await page.getByTestId('contrast-matrix').screenshot({ base64: true })).base64);
   expect(original.width, 'Pixel probes require an unscaled browser viewport').toBe(Math.ceil(container.width));
@@ -87,6 +87,41 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps small stamp text, outlines and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ width: 720, padding: 24 }}>
+      <Surface data-testid="stamp-paper">
+        <Stack gap={16}>
+          {tones.map(tone => <Inline key={tone} gap={24} wrap>
+            <Stamp size="sm" tone={tone} signature="Mara">Done</Stamp>
+            <Stamp as="button" size="sm" tone={tone} pressed signature="Mara">Done</Stamp>
+            <Stamp as="button" size="sm" tone={tone} signature="Mara">Done</Stamp>
+          </Inline>)}
+        </Stack>
+      </Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-stamp-cell').forEach((cell, index) => {
+      const stamp = cell.closest<HTMLElement>('.kraft-stamp')!;
+      cell.dataset.contrast = `${stamp.dataset.tone}/${stamp.getAttribute('aria-pressed') ?? 'static'}/${index}`;
+    });
+    await verifyPaintedContrast(matrix);
+    const paper = channels(getComputedStyle(view.getByTestId('stamp-paper')).backgroundColor).slice(0, 3);
+    for (const button of view.getAllByRole('button')) {
+      const box = button.getBoundingClientRect();
+      expect(box.width).toBeGreaterThanOrEqual(24);
+      expect(box.height).toBeGreaterThanOrEqual(24);
+      const [r, g, b, alpha = 1] = channels(getComputedStyle(button.firstElementChild!).borderTopColor);
+      const outline = [r, g, b].map((value, index) => value * alpha + paper[index] * (1 - alpha));
+      expect(contrast(outline, paper)).toBeGreaterThanOrEqual(3);
+      act(() => button.focus());
+      const focus = getComputedStyle(button);
+      expect(focus.outlineStyle).toBe('solid');
+      expect(contrast(channels(focus.outlineColor).slice(0, 3), paper)).toBeGreaterThanOrEqual(3);
+      expect(focus.rotate).toBe('none');
+    }
+  });
+
   it.each([true, false])('keeps segment labels, counts, selection marks, and focus readable with decoration=%s', async decoration => {
     const options: SegmentOption[] = [
       { value: 'all', label: 'All', description: 'Every item', count: 12 },
@@ -488,4 +523,37 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     }
     await verifyPaintedContrast(matrix, 3);
   });
+});
+
+it('animates the ink only with motion enabled and no system reduction', async () => {
+  const session = cdp();
+  const emulateMotion = (value: string) => session.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value }],
+  });
+  try {
+    await emulateMotion('no-preference');
+    const view = render(<ThemeProvider>
+      <Stamp data-testid="animated-stamp" animate>Done</Stamp>
+      <Stamp as="button" animate>Done</Stamp>
+      <Stamp as="button" animate pressed>Failed</Stamp>
+      <Stamp as="button" pressed>Jira</Stamp>
+    </ThemeProvider>);
+    const css = (element: HTMLElement) => getComputedStyle(element.firstElementChild!);
+    const stamp = view.getByTestId('animated-stamp');
+    const off = view.getByRole('button', { pressed: false });
+    const on = view.getByRole('button', { name: /failed/i, pressed: true });
+    const still = view.getByRole('button', { name: /jira/i, pressed: true });
+    expect(css(stamp).animationName).toBe('kraft-stamp-down');
+    expect(css(on).animationName).toBe('kraft-stamp-down');
+    expect(css(off).animationName).toBe('none');
+    expect(css(still).animationName).toBe('none');
+    expect(css(stamp).rotate).toBe('-4deg');
+
+    await emulateMotion('reduce');
+    expect(css(stamp).animationName).toBe('none');
+    expect(css(on).animationName).toBe('none');
+    expect(css(stamp).rotate).toBe('-4deg');
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
 });

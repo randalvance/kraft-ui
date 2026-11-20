@@ -1,0 +1,92 @@
+.kraft-stamp {
+  --kraft-stamp-ink: var(--kraft-content-ink, var(--kraft-ink));
+  --kraft-stamp-pigment: var(--kraft-stamp-ink);
+  --kraft-stamp-accent: color-mix(in srgb, var(--kraft-stamp-pigment) 55%, var(--kraft-stamp-ink));
+  --kraft-stamp-edge: currentColor;
+  --kraft-stamp-font-size: 15px;
+  --kraft-stamp-padding-block: 4px;
+  --kraft-stamp-padding-inline: var(--kraft-space-8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  vertical-align: middle;
+  color: var(--kraft-stamp-accent);
+  font: 700 var(--kraft-stamp-font-size)/1.15 var(--kraft-font-mono);
+  letter-spacing: .08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.kraft-stamp[data-tone="blue"] { --kraft-stamp-pigment: var(--kraft-blue); }
+.kraft-stamp[data-tone="sage"] { --kraft-stamp-pigment: var(--kraft-green); }
+.kraft-stamp[data-tone="danger"] { --kraft-stamp-pigment: var(--kraft-red); }
+.kraft-stamp[data-tone="attention"] { --kraft-stamp-pigment: var(--kraft-amber); }
+
+.kraft-stamp[data-size="sm"] {
+  --kraft-stamp-font-size: 12px;
+  --kraft-stamp-padding-block: 3px;
+  --kraft-stamp-padding-inline: var(--kraft-space-6);
+}
+
+.kraft-stamp[data-size="lg"] {
+  --kraft-stamp-font-size: 20px;
+  --kraft-stamp-padding-block: 5px;
+  --kraft-stamp-padding-inline: var(--kraft-space-12);
+}
+
+.kraft-stamp-impression {
+  display: inline-flex;
+  min-inline-size: 0;
+  border: 2px solid var(--kraft-stamp-edge);
+  border-radius: 3px 2px 3px 2px;
+  rotate: calc(var(--kraft-tilt-stamp) * var(--kraft-tilt-factor, 1));
+}
+
+.kraft-stamp-cell {
+  min-inline-size: 0;
+  padding: var(--kraft-stamp-padding-block) var(--kraft-stamp-padding-inline);
+  overflow-wrap: anywhere;
+  align-content: center;
+}
+
+.kraft-stamp-cell + .kraft-stamp-cell { border-inline-start: 1px solid var(--kraft-stamp-edge); }
+
+button.kraft-stamp {
+  appearance: none;
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  margin: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: var(--kraft-radius-4);
+  background: transparent;
+  cursor: pointer;
+}
+
+button.kraft-stamp[aria-pressed="false"] {
+  --kraft-stamp-edge: color-mix(in srgb, currentColor 75%, transparent);
+  color: var(--kraft-content-muted, var(--kraft-text-muted-paper));
+}
+
+button.kraft-stamp[aria-pressed="false"] .kraft-stamp-impression { border-style: dashed; }
+button.kraft-stamp[aria-pressed="false"]:enabled:hover { --kraft-stamp-edge: currentColor; }
+button.kraft-stamp:disabled { cursor: not-allowed; }
+button.kraft-stamp:focus-visible { outline: 2px solid var(--kraft-stamp-ink); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .kraft-stamp[data-animate="true"]:is(span, [aria-pressed="true"]:enabled) .kraft-stamp-impression {
+    animation: kraft-stamp-down var(--kraft-motion-duration, var(--kraft-dur-hover)) cubic-bezier(.4, 0, .75, 1);
+  }
+}
+
+@keyframes kraft-stamp-down {
+  from { transform: translateY(-4px) scale(1.06); }
+  to { transform: translateY(0) scale(1); }
+}
+
+@media (forced-colors: active) {
+  button.kraft-stamp:focus-visible { outline-color: Highlight; }
+  button.kraft-stamp:disabled .kraft-stamp-impression { color: GrayText; border-color: GrayText; }
+}
