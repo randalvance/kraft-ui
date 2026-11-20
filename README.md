@@ -44,7 +44,7 @@ export function Note() {
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
-| Controls | `Button`, `IconButton`, `Link` |
+| Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
@@ -55,9 +55,28 @@ export function Note() {
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker`, `Stamp`, `StampProps`, `StampSize` |
 
-Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
+Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors.
 
-Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+
+### Buttons
+
+`Button` has five raised variants (`neutral`, `blue`, `sage`, `danger`, `attention`) plus `ghost` for a flat outline, `text` for a bare action, and `dashed` for an add action. Set `tone="danger"` on the text variant for destructive actions. Use `leading` for a decorative icon before the label. Labels stay on one line by default. Add `wrap` to let long labels fit a narrow container.
+
+`IconButton` supports the same five raised variants and `bare` for a glyph without a card face. It requires `aria-label`. The optional `badge` slot places a visual count at the top-end corner. Include a meaningful count in `aria-label` or an accessible description. Small icon buttons have a 28×28px target with a 16px glyph.
+
+Both render a native `type="button"` by default and forward native props and refs. Set `aria-pressed` from application state to flatten a toggle in place. `loading` disables activation, sets `aria-busy`, and shows a `Pinwheel` in place of the leading icon or action glyph. The label and any corner badge remain visible.
+
+```tsx
+import { Button, Icon, IconButton, Sticker } from '@randalvance/kraft-ui';
+
+<Button variant="dashed" leading={<Icon name="plus" />}>Add note</Button>
+<Button variant="text" tone="danger">Remove draft</Button>
+<IconButton variant="bare" aria-label="Inbox, 12 unread"
+  badge={<Sticker size="count" tone="attention">12</Sticker>}>
+  <Icon name="inbox" />
+</IconButton>
+```
 
 ### Edit pages
 
