@@ -8,6 +8,7 @@ import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
+import { FormSection, PageHeader, Toggle } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -166,6 +167,47 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       expect(focus.outlineStyle).toBe('solid');
       expect(contrast(channels(focus.outlineColor).slice(0, 3), paper)).toBeGreaterThanOrEqual(3);
       expect(focus.rotate).toBe('none');
+    }
+  });
+
+  it.each([true, false])('keeps edit-page headings, hints, save states, and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 620, padding: 24 }}>
+      <Stack gap={16}>
+        <PageHeader title="Edit profile"
+          back={<Link href="#profiles" data-contrast="back">All profiles</Link>}
+          leading={<Avatar decorative initial="M" size={48} tilt={-4} />}
+          status={<span data-contrast="clean">All saved</span>}
+          actions={<Button variant="blue" data-contrast="save-action">Save changes</Button>} />
+        <PageHeader title="Edit adoption listing" titleAs="h2" status={<span data-contrast="dirty">Unsaved changes</span>} />
+        <PageHeader title="Edit shelter contact" titleAs="h2" status={<span data-contrast="saved">Saved</span>} />
+        <FormSection title="Notifications" hint="For the shelter team">
+          <Inline align="center" justify="between" wrap gap={16}>
+            <Stack gap={4}>
+              <Text id="inquiries-name" variant="label" data-contrast="setting">Adoption inquiries</Text>
+              <Text id="inquiries-note" tone="muted" data-contrast="setting-note">Receive messages about this profile.</Text>
+            </Stack>
+            <Inline gap={8}>
+              <Text as="span" variant="label-sm" tone="muted" data-contrast="setting-meta">Email</Text>
+              <Toggle aria-labelledby="inquiries-name" aria-describedby="inquiries-note" defaultChecked />
+            </Inline>
+          </Inline>
+        </FormSection>
+      </Stack>
+    </ThemeProvider>);
+
+    for (const heading of view.getAllByRole('heading')) heading.dataset.contrast = heading.textContent!;
+    view.getByText('For the shelter team').dataset.contrast = 'hint';
+    await verifyPaintedContrast(view.getByTestId('contrast-matrix'));
+
+    for (const control of [view.getByRole('link'), view.getByRole('button'), view.getByRole('switch')]) {
+      act(() => control.focus());
+      const visible = control.getAttribute('role') === 'switch' ? control.nextElementSibling! : control;
+      const css = getComputedStyle(visible);
+      const surface = getComputedStyle(control.closest('header, section')!);
+      expect(visible.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), channels(surface.backgroundColor))).toBeGreaterThanOrEqual(3);
     }
   });
 

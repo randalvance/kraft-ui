@@ -1,0 +1,88 @@
+.kraft-form-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--kraft-space-12);
+}
+
+.kraft-form-section-hint {
+  min-inline-size: 0;
+  max-inline-size: 46%;
+  text-align: end;
+}
+
+.kraft-form-section-header > .kraft-heading:has(+ .kraft-form-section-hint:not(:empty)) {
+  flex-shrink: 0;
+  max-inline-size: 72%;
+}
+
+.kraft-form-section-body {
+  min-inline-size: 0;
+  margin-block-start: var(--kraft-space-16);
+}
+
+.kraft-form-section-body:empty { margin-block-start: 0; }
+
+.kraft-page-header {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  flex: none;
+  min-inline-size: 0;
+  padding: var(--kraft-space-16) var(--kraft-space-24);
+  color: var(--kraft-content-ink);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border-block-end: 1px dashed var(--kraft-mute);
+}
+
+.kraft-page-header-back {
+  margin-block-end: var(--kraft-space-8);
+  overflow-wrap: anywhere;
+}
+
+.kraft-page-header-back :where(a) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kraft-space-6);
+  min-block-size: 24px;
+  min-inline-size: 24px;
+  max-inline-size: 100%;
+}
+
+.kraft-page-header-row,
+.kraft-page-header-identity,
+.kraft-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--kraft-space-12);
+  min-inline-size: 0;
+}
+
+.kraft-page-header-row, .kraft-page-header-actions { flex-wrap: wrap; }
+.kraft-page-header-identity { flex: 1 1 15rem; }
+.kraft-page-header-leading { flex: none; }
+.kraft-page-header-label { min-inline-size: 0; }
+.kraft-page-header .kraft-page-header-title { font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem); text-wrap: wrap; }
+
+.kraft-page-header-status {
+  margin-block-start: var(--kraft-space-2);
+  color: var(--kraft-content-muted);
+  font: 700 13px/1.4 var(--kraft-font-sans);
+  overflow-wrap: anywhere;
+}
+
+.kraft-page-header-actions {
+  max-inline-size: 100%;
+  margin-inline-start: auto;
+  justify-content: flex-end;
+  overflow-wrap: anywhere;
+}
+
+.kraft-form-section-hint:empty,
+.kraft-page-header-back:empty,
+.kraft-page-header-leading:empty,
+.kraft-page-header-status:empty,
+.kraft-page-header-actions:empty { display: none; }

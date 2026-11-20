@@ -11,6 +11,8 @@ export * from './tree-view.js';
 export * from './dialog.js';
 export * from './tabs.js';
 export * from './form-fields.js';
+export * from './form-section.js';
+export * from './page-header.js';
 export * from './radio-group.js';
 export * from './segmented-control.js';
 export * from './overlays.js';
