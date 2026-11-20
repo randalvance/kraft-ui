@@ -7,6 +7,7 @@ import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
 import '../src/styles.css';
+import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -86,6 +87,45 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps segment labels, counts, selection marks, and focus readable with decoration=%s', async decoration => {
+    const options: SegmentOption[] = [
+      { value: 'all', label: 'All', description: 'Every item', count: 12 },
+      { value: 'on', label: 'On', description: 'Running now', count: 8 },
+      { value: 'off', label: 'Off', count: 0, disabled: true },
+    ];
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 620, padding: 24 }}>
+      <Stack gap={16}>
+        {(['highlighter', 'ink'] as const).map(tone => <Inline key={tone} gap={16}>
+          <SegmentedControl label="Show" name={`show-${tone}`} options={options} defaultValue="all" tone={tone} />
+          <ToggleChips label="Tools" name={`tools-${tone}`} options={options} defaultValue={['on', 'off']} tone={tone} />
+        </Inline>)}
+        <Inline gap={16}>{tones.map(tone => <Sticker key={tone} tone={tone} size="count" data-contrast={`sticker-${tone}`}>12</Sticker>)}</Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-segment-label, .kraft-segment-description, .kraft-segment .kraft-badge')
+      .forEach((sample, index) => { sample.dataset.contrast = `segment-ink-${index}`; });
+    await verifyPaintedContrast(matrix);
+    for (const input of [...view.getAllByRole('radio'), ...view.getAllByRole('checkbox')]) {
+      const target = input.closest('label')!;
+      const mark = target.querySelector('.kraft-segment-mark')!;
+      const css = getComputedStyle(target);
+      const face = channels(css.backgroundColor);
+      expect(target.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+      expect(target.getBoundingClientRect().width).toBeGreaterThanOrEqual(44);
+      if ((input as HTMLInputElement).checked) {
+        expect(getComputedStyle(mark).visibility).toBe('visible');
+        expect(contrast(channels(getComputedStyle(mark).color), face)).toBeGreaterThanOrEqual(3);
+      }
+      if (!(input as HTMLInputElement).disabled) {
+        act(() => input.focus());
+        expect(css.outlineStyle).toBe('solid');
+        expect(contrast(channels(css.outlineColor), face)).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
   it.each([true, false])('keeps avatar ink, corner marks, selection, and focus readable with decoration=%s', async decoration => {
     const statuses: AvatarStatus[] = ['working', 'waiting', 'blocked', 'done', 'idle'].map(tone => ({
       tone: tone as AvatarStatus['tone'], label: tone,

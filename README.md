@@ -43,7 +43,7 @@ export function Note() {
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
 | Controls | `Button`, `IconButton`, `Link` |
-| Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `Select` |
+| Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
@@ -54,7 +54,7 @@ export function Note() {
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors. `IconButton` requires `aria-label`, and `Button` defaults to `type="button"`. The `loading` prop shows a `Pinwheel`, disables activation, and sets `aria-busy` on both buttons while preserving their accessible names. It replaces the action glyph in an `IconButton`. A pressed `Button` uses application-managed `aria-pressed` and remains depressed on hover. Text buttons wrap long labels within their available width, including in flex and grid layouts.
 
-Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. Stickers are upright and noninteractive; use `decorative` for redundant marks. Round stickers are true 64px circles; customize `--kraft-sticker-size` for another diameter and use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Button and mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. Small icon buttons are 28×28px circles with 16px glyphs. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
 
 ### Avatars
 
@@ -165,6 +165,30 @@ function AgentFields() {
 ```
 
 `RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.
+
+`SegmentedControl` uses native radios for a single choice. `ToggleChips` uses native checkboxes for independent choices. Both take a `label` for the fieldset, a form `name`, and `options` with unique `value` strings and visible `label`s. A `SegmentOption` also accepts a numeric `count`, a second line in `description`, and `disabled`. Counts and second lines are announced as descriptions.
+
+Use `variant="joined" | "chips"` and `tone="highlighter" | "ink"`. The radio strip defaults to joined, the checkbox group defaults to chips, and both default to highlighter. `hideLabel` keeps the group name accessible, and `disabled` disables the fieldset. Native fieldset props and refs pass through, including `form` for association with an external form. `SegmentedControlProps`, `ToggleChipsProps`, and `SegmentOption` are exported.
+
+Use `defaultValue` for an initial selection or `value` with `onValueChange(value, option)` to control it. A radio value is a string and `required` enables native validation. Arrow keys move between enabled radios. Toggle chip values are arrays of strings and the callback reports them in option order. Tab reaches each enabled checkbox and Space toggles it. Form submission uses the supplied name, with one entry per enabled checked input. Native form reset restores uncontrolled defaults.
+
+```tsx
+import { SegmentedControl, ToggleChips } from '@randalvance/kraft-ui';
+
+function Filters() {
+  return <form>
+    <SegmentedControl label="Show" name="show" defaultValue="all" options={[
+      { value: 'all', label: 'All', count: 12 },
+      { value: 'on', label: 'On', description: 'Running now', count: 8 },
+      { value: 'off', label: 'Off', count: 4 },
+    ]} />
+    <ToggleChips label="Tools" name="tools" defaultValue={['notes']} tone="ink" options={[
+      { value: 'notes', label: 'Notes' },
+      { value: 'search', label: 'Search' },
+    ]} />
+  </form>;
+}
+```
 
 `Select` is a single choice field with a button and listbox. It supports `name`, `required`, disabled options, typeahead, and controlled or initial values. `Menu` is for actions; give it an accessible `label`, an array of actions and separators, and an `onAction` callback. `Popover` holds small structured content with a required title and a close button. Pass a ref forwarding button as a menu or popover `trigger`. These anchored surfaces keep the current theme by default; when an ancestor clips them, pass `portalContainer` pointing to a suitable element within the same theme scope.
 

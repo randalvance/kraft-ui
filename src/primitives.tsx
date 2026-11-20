@@ -68,11 +68,12 @@ export type SeparatorProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> &
 export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(function Separator({ orientation = 'horizontal', decorative = false, className, ...props }, ref) {
   return <div {...props} ref={ref} className={cx('kraft-separator', className)} role={decorative ? 'none' : 'separator'} aria-orientation={decorative ? undefined : orientation} data-orientation={orientation} />;
 });
-export type BadgeProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone };
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge({ tone = 'neutral', className, ...props }, ref) {
-  return <span {...props} ref={ref} className={cx('kraft-badge', className)} data-tone={tone} />;
+export type MarkSize = 'default' | 'sm' | 'count';
+export type BadgeProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone; size?: MarkSize };
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge({ tone = 'neutral', size = 'default', className, ...props }, ref) {
+  return <span {...props} ref={ref} className={cx('kraft-badge', className)} data-tone={tone} data-size={size} />;
 });
-export type StickerProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone; shape?: 'round' | 'pill' | 'square'; decorative?: boolean };
-export const Sticker = forwardRef<HTMLSpanElement, StickerProps>(function Sticker({ tone = 'blue', shape = 'round', decorative = false, className, ...props }, ref) {
-  return <span {...props} ref={ref} className={cx('kraft-sticker', className)} data-tone={tone} data-shape={shape} aria-hidden={decorative || props['aria-hidden'] || undefined} />;
+export type StickerProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone; size?: MarkSize; shape?: 'round' | 'pill' | 'square'; decorative?: boolean };
+export const Sticker = forwardRef<HTMLSpanElement, StickerProps>(function Sticker({ tone = 'blue', shape = 'round', size = 'default', decorative = false, className, ...props }, ref) {
+  return <span {...props} ref={ref} className={cx('kraft-sticker', className)} data-tone={tone} data-shape={shape} data-size={size} aria-hidden={decorative || props['aria-hidden'] || undefined} />;
 });

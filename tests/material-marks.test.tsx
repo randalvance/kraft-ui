@@ -2,9 +2,21 @@ import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Mat, Pinwheel, Tape } from '../src';
+import { Badge, Mat, Pinwheel, Sticker, Tape } from '../src';
 
 describe('paper materials and marks', () => {
+  it('renders compact marks as native spans with refs and server-rendered sizes', () => {
+    const badge = createRef<HTMLSpanElement>();
+    const sticker = createRef<HTMLSpanElement>();
+    render(<><Badge ref={badge} size="sm">Ready</Badge><Sticker ref={sticker} size="count" decorative>12</Sticker></>);
+    expect(badge.current?.tagName).toBe('SPAN');
+    expect(badge.current).toHaveAttribute('data-size', 'sm');
+    expect(sticker.current?.tagName).toBe('SPAN');
+    expect(sticker.current).toHaveAttribute('aria-hidden', 'true');
+    expect(renderToString(<><Badge size="count">0</Badge><Sticker size="sm">K</Sticker></>))
+      .toMatch(/data-size="count">0<\/span>.*data-size="sm">K<\/span>/);
+  });
+
   it('forwards Mat props and ref to its native element and insets the paper sheet', () => {
     const ref = createRef<HTMLElement>();
     render(<Mat as="article" aria-label="Proof" ref={ref} tone="amber" padding={8} className="proof">
