@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cdp, page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Avatar, AvatarGroup, AvatarPicker, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
+import { Avatar, AvatarGroup, AvatarPicker, Card, CardAddTile, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus, type CardTone } from '../src';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
@@ -87,6 +87,53 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps card copy, spines, selection and focus readable with decoration=%s', async decoration => {
+    const cardTones = [...tones, 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] satisfies CardTone[];
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 1050, padding: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: 16 }}>
+        {[false, true].flatMap(off => cardTones.map(tone => {
+          const name = `${tone}-${off ? 'off' : 'on'}`;
+          return <Card key={name} as="button" aria-label={name} tone={tone} off={off} selected={tone === 'teal'}
+            header={<span data-contrast={`${name}-header`}>Print studio</span>}
+            footer={<span data-contrast={`${name}-footer`}>Two boards</span>}>
+            <span data-contrast={`${name}-body`}>Prepare proofs.</span>
+          </Card>;
+        }))}
+        <CardAddTile label="Add workspace" />
+      </div>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const tile = view.getByRole('button', { name: 'Add workspace' });
+    tile.querySelector('span')!.dataset.contrast = 'add-label';
+    await verifyPaintedContrast(matrix);
+    const desk = channels(getComputedStyle(matrix).backgroundColor);
+    const tileStyle = getComputedStyle(tile);
+    expect(contrast(channels(tileStyle.borderTopColor), desk), 'add tile boundary').toBeGreaterThanOrEqual(3);
+    act(() => tile.focus());
+    expect(tileStyle.outlineStyle).toBe('solid');
+    expect(contrast(channels(tileStyle.outlineColor), desk), 'add tile focus').toBeGreaterThanOrEqual(3);
+
+    for (const target of matrix.querySelectorAll<HTMLButtonElement>('.kraft-card-target')) {
+      const frame = target.closest('article')!;
+      const name = target.ariaLabel;
+      const cardStyle = getComputedStyle(frame);
+      const face = channels(cardStyle.backgroundColor);
+      expect(contrast(channels(cardStyle.borderTopColor), desk), `${name}: card boundary`).toBeGreaterThanOrEqual(3);
+      const spine = channels(getComputedStyle(frame, '::before').backgroundColor);
+      expect(contrast(spine, face), `${name}: spine`).toBeGreaterThanOrEqual(3);
+      act(() => target.focus());
+      const outline = getComputedStyle(target);
+      expect(outline.outlineStyle, `${name}: focus outline`).toBe('solid');
+      expect(contrast(channels(outline.outlineColor), desk), `${name}: focus on desk`).toBeGreaterThanOrEqual(3);
+      if (target.getAttribute('aria-pressed') === 'true') {
+        expect(contrast(channels(cardStyle.borderTopColor), face), `${name}: selected edge`).toBeGreaterThanOrEqual(3);
+        const mark = getComputedStyle(frame.querySelector('.kraft-card-corner svg')!);
+        expect(contrast(channels(mark.color), face), `${name}: selected mark`).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
   it.each([true, false])('keeps small stamp text, outlines and focus readable with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
       motion={decoration} tilt={decoration} style={{ width: 720, padding: 24 }}>

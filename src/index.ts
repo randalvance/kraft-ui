@@ -1,6 +1,7 @@
 export * from './primitives.js';
 export * from './material-marks.js';
 export * from './paper-panel.js';
+export * from './card.js';
 export * from './sticky-note.js';
 export * from './stamp.js';
 export * from './cork-board.js';
