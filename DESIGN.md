@@ -448,6 +448,12 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 `Link` remains a native anchor, blue and underlined, with a thicker underline on hover and the same visible focus treatment as buttons. `Separator` renders horizontal or vertical dashed divisions and exposes separator semantics unless decorative.
 
+### Cork boards and pins
+
+`CorkBoard` is the one place the cork tokens appear: **cork** is the speckled face and **cork-2** is the wooden frame and the grain. The cork sits recessed in the frame and scrolls with its contents. Cork holds things and never carries words, so column names sit on a pinned kraft label and notes stay on paper. Column labels tilt one degree when theme tilt is on and stay in view while the board scrolls.
+
+`Pin` is a round tack with a white highlight and an ink rim. The rim keeps every tone distinct on cork and on any note. A button pin has a 28px target, lifts on hover, and is hollow and dashed when disabled. Focus rings for the board, a movable item, and a pin are ink, drawn on cork rather than on the frame, and the item in use comes to the front.
+
 ### Avatars
 
 `Avatar` is a portrait sticker with a white cut border and no cast shadow. Images fill the circle; monograms and glyphs use the five shared tones with paper texture and readable ink. Diameters run from tiny 18px marks to 84px portraits. A labelled corner status uses a solid, dashed, square, checked, or hollow mark, carrying meaning beyond color. Portraits stay upright by default; their optional tilt follows the theme preference. This opt-in portrait tilt is the exception to the upright sticker rule.
