@@ -1,7 +1,7 @@
 import { expect } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Badge,Sticker,Text } from '../src';
-const meta = { title: 'Primitives/Sticker', component: Sticker, parameters: { docs: { description: { component: "An upright printed mark with a cut outline and no cast shadow. Round marks have a fixed 64px diameter, customizable with --kraft-sticker-size; use pills for longer labels. Hide redundant decoration with decorative; provide an accessible name for icon-only meaning." } } }, argTypes: { tone: { control: 'select', options: ['neutral','blue','sage','danger','attention'] }, shape: { control: 'select', options: ['round','pill','square'] }, decorative: { control: 'boolean' } }, args: { children: 'Keep', tone: 'blue', shape: 'round', decorative: false } } satisfies Meta<typeof Sticker>;
+import { Sticker } from '../src';
+const meta = { title: 'Primitives/Sticker', component: Sticker, parameters: { docs: { description: { component: "An upright printed mark with a cut outline and no cast shadow. Round marks come in 64px, 36px, and 18px sizes, customizable with --kraft-sticker-size; use pills for longer labels. Hide redundant decoration with decorative; provide an accessible name for icon-only meaning." } } }, argTypes: { tone: { control: 'select', options: ['neutral','blue','sage','danger','attention'] }, shape: { control: 'select', options: ['round','pill','square'] }, decorative: { control: 'boolean' } }, args: { children: 'Keep', tone: 'blue', shape: 'round', decorative: false } } satisfies Meta<typeof Sticker>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
@@ -30,3 +30,18 @@ export const CustomDiameter: Story = { args: { children: 'Keep', style: { '--kra
   await expect(rect.height).toBe(96);
   await expect(getComputedStyle(sticker).transform).toBe('none');
 } };
+export const Compact: Story = {
+  render: () => <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Sticker size="sm">New</Sticker>
+    <Sticker size="count">12</Sticker>
+    <Sticker size="sm" shape="pill">Ready for review</Sticker>
+    <Sticker size="count" shape="square">3</Sticker>
+  </div>,
+  play: async ({ canvasElement }) => {
+    const count = canvasElement.querySelector('[data-size="count"][data-shape="round"]')!;
+    await expect(count.getBoundingClientRect().width).toBe(18);
+    await expect(count.getBoundingClientRect().height).toBe(18);
+    await expect(getComputedStyle(count).padding).toBe('0px');
+    await expect(getComputedStyle(count).boxShadow).not.toBe('none');
+  },
+};
