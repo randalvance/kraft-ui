@@ -2,6 +2,7 @@ export * from './primitives.js';
 export * from './material-marks.js';
 export * from './paper-panel.js';
 export * from './sticky-note.js';
+export * from './cork-board.js';
 export * from './avatar.js';
 export * from './controls.js';
 export * from './tree-view.js';

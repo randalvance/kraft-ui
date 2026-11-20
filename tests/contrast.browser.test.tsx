@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Avatar, AvatarGroup, AvatarPicker, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
+import { Avatar, AvatarGroup, AvatarPicker, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus } from '../src';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
@@ -122,6 +122,49 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
         act(() => input.focus());
         expect(css.outlineStyle).toBe('solid');
         expect(contrast(channels(css.outlineColor), face)).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  it.each([true, false])('keeps cork board headers, pins, and focus rings readable with decoration=%s', async decoration => {
+    const pinTones = ['red', 'blue', 'green', 'amber'] as const;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 920, padding: 24 }}>
+      <CorkBoard layout="columns" style={{ '--kraft-cork-board-column-width': '11rem' } as CSSProperties}>
+        {pinTones.map(tone => <CorkBoardColumn key={tone} pinTone={tone} count={12}
+          name={<span data-contrast={`${tone}-column-name`}>Waiting for review</span>}>
+          <CorkBoardItem label={`${tone} note`} onMove={() => {}} pin={<Pin as="button" tone={tone} label={`Unpin ${tone}`} />}>
+            <StickyNote>Check the paper samples.</StickyNote>
+          </CorkBoardItem>
+        </CorkBoardColumn>)}
+      </CorkBoard>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-cork-board-column-count')
+      .forEach((count, index) => { count.dataset.contrast = `${pinTones[index]}-column-count`; });
+    await verifyPaintedContrast(matrix);
+
+    const body = matrix.querySelector<HTMLElement>('.kraft-cork-board-body')!;
+    const cork = channels(getComputedStyle(body).backgroundColor).slice(0, 3);
+    const note = channels(getComputedStyle(matrix.querySelector('.kraft-sticky-note')!).backgroundColor).slice(0, 3);
+    body.tabIndex = 0;
+    act(() => body.focus());
+    expect(getComputedStyle(body).outlineStyle, 'board focus outline').toBe('solid');
+    expect(contrast(channels(getComputedStyle(body).outlineColor), cork), 'board focus contrast').toBeGreaterThanOrEqual(3);
+    for (const item of view.getAllByRole('group')) {
+      act(() => item.focus());
+      const css = getComputedStyle(item);
+      expect(css.outlineStyle, `${item.ariaLabel}: focus outline`).toBe('solid');
+      expect(contrast(channels(css.outlineColor), cork), `${item.ariaLabel}: focus contrast`).toBeGreaterThanOrEqual(3);
+    }
+    for (const pin of view.getAllByRole('button')) {
+      act(() => pin.focus());
+      const rim = channels(getComputedStyle(pin.firstElementChild!).borderTopColor);
+      const ring = channels(getComputedStyle(pin).outlineColor);
+      expect(getComputedStyle(pin).outlineStyle, `${pin.ariaLabel}: focus outline`).toBe('solid');
+      for (const [ground, face] of [['cork', cork], ['note', note]] as const) {
+        expect(contrast(rim, face), `${pin.ariaLabel}: rim on ${ground}`).toBeGreaterThanOrEqual(3);
+        expect(contrast(ring, face), `${pin.ariaLabel}: focus ring on ${ground}`).toBeGreaterThanOrEqual(3);
       }
     }
   });

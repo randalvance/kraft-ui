@@ -1,0 +1,194 @@
+/* Cork grain and wood streaks follow the nearest ThemeProvider's texture setting. */
+:root, [data-kraft-theme] {
+  --kraft-texture-cork:
+    radial-gradient(circle at 30% 35%, color-mix(in srgb, var(--kraft-cork-2) 38%, transparent) 0 1.2px, transparent 1.7px) 0 0 / 23px 19px,
+    radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--kraft-cork-2) 26%, transparent) 0 1.6px, transparent 2.2px) 0 0 / 37px 31px,
+    radial-gradient(circle at 45% 80%, var(--kraft-face) 0 1px, transparent 1.5px) 0 0 / 17px 29px;
+  --kraft-texture-wood: repeating-linear-gradient(91deg, transparent 0 5px, color-mix(in srgb, var(--kraft-cork) 20%, transparent) 5px 6px, transparent 6px 13px);
+}
+[data-kraft-texture="off"] { --kraft-texture-cork: none; --kraft-texture-wood: none; }
+
+.kraft-cork-board {
+  --kraft-cork-frame: var(--kraft-cork-2);
+  --kraft-cork-frame-edge: color-mix(in srgb, var(--kraft-cork-2) 62%, black);
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  padding: 10px;
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-wood), var(--kraft-cork-frame);
+  border: 1px solid var(--kraft-cork-frame-edge);
+  border-radius: var(--kraft-radius-5);
+  box-shadow: 2px 3px 0 var(--kraft-cork-frame-edge), 5px 8px 10px var(--kraft-amb), 10px 18px 26px -8px var(--kraft-amb-2);
+}
+
+.kraft-cork-board-body {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-ink);
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow: auto;
+  padding: var(--kraft-space-24);
+  color: var(--kraft-content-ink);
+  background: var(--kraft-texture-cork), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-cork);
+  background-attachment: local;
+  border: 1px solid var(--kraft-cork-frame-edge);
+  border-radius: var(--kraft-radius-2);
+  box-shadow: var(--kraft-recess);
+  scrollbar-color: var(--kraft-cork-2) transparent;
+}
+/* Inset, so the ring is drawn on cork instead of the darker frame. */
+.kraft-cork-board-body:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: -5px; }
+
+.kraft-cork-board[data-layout="grid"] > .kraft-cork-board-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--kraft-cork-board-item-width, 13rem)), 1fr));
+  align-items: start;
+  gap: var(--kraft-space-24);
+}
+.kraft-cork-board[data-layout="grid"] > .kraft-cork-board-body > * { inline-size: 100%; }
+
+.kraft-cork-board[data-layout="free"] > .kraft-cork-board-body { min-block-size: 12rem; }
+.kraft-cork-board[data-layout="free"] > .kraft-cork-board-body > .kraft-cork-board-item {
+  position: absolute;
+  left: var(--kraft-cork-board-item-x, 0px);
+  top: var(--kraft-cork-board-item-y, 0px);
+  z-index: var(--kraft-cork-board-item-z, auto);
+  inline-size: var(--kraft-cork-board-item-width, 13rem);
+}
+/* The item in use comes to the front, so its focus ring is never covered. */
+.kraft-cork-board[data-layout="free"] > .kraft-cork-board-body > .kraft-cork-board-item:focus-within { z-index: 2147483647; }
+
+.kraft-cork-board[data-layout="columns"] > .kraft-cork-board-body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kraft-space-24);
+  scroll-padding-block-start: 4rem;
+}
+
+.kraft-cork-board-item { position: relative; box-sizing: border-box; min-inline-size: 0; }
+.kraft-cork-board-item > .kraft-sticky-note { inline-size: 100%; }
+.kraft-cork-board-item:focus-visible {
+  outline: 2px solid var(--kraft-ink);
+  outline-offset: 5px;
+  border-radius: var(--kraft-radius-2);
+}
+.kraft-cork-board-item-pin {
+  position: absolute;
+  z-index: 1;
+  top: var(--kraft-space-4);
+  left: 50%;
+  display: flex;
+  translate: -50% -50%;
+}
+
+.kraft-cork-board-column {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 var(--kraft-cork-board-column-width, 15rem);
+  flex-direction: column;
+  gap: var(--kraft-space-16);
+  min-inline-size: 0;
+}
+.kraft-cork-board-column-header.kraft-surface {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--kraft-space-8);
+  padding-inline: var(--kraft-space-10);
+  rotate: calc(-1deg * var(--kraft-tilt-factor, 1));
+  border-radius: var(--kraft-radius-2);
+}
+.kraft-cork-board-column-name {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  color: inherit;
+  font: 800 13px/1.3 var(--kraft-font-sans);
+  overflow-wrap: anywhere;
+}
+.kraft-cork-board-column-count {
+  flex: none;
+  min-inline-size: 24px;
+  padding: var(--kraft-space-2) var(--kraft-space-6);
+  border: 1.5px solid currentColor;
+  border-radius: var(--kraft-radius-pill);
+  font: 800 12px/1.3 var(--kraft-font-sans);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.kraft-cork-board-column-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kraft-space-16);
+  padding-inline: var(--kraft-space-4);
+}
+.kraft-cork-board-column-items > * { inline-size: 100%; }
+
+.kraft-pin {
+  --kraft-pin-face: var(--kraft-red);
+  --kraft-pin-ink: var(--kraft-content-ink, var(--kraft-ink));
+  position: relative;
+  box-sizing: border-box;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 16px;
+  block-size: 16px;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  background: none;
+  border: 0;
+}
+.kraft-pin[data-tone="blue"] { --kraft-pin-face: var(--kraft-blue); }
+.kraft-pin[data-tone="green"] { --kraft-pin-face: var(--kraft-green); }
+.kraft-pin[data-tone="amber"] { --kraft-pin-face: var(--kraft-attention); }
+/* The ink rim keeps the tack distinct on cork and on every note, whatever its tone. */
+.kraft-pin-head {
+  box-sizing: border-box;
+  inline-size: 16px;
+  block-size: 16px;
+  background:
+    radial-gradient(circle at 34% 30%, color-mix(in srgb, var(--kraft-white) 80%, transparent) 0 1.6px, transparent 2.4px),
+    radial-gradient(circle at 62% 68%, transparent 45%, color-mix(in srgb, var(--kraft-pin-face) 72%, black)),
+    var(--kraft-pin-face);
+  border: 1.5px solid var(--kraft-pin-ink);
+  border-radius: var(--kraft-radius-round);
+  box-shadow: 1px 2px 2px var(--kraft-amb);
+}
+
+button.kraft-pin {
+  appearance: none;
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: var(--kraft-radius-round);
+  cursor: pointer;
+}
+button.kraft-pin > .kraft-pin-head {
+  transition: translate var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease);
+}
+button.kraft-pin:enabled:hover > .kraft-pin-head { translate: 0 -2px; box-shadow: 1px 4px 3px var(--kraft-amb); }
+button.kraft-pin:enabled:active > .kraft-pin-head { translate: 0 0; box-shadow: 0 1px 1px var(--kraft-amb); }
+button.kraft-pin:focus-visible { outline: 2px solid var(--kraft-pin-ink); outline-offset: 0; }
+button.kraft-pin:disabled { cursor: not-allowed; }
+button.kraft-pin:disabled > .kraft-pin-head { background: none; border-style: dashed; box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  button.kraft-pin > .kraft-pin-head { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .kraft-cork-board, .kraft-cork-board-body { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-cork-board-body:focus-visible, .kraft-cork-board-item:focus-visible, button.kraft-pin:focus-visible { outline-color: Highlight; }
+  .kraft-cork-board-column-header.kraft-surface { background: Canvas; }
+  .kraft-pin-head { background: CanvasText; border-color: CanvasText; box-shadow: none; }
+  button.kraft-pin > .kraft-pin-head { background: ButtonText; border-color: ButtonText; }
+  button.kraft-pin:disabled > .kraft-pin-head { background: none; border-color: GrayText; }
+}

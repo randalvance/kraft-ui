@@ -41,6 +41,7 @@ export function Note() {
 | Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
+| Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
 | Controls | `Button`, `IconButton`, `Link` |
 | Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
@@ -130,6 +131,48 @@ function ProofNote({ selected, onSelect }: { selected: boolean; onSelect: () => 
   </StickyNote>;
 }
 ```
+
+### CorkBoard and Pin
+
+`CorkBoard` draws textured cork in a wooden frame. Native props and the ref reach the frame; choose `as="div"` (default) or `as="section"` with an `aria-label`. The cork scrolls inside the frame: set `maxHeight` to cap it or `height` to fix it. When the cork overflows it becomes a keyboard stop named by `scrollLabel` (default “Scrollable board”).
+
+`layout` chooses how the board arranges its children:
+
+- `grid` (default) flows children into equal cells at least `minItemWidth` pixels wide (default 208).
+- `free` places each `CorkBoardItem` by `x` and `y` in pixels from the cork's top-left corner, with `z` for stacking order. Give the board a `height`. The cork grows a scroll area to fit items placed beyond its edge. Items are `minItemWidth` wide.
+- `columns` lines up `CorkBoardColumn`s for a Kanban board and scrolls sideways when they do not fit.
+
+`CorkBoardItem` wraps one pinned thing in any layout and draws its `pin` over the top edge. Pass `onMove` and a `label` to make a free item movable by keyboard: it becomes a named tab stop, the arrow keys call `onMove` with the next `{ x, y }`, and Shift moves five steps. `step` sets the distance in pixels (default 8). The item never moves past the top or left edge, the focused item comes to the front, and the board scrolls to follow it. Store the position yourself and pass it back as `x` and `y`. The board does not add pointer dragging; if you add it, keep `onMove` so every move also works without a drag.
+
+`CorkBoardColumn` renders a named `<section>` with a pinned kraft header that stays in view while the board scrolls. `name` is its heading (`headingLevel`, default 3) and names the region. `count` shows a number beside it; pass `countLabel`, such as “3 notes”, for what screen readers hear in its place. `pinTone` colors the header's tack. Size columns with `--kraft-cork-board-column-width` (default `15rem`).
+
+`Pin` draws a tack with a highlight in `tone="red"` (default), `blue`, `green`, or `amber`. It is a decorative span by default; pass `label` to expose it as a named image. `as="button"` makes it a native button that requires a `label`, such as “Unpin the poster proof”, lifts on hover, and has a 28px target. Native props and the ref reach the span or button.
+
+```tsx
+import { CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, StickyNote } from '@randalvance/kraft-ui';
+
+function Wall({ notes, onMove, onUnpin }: WallProps) {
+  return <CorkBoard as="section" aria-label="Poster plan" layout="free" height={420}>
+    {notes.map(note => <CorkBoardItem key={note.id} label={note.text} x={note.x} y={note.y} z={note.z}
+      onMove={position => onMove(note.id, position)}
+      pin={<Pin as="button" label={`Unpin ${note.text}`} onClick={() => onUnpin(note.id)} />}>
+      <StickyNote>{note.text}</StickyNote>
+    </CorkBoardItem>)}
+  </CorkBoard>;
+}
+
+<CorkBoard as="section" aria-label="Poster plan" layout="columns" maxHeight={480}>
+  <CorkBoardColumn name="To do" count={2} countLabel="2 notes">
+    <StickyNote>Order cream paper</StickyNote>
+    <StickyNote tone="blue">Pick three photographs</StickyNote>
+  </CorkBoardColumn>
+  <CorkBoardColumn name="Done" count={1} countLabel="1 note" pinTone="green">
+    <StickyNote tone="sage" status="done">Book the print studio</StickyNote>
+  </CorkBoardColumn>
+</CorkBoard>;
+```
+
+The package exports `CorkBoardProps`, `CorkBoardLayout`, `CorkBoardItemProps`, `CorkBoardPosition`, `CorkBoardColumnProps`, `PinProps`, and `PinTone`.
 
 ### Interactive components and compositions
 
