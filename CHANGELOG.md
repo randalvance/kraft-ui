@@ -1,5 +1,17 @@
 # @randalvance/kraft-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- 6bbc12d: Add small and count sizes to Badge and Sticker. Mark labels stay on one line and preserve their width in flex layouts.
+- 5a2ae05: Add FormSection for titled paper form groups and PageHeader for persistent edit-page navigation and actions. Document accessible save status and setting row compositions.
+- d575d8c: Add Stamp, an outlined paper ink mark with an optional signature, a native toggle form, and theme-aware tilt and stamp-down motion.
+- 0c492af: Add Card and CardAddTile for paper grids, with optional colour spines, off and selected states, and native whole-card activation alongside independent controls.
+- 642ff98: Add CorkBoard, a cork board in a wooden frame with a scrolling body and grid, free-position, and column layouts. CorkBoardItem places things by coordinates with a z-order and can be moved with the arrow keys. CorkBoardColumn adds a pinned kraft header with a name and count for Kanban boards. Pin draws a tack in four tones as a decoration or as a button to unpin.
+- fb04d7a: Add ghost, text, and dashed Button variants, a leading icon slot, and flat pressed states. Add a bare IconButton variant and a corner badge slot. Button labels now stay on one line by default. Set `wrap` on buttons whose labels need to flow across lines.
+- 6bbc12d: Add SegmentedControl and ToggleChips for native single- and multi-select form choices, with joined and separate chip layouts, highlighter and ink selection, option counts, and second lines.
+
 ## 0.3.0
 
 ### Minor Changes
