@@ -88,6 +88,55 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps button labels, glyphs, badges, and indicators readable with decoration=%s', async decoration => {
+    const variants = [...tones, 'ghost', 'text', 'dashed', 'danger-text'] as const;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 980, padding: 24 }}>
+      <Stack gap={24}>
+        {[false, true].map(pressed => <Inline key={String(pressed)} gap={16} wrap>
+          {variants.map(variant => <Button key={variant} variant={variant === 'danger-text' ? 'text' : variant}
+            tone={variant === 'danger-text' ? 'danger' : undefined} aria-pressed={pressed}>
+            <span data-contrast={`${variant}-${pressed}`}>{variant}</span>
+          </Button>)}
+        </Inline>)}
+        <Inline gap={24}>
+          {([...tones, 'bare'] as const).flatMap(variant => [false, true].map(pressed =>
+            <IconButton key={`${variant}-${pressed}`} variant={variant} size="sm" aria-label={`${variant} inbox`}
+              aria-pressed={pressed} badge={<Sticker size="count" data-contrast={`${variant}-badge-${pressed}`}>12</Sticker>}>
+              <Icon name="inbox" data-glyph={`${variant}-glyph-${pressed}`} />
+            </IconButton>))}
+        </Inline>
+        <Inline gap={16}>
+          {materials.map(material => <Surface key={material} material={material} padding={12}>
+            <Button variant="text" tone="danger" leading={<Icon name="trash" data-glyph={`${material}-danger-icon`} />}>
+              <span data-contrast={`${material}-danger-label`}>Remove board</span>
+            </Button>
+          </Surface>)}
+        </Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await verifyPaintedContrast(matrix);
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll('[data-glyph]').forEach(glyph => glyph.setAttribute('data-contrast', glyph.getAttribute('data-glyph')!));
+    await verifyPaintedContrast(matrix, 3);
+    for (const button of view.getAllByRole('button')) {
+      const ground = channels(getComputedStyle(button.closest('.kraft-surface') ?? matrix).backgroundColor);
+      const name = button.ariaLabel ?? button.textContent;
+      const css = getComputedStyle(button);
+      if (button.matches('[data-variant="ghost"], [data-variant="dashed"]')) {
+        expect(contrast(channels(css.borderTopColor), ground), `${name}: boundary`).toBeGreaterThanOrEqual(3);
+      }
+      if (button.getAttribute('aria-pressed') === 'true') {
+        expect(css.boxShadow).toContain('inset');
+        expect(contrast(channels(css.color), channels(css.backgroundColor)), `${name}: pressed ring`).toBeGreaterThanOrEqual(3);
+      }
+      act(() => button.focus());
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), ground), `${name}: keyboard focus`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
   it.each([true, false])('keeps card copy, spines, selection and focus readable with decoration=%s', async decoration => {
     const cardTones = [...tones, 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] satisfies CardTone[];
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}

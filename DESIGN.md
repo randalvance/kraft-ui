@@ -300,7 +300,7 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 ### Secondary
 
 - **Mat green / sage** distinguishes the sage button; **st-green** supplies the separate badge and sticker face.
-- **Mat red** provides the danger button's face and edge; **st-red** provides the danger badge and sticker face. These are separate material assignments, not interchangeable tones.
+- **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. **st-red** provides the danger badge and sticker face.
 - **Red, green, amber, ochre, teal, violet, plum, blush, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
 
 ### Neutral
@@ -368,7 +368,7 @@ Depth is structural: a crisp material edge sits beneath a face, followed by a di
 
 Paper and kraft Surface use radius-4; cardboard Surface uses radius-10. Buttons retain radius-4 at every size, including large. Icon buttons use radius-10 except the round small variant. Badges are pills; stickers offer round, pill, and square shapes, with square using radius-10. The exact component geometry is carried by frontmatter and the sidecar snippets.
 
-Surface outlines lightly mix the material edge with transparency. Button edges are solid. Dashed separators are printed divisions rather than raised edges. Sticker cuts surround the face without adding a directional shadow. Texture, motion, and decorative tilt can each be disabled at a ThemeProvider boundary.
+Surface outlines lightly mix the material edge with transparency. Raised buttons have solid edges, and the dashed add variant uses a printed outline. Dashed separators mark printed divisions. Sticker cuts surround the face without adding a directional shadow. Texture, motion, and decorative tilt can each be disabled at a ThemeProvider boundary.
 
 ## Components
 
@@ -378,11 +378,11 @@ Surface outlines lightly mix the material edge with transparency. Button edges a
 
 ### Buttons
 
-Tactile and dependable. `Button` has neutral, blue, sage, danger, and attention variants, and sm, md, and lg sizes. It defaults to native button semantics with type button. Hover lifts unpressed controls up and left; active and `aria-pressed="true"` travel down and right and reduce the shadow. Pressed toggles remain depressed on hover. Text buttons shrink to their available inline size and wrap long labels without truncation, including in flex and grid layouts; icon buttons retain their fixed geometry. Focus draws an ink outline with a clear offset. Disabled uses a quieter paper face; loading keeps its label, adds a small mark, disables activation, and announces busy state.
+`Button` has neutral, blue, sage, danger, and attention card variants in sm, md, and lg sizes. Raised buttons lift on hover and travel down and right during activation. `ghost`, `text`, and `dashed` are flat by default and show a paper tint on hover. Text actions can use danger ink. A persistent `aria-pressed="true"` has a flat face and inset ink ring, with the same label alignment as its neighbors. The `leading` slot spaces a decorative glyph before the label. Labels stay on one line by default and flow within the available width with `wrap`. Focus draws an offset ink outline. Disabled controls use muted ink. Loading keeps the label, shows a small Pinwheel in place of the leading icon, disables activation, and announces the busy state.
 
-`IconButton` shares Button behavior and requires an accessible label. Its sizing and corner treatment differ from the text button; small icon buttons are exactly 28×28px with 16px glyphs; other icon sizes use 20px glyphs. During loading, the busy mark replaces the action icon. Small controls need suitable spacing or another WCAG 2.2 AA target-size accommodation in their composition.
+`IconButton` requires an accessible label. Small icon buttons are 28×28px with 16px glyphs, and larger sizes use 20px glyphs. `bare` keeps the hit area and removes the resting card face. The optional corner `badge` holds an upright count sticker. During loading, the busy mark replaces the action icon and the corner badge stays visible.
 
-**The Dependable Press Rule.** Buttons depress toward their cut edge and never tilt. Stickers stay upright in every shape; decorative rotation is reserved for paper.
+**The Dependable Press Rule.** Raised buttons depress toward their cut edge during activation. Persistent toggles flatten in place. Buttons and stickers stay upright.
 
 ### Checkboxes and toggles
 

@@ -51,15 +51,46 @@ export const Mat = forwardRef(function Mat({
   </Tag>;
 }) as PolymorphicComponent<MatProps>;
 
-export type ButtonProps = ComponentPropsWithoutRef<'button'> & { variant?: Tone; size?: 'sm' | 'md' | 'lg'; loading?: boolean };
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ variant = 'neutral', size = 'md', loading = false, disabled, type = 'button', className, children, ...props }, ref) {
-  return <button {...props} ref={ref} type={type} disabled={disabled || loading} aria-busy={loading || props['aria-busy'] || undefined} className={cx('kraft-button', className)} data-variant={variant} data-size={size}>
-    {loading && <Pinwheel size="button" />}{children}
+export type ButtonVariant = Tone | 'ghost' | 'text' | 'dashed';
+export type IconButtonVariant = Tone | 'bare';
+
+type NativeButtonProps = ComponentPropsWithoutRef<'button'> & { size?: 'sm' | 'md' | 'lg'; loading?: boolean };
+type ButtonBaseProps = NativeButtonProps & { variant?: ButtonVariant | IconButtonVariant };
+const ButtonBase = forwardRef<HTMLButtonElement, ButtonBaseProps>(function ButtonBase({
+  variant = 'neutral', size = 'md', loading = false, disabled, type = 'button', className, children, ...props
+}, ref) {
+  return <button {...props} ref={ref} type={type} disabled={disabled || loading} aria-busy={loading || props['aria-busy']}
+    className={cx('kraft-button', className)} data-variant={variant} data-size={size}>
+    {loading && <Pinwheel size="button" />}
+    {children}
   </button>;
 });
-export type IconButtonProps = Omit<ButtonProps, 'children' | 'aria-label'> & { 'aria-label': string; children: ReactNode };
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton({ className, loading = false, children, ...props }, ref) {
-  return <Button {...props} ref={ref} loading={loading} className={cx('kraft-icon-button', className)}>{loading ? null : children}</Button>;
+
+export type ButtonProps = NativeButtonProps & {
+  variant?: ButtonVariant;
+  /** Ink tone for the text variant. */
+  tone?: 'neutral' | 'danger';
+  leading?: ReactNode;
+  wrap?: boolean;
+};
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ leading, wrap, tone, loading, children, ...props }, ref) {
+  return <ButtonBase {...props} ref={ref} loading={loading} data-button-tone={tone} data-button-wrap={wrap || undefined}>
+    {!loading && leading != null && typeof leading !== 'boolean' && <span className="kraft-button-leading" aria-hidden="true">{leading}</span>}
+    {children}
+  </ButtonBase>;
+});
+
+export type IconButtonProps = Omit<NativeButtonProps, 'children' | 'aria-label'> & {
+  variant?: IconButtonVariant;
+  'aria-label': string;
+  children: ReactNode;
+  badge?: ReactNode;
+};
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton({ className, loading, children, badge, ...props }, ref) {
+  return <ButtonBase {...props} ref={ref} loading={loading} className={cx('kraft-icon-button', className)}>
+    {!loading && children}
+    {badge != null && typeof badge !== 'boolean' && <span className="kraft-icon-button-badge" aria-hidden="true">{badge}</span>}
+  </ButtonBase>;
 });
 export const Link = forwardRef<HTMLAnchorElement, ComponentPropsWithoutRef<'a'>>(function Link({ className, ...props }, ref) {
   return <a {...props} ref={ref} className={cx('kraft-link', className)} />;

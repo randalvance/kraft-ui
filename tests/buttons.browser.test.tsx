@@ -1,13 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cdp, page } from 'vitest/browser';
+import { cdp, page, userEvent } from 'vitest/browser';
 import { cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Button, Card, CardAddTile, IconButton, Pinwheel, ThemeProvider, type Theme } from '../src';
+import { Button, Card, CardAddTile, Icon, IconButton, Inline, Pinwheel, Sticker, ThemeProvider, type Theme } from '../src';
 import '../src/styles.css';
 
 afterEach(cleanup);
 const longLabel = 'KeepThisVeryLongUnbrokenIdeaIdentifier'.repeat(6);
 const plus = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>;
+const variants = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ghost', 'text', 'dashed'] as const;
 const layouts = {
   standalone: {},
   flex: { display: 'flex', gap: 12, alignItems: 'start' },
@@ -24,11 +25,22 @@ function assertFits(button: HTMLButtonElement, frame: HTMLElement) {
 }
 
 describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
+  it('keeps labels on one line unless wrapping is enabled', () => {
+    const view = render(<ThemeProvider theme={theme}>
+      <Button style={{ width: 145 }}>Keep this label together</Button>
+      <Button wrap style={{ width: 145 }}>Keep this label together</Button>
+    </ThemeProvider>);
+    const [singleLine, multipleLines] = view.getAllByRole('button');
+    expect(getComputedStyle(singleLine).whiteSpace).toBe('nowrap');
+    expect(singleLine.getBoundingClientRect().height).toBe(36);
+    expect(multipleLines.getBoundingClientRect().height).toBeGreaterThan(36);
+  });
+
   it.each(Object.entries(layouts))('wraps long labels in %s layouts', (layoutName, style) => {
     for (const size of ['sm', 'md', 'lg'] as const) {
       const view = render(<ThemeProvider theme={theme} motion={false}>
         <div data-testid="frame" style={{ width: 180, ...style }}>
-          <Button size={size}>{longLabel}</Button>
+          <Button size={size} wrap>{longLabel}</Button>
           {layoutName === 'flex' && <IconButton size="sm" aria-label="Add note">{plus}</IconButton>}
         </div>
       </ThemeProvider>);
@@ -51,7 +63,7 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
     for (const label of labels) {
       const view = render(<ThemeProvider theme={theme} motion={false}>
         <div data-testid="frame" style={{ width: 180 }} dir={label.dir}>
-          <Button loading={label.loading}><span>{label.text}</span></Button>
+          <Button loading={label.loading} wrap><span>{label.text}</span></Button>
         </div>
       </ThemeProvider>);
       const button = view.getByRole('button') as HTMLButtonElement;
@@ -60,6 +72,83 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
       if (label.loading) expect(button.querySelector('.kraft-pinwheel')!.getBoundingClientRect().width).toBe(16);
       view.unmount();
     }
+  });
+
+  it.each([true, false])('keeps every pressed variant flat and aligned with decoration=%s', decoration => {
+    const view = render(<ThemeProvider theme={theme} texture={decoration} motion={decoration} tilt={decoration}>
+      {variants.map(variant => <Inline key={variant} wrap gap={12} style={{ width: 244 }}>
+        <Button variant={variant} style={{ width: 114 }}><span>{variant} idle</span></Button>
+        <Button variant={variant} style={{ width: 114 }} aria-pressed><span>{variant} on</span></Button>
+        <Button style={{ width: 114 }}>Next row</Button>
+      </Inline>)}
+    </ThemeProvider>);
+    for (const variant of variants) {
+      const idle = view.getByRole('button', { name: `${variant} idle` });
+      const pressed = view.getByRole('button', { name: `${variant} on`, pressed: true });
+      const nextRow = pressed.nextElementSibling!;
+      expect(nextRow.getBoundingClientRect().top).toBeGreaterThan(pressed.getBoundingClientRect().bottom);
+      expect(pressed.getBoundingClientRect().top).toBe(idle.getBoundingClientRect().top);
+      expect(pressed.firstElementChild!.getBoundingClientRect().bottom).toBe(idle.firstElementChild!.getBoundingClientRect().bottom);
+      const css = getComputedStyle(pressed);
+      expect(css.transform).toBe('none');
+      expect(css.boxShadow).toContain('inset');
+      expect(css.backgroundImage).toBe('none');
+    }
+  });
+
+  it('lays out leading icons and corner badges in both directions', () => {
+    const view = render(<ThemeProvider theme={theme}>
+      {(['ltr', 'rtl'] as const).map(dir => <Inline key={dir} dir={dir} gap={16}>
+        <Button variant="dashed" leading={<Icon name="plus" />}><span>Add {dir}</span></Button>
+        <IconButton variant="bare" size="sm" aria-label={`Inbox ${dir}`} badge={<Sticker size="count">12</Sticker>}>
+          <Icon name="inbox" />
+        </IconButton>
+      </Inline>)}
+    </ThemeProvider>);
+    for (const dir of ['ltr', 'rtl']) {
+      const add = view.getByRole('button', { name: `Add ${dir}` });
+      const [leading, label] = [...add.children].map(child => child.getBoundingClientRect());
+      expect(dir === 'rtl' ? leading.left - label.right : label.left - leading.right).toBeCloseTo(8);
+
+      const inbox = view.getByRole('button', { name: `Inbox ${dir}` });
+      const target = inbox.getBoundingClientRect();
+      const badge = view.getAllByText('12').find(count => inbox.contains(count))!.getBoundingClientRect();
+      expect([target.width, target.height]).toEqual([28, 28]);
+      expect(badge.top).toBeLessThan(target.top);
+      expect(dir === 'rtl' ? badge.left < target.left : badge.right > target.right).toBe(true);
+      expect(getComputedStyle(inbox).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+      expect(getComputedStyle(inbox).borderTopColor).toBe('rgba(0, 0, 0, 0)');
+      expect(getComputedStyle(inbox).boxShadow).toBe('none');
+    }
+  });
+
+  it('supports keyboard focus and activation for the new styles', async () => {
+    const activate = vi.fn();
+    const view = render(<ThemeProvider theme={theme} style={{ padding: 16 }}>
+      <Inline gap={16}>
+        <Button variant="ghost" onClick={activate}>Preview</Button>
+        <Button variant="text" tone="danger" onClick={activate}>Remove</Button>
+        <Button variant="dashed" onClick={activate}>Add</Button>
+        <IconButton variant="bare" aria-label="Pin" aria-pressed onClick={activate}><Icon name="pin" /></IconButton>
+      </Inline>
+    </ThemeProvider>);
+    const ghost = getComputedStyle(view.getByRole('button', { name: 'Preview' }));
+    const text = getComputedStyle(view.getByRole('button', { name: 'Remove' }));
+    const dashed = getComputedStyle(view.getByRole('button', { name: 'Add' }));
+    expect(ghost.borderTopStyle).toBe('solid');
+    expect(ghost.boxShadow).toBe('none');
+    expect(text.borderTopColor).toBe('rgba(0, 0, 0, 0)');
+    expect(text.color).not.toBe(ghost.color);
+    expect(dashed.borderTopStyle).toBe('dashed');
+
+    for (const button of view.getAllByRole('button')) {
+      await userEvent.tab();
+      expect(document.activeElement).toBe(button);
+      expect(button.matches(':focus-visible')).toBe(true);
+      expect(getComputedStyle(button).outlineStyle).toBe('solid');
+      await userEvent.keyboard('{Enter}[Space]');
+    }
+    expect(activate).toHaveBeenCalledTimes(8);
   });
 
   it('lifts a pressable card on hover and leaves slot controls independently clickable', async () => {
@@ -93,10 +182,12 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
       <Button onMouseDown={event => { pointerDownTransform = getComputedStyle(event.currentTarget).transform; }}>Normal</Button>
     </ThemeProvider>);
     const pinned = view.getByRole('button', { name: 'Pinned' });
-    expect(getComputedStyle(pinned).transform).toBe('matrix(1, 0, 0, 1, 2, 3)');
+    const pressedShadow = getComputedStyle(pinned).boxShadow;
+    expect(getComputedStyle(pinned).transform).toBe('none');
     await page.getByRole('button', { name: 'Pinned' }).hover();
     expect(pinned.matches(':hover')).toBe(true);
-    expect(getComputedStyle(pinned).transform).toBe('matrix(1, 0, 0, 1, 2, 3)');
+    expect(getComputedStyle(pinned).transform).toBe('none');
+    expect(getComputedStyle(pinned).boxShadow).toBe(pressedShadow);
     expect(pinned.getAttribute('aria-pressed')).toBe('true');
     await page.getByRole('button', { name: 'Normal' }).hover();
     const normal = view.getByRole('button', { name: 'Normal' });
@@ -104,7 +195,7 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
     await page.getByRole('button', { name: 'Normal' }).click();
     expect(pointerDownTransform).toBe('matrix(1, 0, 0, 1, 2, 3)');
     expect(getComputedStyle(normal).transform).toBe('matrix(1, 0, 0, 1, -1, -1)');
-    expect(getComputedStyle(pinned).transform).toBe('matrix(1, 0, 0, 1, 2, 3)');
+    expect(getComputedStyle(pinned).transform).toBe('none');
   });
 });
 
