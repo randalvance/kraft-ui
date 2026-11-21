@@ -1,9 +1,12 @@
 import { forwardRef, useId, useRef, useState, type ComponentPropsWithoutRef, type KeyboardEvent, type ReactNode } from 'react';
+import { descriptionClamp, type RowContentOptions, type RowDensity } from './row-options.js';
 
-export type TreeNode = {
+export type TreeBranchStyle = 'board' | 'plain';
+
+export type TreeNode = RowContentOptions & {
   id: string;
-  label: string;
-  description?: string;
+  /** Optional typeahead text for a rich label. Defaults to the rendered label text. */
+  textValue?: string;
   leading?: ReactNode;
   trailing?: ReactNode;
   disabled?: boolean;
@@ -16,6 +19,8 @@ export type TreeViewProps = Omit<ComponentPropsWithoutRef<'ul'>, 'children' | 'o
   /** A name for the tree as a whole. Item labels must be unique enough to distinguish them. */
   'aria-label': string;
   items: readonly TreeNode[];
+  density?: RowDensity;
+  branchStyle?: TreeBranchStyle;
   selectionMode?: 'none' | 'single';
   selectedId?: string | null;
   defaultSelectedId?: string | null;
@@ -34,9 +39,9 @@ function visibleItems(items: readonly TreeNode[], expanded: ReadonlySet<string>,
   ]);
 }
 
-/** A generic, single-focus tree. Branches expand; leaves select unless disabled. */
+/** A tree with roving treeitem focus and optional row actions. */
 export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function TreeView({
-  items, selectionMode = 'single', selectedId, defaultSelectedId = null, onSelectionChange,
+  items, density = 'default', branchStyle = 'board', selectionMode = 'single', selectedId, defaultSelectedId = null, onSelectionChange,
   expandedIds, defaultExpandedIds = [], onExpandedChange, className, ...props
 }, forwardedRef) {
   const [localSelected, setLocalSelected] = useState<string | null>(defaultSelectedId);
@@ -65,8 +70,12 @@ export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function Tre
     onExpandedChange?.(ids);
   }
 
+  function isSelectable(item: TreeNode) {
+    return selectionMode === 'single' && (item.selectable ?? !item.children?.length);
+  }
+
   function select(item: TreeNode) {
-    if (selectionMode === 'none' || item.disabled || (item.children?.length && !item.selectable) || item.selectable === false) return;
+    if (item.disabled || !isSelectable(item)) return;
     if (selectedId === undefined) setLocalSelected(item.id);
     onSelectionChange?.(item.id, item);
   }
@@ -100,7 +109,11 @@ export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function Tre
       search.current.value += event.key.toLocaleLowerCase();
       search.current.timer = window.setTimeout(() => { search.current.value = ''; }, 500);
       const ordered = [...enabled.slice(index + 1), ...enabled.slice(0, index + 1)];
-      next = ordered.find(({ item }) => item.label.toLocaleLowerCase().startsWith(search.current.value))?.item.id;
+      next = ordered.find(({ item }) => {
+        const text = item.textValue ?? (typeof item.label === 'string'
+          ? item.label : refs.current.get(item.id)?.querySelector('.kraft-tree-label')?.textContent);
+        return text?.trim().toLocaleLowerCase().startsWith(search.current.value);
+      })?.item.id;
     } else return;
     event.preventDefault();
     if (next) focus(next);
@@ -109,7 +122,8 @@ export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function Tre
   function render(itemsAtLevel: readonly TreeNode[], depth: number, parentId: string | null, path: readonly number[]): ReactNode {
     return itemsAtLevel.map((item, index) => {
       const branch = Boolean(item.children?.length);
-      const selectable = !branch || item.selectable === true;
+      const selectable = isSelectable(item);
+      const clamp = descriptionClamp(item.clampDescription);
       const current = { item, parentId, depth, position: index + 1, setSize: itemsAtLevel.length };
       const groupId = `${idPrefix}-${[...path, index].join('-')}-group`;
       const rowId = `${idPrefix}-${[...path, index].join('-')}-row`;
@@ -119,17 +133,28 @@ export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function Tre
         aria-level={depth + 1} aria-posinset={current.position} aria-setsize={current.setSize}
         aria-expanded={branch ? expanded.has(item.id) : undefined}
         aria-owns={branch && expanded.has(item.id) ? groupId : undefined}
-        aria-selected={selectionMode === 'single' && selectable ? selected === item.id : undefined}
+        aria-selected={selectable ? selected === item.id : undefined}
         aria-disabled={item.disabled || undefined}
-        className="kraft-tree-item" data-branch={branch || undefined}
+        className="kraft-tree-item" data-branch={branch || undefined} data-done={item.done || undefined}
+        data-activatable={branch || selectable || undefined}
         onFocus={event => { if (event.target === event.currentTarget) setFocusedId(item.id); }}
         onKeyDown={event => onItemKeyDown(event, current)}
-        onClick={event => { if (item.disabled || (event.target instanceof Element && event.target.closest('[role="treeitem"]') !== event.currentTarget)) return; focus(item.id); activate(item); }}>
-        <span id={rowId} className="kraft-tree-row">
-          <span className="kraft-tree-chevron" aria-hidden="true">{branch && <svg viewBox="0 0 20 20" fill="none"><path d="m7 4 6 6-6 6" /></svg>}</span>
-          {item.leading != null && <span className="kraft-tree-leading" aria-hidden="true">{item.leading}</span>}
-          <span className="kraft-tree-content"><span className="kraft-tree-label">{item.label}</span>{item.description != null && <> <span className="kraft-tree-description">{item.description}</span></>}</span>
-          {item.trailing != null && <> <span className="kraft-tree-trailing">{item.trailing}</span></>}
+        onClick={event => {
+          if (item.disabled || (event.target instanceof Element &&
+            (event.target.closest('[role="treeitem"]') !== event.currentTarget || event.target.closest('.kraft-tree-actions')))) return;
+          focus(item.id);
+          activate(item);
+        }}>
+        <span className="kraft-tree-row">
+          <span id={rowId} className="kraft-tree-main">
+            <span className="kraft-tree-chevron" aria-hidden="true">{branch && <svg viewBox="0 0 20 20" fill="none"><path d="m7 4 6 6-6 6" /></svg>}</span>
+            {item.leading != null && <span className="kraft-tree-leading" aria-hidden="true">{item.leading}</span>}
+            <span className="kraft-tree-content"><span className="kraft-tree-label" data-truncate={item.truncateLabel || undefined}>{item.label}</span>
+              {item.description != null && item.description !== '' && <> <span className="kraft-tree-description" style={clamp} data-clamp={clamp ? true : undefined}>{item.description}</span></>}
+            </span>
+            {item.trailing != null && <> <span className="kraft-tree-trailing">{item.trailing}</span></>}
+          </span>
+          {!item.disabled && item.actions != null && <span className="kraft-tree-actions" data-visibility={item.actionsVisibility}>{item.actions}</span>}
         </span>
         </div>
         {branch && expanded.has(item.id) && <ul id={groupId} role="group" className="kraft-tree-group">{render(item.children!, depth + 1, item.id, [...path, index])}</ul>}
@@ -137,5 +162,5 @@ export const TreeView = forwardRef<HTMLUListElement, TreeViewProps>(function Tre
     });
   }
 
-  return <ul {...props} ref={forwardedRef} role="tree" className={className ? `kraft-tree ${className}` : 'kraft-tree'}>{render(items, 0, null, [])}</ul>;
+  return <ul {...props} ref={forwardedRef} role="tree" data-density={density} data-branch-style={branchStyle} className={className ? `kraft-tree ${className}` : 'kraft-tree'}>{render(items, 0, null, [])}</ul>;
 });

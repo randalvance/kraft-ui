@@ -370,7 +370,29 @@ function WorkChoices() {
 }
 ```
 
-`ActionableList` names a flat collection. Each `ActionableListItem` has one primary button or link, with optional descriptive copy, noninteractive trailing detail, and separate `actions`. Use `current` for the active destination and `disabled` for an unavailable row. Use `TreeView` for hierarchy and `Select` for one choice from a listbox.
+`ActionableList` and `ActionableListProps` name a flat collection. `ActionableListItem` and `ActionableListItemProps` use `href` for a native link, `onActivate` for a native button, or static content when both are omitted. Use `current` for the active destination and `disabled` for an unavailable row. The list and item refs point to the native `ul` and `li`.
+
+`RowDensity` covers `"default"` and `"compact"`. Set `density="compact"` on a list or individual item for 28px single-line rows. An item's `density` overrides its list. Rows grow with multiline content or larger controls.
+
+`RowContentOptions` is shared by list items and tree nodes. Use inline React content in `label` and `description`, `truncateLabel` for one-line ellipsis, and `clampDescription` for a maximum visible line count. Clipped copy stays available to assistive technology. `leading` is decorative and noninteractive `trailing` detail can use the space its content needs. `done` strikes the label and mutes row copy. Use `trailing` for a written status when completion needs to be announced explicitly.
+
+Use `actions` for separately labelled controls. `RowActionsVisibility` covers `"always"` (default) and `"hover"`. Hover actions reserve space and appear on row hover or keyboard focus. They stay visible on touch. For example, a compact queue can put a short key before the title and show a pin beside it.
+
+```tsx
+import { ActionableList, ActionableListItem, Icon, IconButton } from '@randalvance/kraft-ui';
+
+export function PrintQueue({ onPin }: { onPin: () => void }) {
+  return <ActionableList aria-label="Print queue" density="compact">
+    <ActionableListItem href="/proofs/12" label={<><code>KW-12</code> Final print proof</>}
+      description={<>Check the <strong>cover margins</strong> before printing.</>}
+      truncateLabel clampDescription={1} actionsVisibility="hover"
+      actions={<IconButton size="sm" variant="bare" aria-label="Pin final print proof" onClick={onPin}>
+        <Icon name="pin" />
+      </IconButton>} />
+    <ActionableListItem label="Initial proof" done trailing="Complete" />
+  </ActionableList>;
+}
+```
 
 `Drawer` and `DrawerProps` provide a native paper aside with a rich `title` and optional rich `description`. Put a tag or stamp above the title with `eyebrow`, place decorative content beside the title with `leading`, and use `actions` for labelled controls next to close. Supply `onClose` to show the close button and `closeLabel` to customize its accessible name. The `footer` stays below the scrolling body by default. Set `footerPlacement="scroll"` to scroll them together.
 
@@ -398,20 +420,24 @@ export function KeepIdea() {
 }
 ```
 
-`TreeView` renders a named hierarchy from nodes with unique, stable `id` values. Branches expand and collapse; leaves select unless disabled. Set `selectable: true` on a branch when it should select too. Nodes can show a description, decorative `leading` mark, and noninteractive `trailing` content. Arrow keys navigate visible items, Home/End jump to the edges, typing finds a label, and Enter/Space activates the focused item. Expansion and selection can be uncontrolled (`defaultExpandedIds`, `defaultSelectedId`) or controlled (`expandedIds`, `selectedId`) with change callbacks. Use `selectionMode="none"` for an exploration-only tree. Keep menus, links, filtering, and drag and drop in the application rather than nesting interactive controls inside a tree row.
+`TreeView` and `TreeViewProps` render a named hierarchy from `TreeNode` objects with unique, stable `id` values. Set `density="compact"` for 28px single-line rows and `branchStyle="plain"` for a file navigator with flat branches. `TreeBranchStyle` covers `"board"` (default) and `"plain"`. The ref points to the native `ul`.
+
+Branches expand and collapse. Leaves select by default. Set `selectable: true` to select a branch or `selectable: false` for a read-only leaf. Use `selectionMode="none"` to turn off selection across the tree. Arrow keys navigate visible items, Home and End jump to the edges, and Enter or Space activates the focused item. Typeahead uses the rendered label text, or the node's `textValue` when supplied. Expansion and selection can be uncontrolled (`defaultExpandedIds`, `defaultSelectedId`) or controlled (`expandedIds`, `selectedId`) with change callbacks.
+
+Nodes support the same rich copy, clipping, `done`, `actions`, and `actionsVisibility` options as list items. The row's name includes its label, description, and trailing detail. Actions have their own names and keyboard focus. Tab reaches the action controls, and activating one leaves tree selection and expansion alone. Disabled nodes have no action controls.
 
 ```tsx
 import { TreeView, type TreeNode } from '@randalvance/kraft-ui';
 
 const pages: TreeNode[] = [
   { id: 'ideas', label: 'Ideas', children: [
-    { id: 'sketches', label: 'Sketches' },
-    { id: 'notes', label: 'Notes', description: 'Three pages' },
+    { id: 'sketches', label: <code>sketches.md</code> },
+    { id: 'notes', label: <code>notes.md</code>, description: 'Three pages', truncateLabel: true, clampDescription: 1 },
   ] },
 ];
 
 export function Pages({ onOpen }: { onOpen: (id: string) => void }) {
-  return <TreeView aria-label="Pages" items={pages} defaultExpandedIds={['ideas']}
+  return <TreeView aria-label="Pages" items={pages} defaultExpandedIds={['ideas']} density="compact" branchStyle="plain"
     onSelectionChange={onOpen} />;
 }
 ```
