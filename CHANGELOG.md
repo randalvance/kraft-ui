@@ -1,5 +1,16 @@
 # @randalvance/kraft-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- 507e118: Add compact ActionableList and TreeView rows with rich labels and descriptions, optional ellipsis and line clamping, flexible trailing detail, done styling, and reserved hover and focus actions. TreeView supports plain branches and typeahead for rich labels. ActionableListItem renders static content when given neither a destination nor an activation callback.
+- 3daf975: Add rich headings, eyebrow slots, and header actions to Dialog and Drawer. Dialog supports three widths and keeps its top edge steady as content changes. Drawer supports an optional close button and a scrolling footer. ResizablePane fills its container with independently scrolling columns and supports stacked drawers in the side pane.
+
+### Patch Changes
+
+- b7403c0: Keep the paper-theme blue Button label at 4.5:1 across the whole face by multiplying the paper texture instead of letting its light fibres lighten the blue beneath white ink.
+
 ## 0.4.0
 
 ### Minor Changes
