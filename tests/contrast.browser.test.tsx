@@ -10,6 +10,7 @@ import '../src/styles.css';
 import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
 import { FormSection, PageHeader, Toggle } from '../src';
 import { Dialog, Drawer, ResizablePane } from '../src';
+import { ActionableList, ActionableListItem, TreeView } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -89,6 +90,58 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps collection row ink and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration}
+      style={{ ...font, width: 480, padding: 24 }}>
+      <Stack gap={8}>
+        <ActionableList aria-label="Print queue" density="compact">
+          <ActionableListItem label={<><code>KW-12</code> Print proof</>} description={<>Review the <strong>trim</strong></>} trailing="Today"
+            href="#proof" current done actionsVisibility="hover"
+            actions={<IconButton variant="bare" size="sm" aria-label="Pin print proof"><Icon name="pin" /></IconButton>} />
+          <ActionableListItem label="Production notes" description="Draft notes" />
+        </ActionableList>
+        <TreeView aria-label="Files" branchStyle="plain" density="compact" defaultExpandedIds={['src']} defaultSelectedId="index"
+          items={[{ id: 'src', label: <code>src</code>, description: 'Workspace files', children: [
+            { id: 'index', label: <code>index.ts</code>, description: 'Review complete', trailing: 'Yesterday', done: true },
+          ] }]} />
+        <TreeView aria-label="Archive" items={[{ id: 'archive', label: 'Archive', description: 'Earlier proofs', done: true,
+          children: [{ id: 'old', label: 'First proof' }] }]} />
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const samples = matrix.querySelectorAll<HTMLElement>(
+      '.kraft-list-label, .kraft-list-description, .kraft-list-trailing, .kraft-tree-label, .kraft-tree-description, .kraft-tree-trailing',
+    );
+    for (const sample of samples) sample.dataset.contrast = sample.textContent!;
+    await verifyPaintedContrast(matrix);
+    for (const sample of samples) sample.removeAttribute('data-contrast');
+
+    const branch = view.getByRole('treeitem', { name: /^src\b/ });
+    const link = view.getByRole('link', { name: /^KW-12\b/ });
+    const action = view.getByRole('button', { name: 'Pin print proof' });
+    const slot = action.parentElement!;
+    expect(getComputedStyle(slot).opacity).toBe('0');
+    await page.getByRole('link', { name: /^KW-12\b/ }).hover();
+    expect(getComputedStyle(slot).opacity).toBe('1');
+    await page.getByRole('treeitem', { name: /^src\b/ }).hover();
+    expect(getComputedStyle(slot).opacity).toBe('0');
+    const linkGround = channels(getComputedStyle(link.closest('li')!).backgroundColor);
+    const deskGround = channels(getComputedStyle(matrix).backgroundColor);
+    for (const [target, outline, ground] of [[link, link, linkGround], [branch, branch.firstElementChild!, deskGround]] as const) {
+      act(() => target.focus());
+      const css = getComputedStyle(outline);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), ground)).toBeGreaterThanOrEqual(3);
+    }
+
+    const chevron = branch.querySelector('svg')!;
+    if (!decoration) expect(getComputedStyle(chevron).transitionDuration).toBe('0s');
+    chevron.dataset.contrast = 'plain branch chevron';
+    act(() => link.focus());
+    action.querySelector('svg')!.dataset.contrast = 'hover action glyph';
+    await verifyPaintedContrast(matrix, 3);
+  });
+
   it.each([true, false])('keeps dialog and drawer headers and divider readable with decoration=%s', async decoration => {
     const themeProps = { theme, texture: decoration, motion: decoration, tilt: decoration, style: font };
     const header = {

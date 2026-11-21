@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
-import { Badge, TreeView, type TreeNode } from '../src';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { Badge, Icon, IconButton, TreeView, type TreeNode } from '../src';
 
 const items: TreeNode[] = [
   { id: 'shelf', label: 'Idea shelf', trailing: '3 folders', children: [
@@ -20,8 +20,12 @@ const items: TreeNode[] = [
 
 const meta = {
   title: 'Components/TreeView', component: TreeView,
-  parameters: { controls: { include: ['selectionMode'] }, docs: { description: { component: 'A generic hierarchy with native ARIA tree semantics. Nodes supply stable IDs, text labels, optional descriptions and decorative marks. Branch rows expand; leaves select. Set selectable on a branch when it should select too. Arrow keys move through visible items, Home/End jump to the edges, typing finds a label, and Enter/Space activates. Application code owns filtering, routing, menus, and drag and drop.' } } },
-  argTypes: { selectionMode: { control: 'radio', options: ['single', 'none'] } },
+  parameters: { controls: { include: ['selectionMode', 'density', 'branchStyle'] }, docs: { description: { component: 'A named hierarchy with rich labels and optional row actions. Branches expand and leaves select. Arrow keys move through visible rows, Home and End jump to the edges, typing finds a label, and Enter or Space activates a row. Tab reaches the separate row actions.' } } },
+  argTypes: {
+    selectionMode: { control: 'radio', options: ['single', 'none'] },
+    density: { control: 'radio', options: ['default', 'compact'] },
+    branchStyle: { control: 'radio', options: ['board', 'plain'] },
+  },
   args: { 'aria-label': 'Idea shelf', items, defaultExpandedIds: ['shelf', 'notes'], defaultSelectedId: 'draft', selectionMode: 'single', style: { maxWidth: 380 } },
 } satisfies Meta<typeof TreeView>;
 export default meta;
@@ -68,3 +72,62 @@ export const RightToLeft: Story = { render: () => <div dir="rtl" lang="ar"><Tree
 } };
 
 export const Night: Story = { globals: { theme: 'night' } };
+
+const pinFolder = fn();
+const files: TreeNode[] = [
+  { id: 'src', label: <><code>src</code> Workspace application source</>, textValue: 'src',
+    description: <>Files for the <strong>production workspace</strong> and its navigation components</>,
+    leading: <Icon name="code" />, truncateLabel: true, clampDescription: 1,
+    actionsVisibility: 'hover', actions: <IconButton variant="bare" size="sm" aria-label="Pin source folder" onClick={pinFolder}><Icon name="pin" /></IconButton>,
+    children: [
+      { id: 'index', label: <code>index.ts</code>, trailing: 'Updated just before the print review' },
+      { id: 'legacy', label: <code>legacy.ts</code>, trailing: <Badge tone="sage" size="sm">Done</Badge>, done: true, selectable: false },
+      { id: 'private', label: 'Private files', disabled: true },
+    ] },
+];
+
+export const FileNavigator: Story = {
+  args: { 'aria-label': 'Project files', items: files, density: 'compact', branchStyle: 'plain', defaultExpandedIds: [],
+    defaultSelectedId: null, style: { width: 280, maxWidth: '100%' } },
+  play: async ({ canvasElement }) => {
+    const tree = within(within(canvasElement).getByRole('tree', { name: 'Project files' }));
+    const branch = tree.getByRole('treeitem', { name: /^src Workspace/ });
+    const row = branch.querySelector('.kraft-tree-row')!;
+    const label = row.querySelector('.kraft-tree-label')!;
+    const description = row.querySelector('.kraft-tree-description')!;
+    const action = tree.getByRole('button', { name: 'Pin source folder' });
+    const slot = action.parentElement!;
+    const reservedWidth = slot.getBoundingClientRect().width;
+    await expect(row.getBoundingClientRect().height).toBeGreaterThanOrEqual(26);
+    await expect(row.getBoundingClientRect().height).toBeLessThanOrEqual(32);
+    await expect(getComputedStyle(row).boxShadow).toBe('none');
+    await expect(getComputedStyle(label).textOverflow).toBe('ellipsis');
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+    await expect(getComputedStyle(description).webkitLineClamp).toBe('1');
+    await expect(getComputedStyle(slot).opacity).toBe('0');
+    await userEvent.tab();
+    await expect(branch).toHaveFocus();
+    await expect(getComputedStyle(row).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(slot).opacity).toBe('1');
+    await expect(slot.getBoundingClientRect().width).toBe(reservedWidth);
+    await userEvent.tab();
+    await expect(action).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(pinFolder).toHaveBeenCalled();
+    await expect(branch).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.tab({ shift: true });
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}');
+    const file = tree.getByRole('treeitem', { name: /^index\.ts/ });
+    await expect(file).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await expect(file).toHaveAttribute('aria-selected', 'true');
+    const trailing = tree.getByText('Updated just before the print review');
+    await expect(trailing.getBoundingClientRect().width).toBeGreaterThan(0.45 * file.clientWidth);
+    const done = tree.getByRole('treeitem', { name: /^legacy\.ts/ });
+    await expect(getComputedStyle(done.querySelector('.kraft-tree-label')!).textDecorationLine).toBe('line-through');
+    await expect(done).not.toHaveAttribute('aria-selected');
+    await expect(tree.getByRole('treeitem', { name: 'Private files' })).toHaveAttribute('aria-disabled', 'true');
+  },
+};
+
+export const FileNavigatorWithoutDecoration: Story = { ...FileNavigator, globals: { texture: 'off', motion: 'off', tilt: 'off' } };

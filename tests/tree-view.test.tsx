@@ -71,4 +71,44 @@ describe('TreeView', () => {
     await userEvent.keyboard('a');
     expect(screen.getByRole('treeitem', { name: 'Archive' })).toHaveFocus();
   });
+
+  it('supports typeahead for rendered labels and explicit search text', async () => {
+    const files: TreeNode[] = [
+      { id: 'root', label: 'Files' },
+      { id: 'spec', label: <strong>TEST-1 spec.ts</strong>, textValue: 'spec.ts' },
+      { id: 'notes', label: <code>notes.ts</code>, description: <mark>Draft</mark>, truncateLabel: true, clampDescription: 1, done: true, selectable: false },
+    ];
+    const tree = <TreeView aria-label="Project files" items={files} density="compact" branchStyle="plain" />;
+    render(tree);
+    await userEvent.tab();
+    await userEvent.keyboard('s');
+    expect(screen.getByRole('treeitem', { name: 'TEST-1 spec.ts' })).toHaveFocus();
+
+    const html = renderToString(tree);
+    expect(html).toContain('data-branch-style="plain"');
+    expect(html).toContain('<code>notes.ts</code>');
+    expect(html).toContain('<mark>Draft</mark>');
+    expect(html).not.toContain('<button');
+  });
+
+  it('finds the text rendered by a rich label and lets independent row actions receive focus', async () => {
+    function FileLabel() { return <code>notes.ts</code>; }
+    const pin = vi.fn(), select = vi.fn();
+    const files: TreeNode[] = [
+      { id: 'readme', label: 'Readme' },
+      { id: 'notes', label: <FileLabel />, actions: <button onClick={pin}>Pin notes</button>, actionsVisibility: 'hover', selectable: false },
+    ];
+    render(<TreeView aria-label="Files" items={files} onSelectionChange={select} />);
+    await userEvent.tab();
+    await userEvent.keyboard('n');
+    const notes = screen.getByRole('treeitem', { name: 'notes.ts' });
+    expect(notes).toHaveFocus();
+    expect(notes).not.toHaveAttribute('aria-selected');
+    await userEvent.keyboard('{Enter}');
+    await userEvent.tab();
+    expect(screen.getByRole('button', { name: 'Pin notes' })).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(pin).toHaveBeenCalledOnce();
+    expect(select).not.toHaveBeenCalled();
+  });
 });

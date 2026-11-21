@@ -146,8 +146,9 @@ export const Composition: Story = {
     for (const [selector, pixels] of [['.kraft-tab-leading svg', 16], ['.kraft-list-leading svg', 18]] as const) {
       for (const icon of canvasElement.querySelectorAll(selector)) await expect(icon.getBoundingClientRect().width).toBe(pixels);
     }
-    await expect(canvas.getByRole('button', { name: 'Project notes' })).toBeEnabled();
-    await expect(canvas.getByRole('button', { name: 'Archived notes' })).toBeDisabled();
+    await expect(canvas.getByText('Project notes').closest('.kraft-list-target')?.tagName).toBe('SPAN');
+    await expect(canvas.getByText('Archived notes').closest('.kraft-list-target')).toHaveAttribute('aria-disabled', 'true');
+    await expect(canvas.getByRole('button', { name: 'Pin project notes' })).toBeEnabled();
     await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
   },
 };

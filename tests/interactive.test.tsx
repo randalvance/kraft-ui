@@ -45,7 +45,7 @@ describe('ActionableList', () => {
     const open = vi.fn(), more = vi.fn();
     render(<ActionableList aria-label="Sessions"><ActionableListItem label="Plan the release" description="Working now"
       current onActivate={open} actions={<button type="button" onClick={more}>More</button>} />
-      <ActionableListItem label="Older session" disabled /></ActionableList>);
+      <ActionableListItem label="Older session" disabled onActivate={open} /></ActionableList>);
     const list = screen.getByRole('list', { name: 'Sessions' });
     await userEvent.click(within(list).getByRole('button', { name: 'More' }));
     expect(more).toHaveBeenCalledOnce();
@@ -60,6 +60,37 @@ describe('ActionableList', () => {
   it('uses an anchor when a destination is provided', () => {
     render(<ActionableList aria-label="Pages"><ActionableListItem label="Notes" href="/notes" /></ActionableList>);
     expect(screen.getByRole('link', { name: 'Notes' })).toHaveAttribute('href', '/notes');
+  });
+
+  it('forwards native list and item refs and renders rich static rows on the client and server', async () => {
+    const listRef = createRef<HTMLUListElement>();
+    const itemRef = createRef<HTMLLIElement>();
+    const action = vi.fn();
+    const list = <ActionableList ref={listRef} aria-label="Print queue" density="compact">
+      <ActionableListItem ref={itemRef} id="proof" label={<><code>KW-12</code> Print proof</>}
+        description={<>Review the <mark>margins</mark></>} truncateLabel clampDescription={2} done
+        actionsVisibility="hover" actions={<button onClick={action}>Reopen print proof</button>} />
+      <ActionableListItem label="Old proof" disabled />
+    </ActionableList>;
+    render(list);
+    expect(listRef.current).toBe(screen.getByRole('list', { name: 'Print queue' }));
+    expect(listRef.current?.tagName).toBe('UL');
+    expect(itemRef.current).toBe(screen.getAllByRole('listitem')[0]);
+    expect(itemRef.current?.id).toBe('proof');
+    expect(screen.getByText('KW-12').tagName).toBe('CODE');
+    expect(screen.getByText('margins').tagName).toBe('MARK');
+    const reopen = screen.getByRole('button', { name: 'Reopen print proof' });
+    expect(screen.getAllByRole('button')).toEqual([reopen]);
+    await userEvent.tab();
+    expect(reopen).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(action).toHaveBeenCalledOnce();
+
+    const html = renderToString(list);
+    expect(html).toContain('data-density="compact"');
+    expect(html).toContain('<code>KW-12</code>');
+    expect(html).toContain('--kraft-row-description-lines:2');
+    expect(html).not.toContain('<button class="kraft-list-target"');
   });
 });
 

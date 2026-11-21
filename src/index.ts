@@ -17,6 +17,7 @@ export * from './radio-group.js';
 export * from './segmented-control.js';
 export * from './overlays.js';
 export * from './actionable-list.js';
+export type { RowDensity, RowActionsVisibility, RowContentOptions } from './row-options.js';
 export * from './table.js';
 export * from './description-list.js';
 export * from './prose.js';

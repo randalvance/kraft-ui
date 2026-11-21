@@ -412,7 +412,7 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 
 ### Actionable lists and side panes
 
-`ActionableList` makes flat rows from paper strips. One primary native button or link takes most of the row; optional row actions sit beside it without nesting controls. Leading marks are decorative, while descriptive and trailing text remain part of the primary target's name. A current row takes the highlighter face. Use `TreeView` for nested items and `Select` for a listbox.
+`ActionableList` makes flat rows from paper strips. The main area is a native button, link, or static content. Optional row actions sit beside it and keep their own focus. Compact rows reduce the inset and gap for long lists. Leading marks are decorative, and descriptive and trailing text contribute to the primary target's name. A current row takes the highlighter face. Done titles strike through in muted ink. Hover actions reserve their space and appear on pointer hover or keyboard focus. Use `TreeView` for nested items and `Select` for a listbox.
 
 `Drawer` is a titled side sheet with a thin dividing rule, scrollable body, and optional footer. `ResizablePane` sets that sheet beside the main content. Its dashed ink divider moves with pointer drag and keyboard arrows, with Home and End reaching size limits. Narrow layouts present the side pane across the available width. The application decides when it opens and where focus goes when it closes.
 
@@ -424,9 +424,9 @@ Paper carries content; kraft warms a paper-like panel; cardboard supplies suppor
 
 ### Tree view
 
-`TreeView` gives nested paper items a single keyboard focus. A board-colored branch row holds its label, secondary text, decorative leading mark, and noninteractive trailing detail. Child rows sit beside a dashed connector. The selected row uses a highlighter face; focus has a separate ink outline, so the two states remain distinct in Paper and Night. Disabled rows retain their shape and hierarchy without responding to input.
+`TreeView` gives nested paper items one roving treeitem focus. Branches use a board-colored strip by default and can be plain for a file navigator. Child rows sit beside a dashed connector. The selected row uses a highlighter face and focus has a separate ink outline. Compact rows have shallower insets and can clip rich titles and descriptions. Done titles strike through in muted ink. Separate row actions use native controls and can reveal themselves on hover or focus. Disabled rows retain their shape and hierarchy without responding to input.
 
-Branches expand and collapse; leaves select by default. A branch can opt into selection too. Arrow keys follow visible rows and enter or leave branches, Home/End reach the edges, and typing jumps to a matching label. The tree needs a name, stable unique node IDs, and a label for every item. Application code supplies navigation, filtering, menus, and drag and drop outside tree rows.
+Branches expand and collapse. Leaves select by default and branches can opt into selection. Arrow keys follow visible rows and enter or leave branches, Home and End reach the edges, and typing jumps to a matching label. Tab reaches the separate row actions. The tree needs a name, stable unique node IDs, and a label for every item. Application code supplies navigation, filtering, and drag and drop.
 
 ### Tabs and panes
 
