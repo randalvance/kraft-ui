@@ -135,7 +135,10 @@
 .kraft-button[data-button-wrap] { min-inline-size: 0; max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }
 .kraft-button-leading { display: inline-flex; flex: none; margin-inline-end: var(--kraft-space-2); }
 .kraft-button-leading > svg { inline-size: 16px; block-size: 16px; }
-.kraft-button[data-variant="blue"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); }
+/* Paper blue carries white ink: multiply keeps the dark pulp fibres but stops light ones from thinning the label's contrast. */
+:root, [data-kraft-theme="paper"] { --kraft-button-blue-texture-blend: multiply; }
+[data-kraft-theme="night"] { --kraft-button-blue-texture-blend: normal; }
+.kraft-button[data-variant="blue"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); background-blend-mode: normal, var(--kraft-button-blue-texture-blend, normal), normal; }
 .kraft-button[data-variant="sage"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }
 .kraft-button[data-variant="danger"] { --kraft-button-face: color-mix(in srgb, var(--kraft-mat-red-2) 85%, var(--kraft-mat-red-3)); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }
 .kraft-button[data-variant="attention"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }
