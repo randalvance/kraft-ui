@@ -9,6 +9,7 @@ import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
 import { FormSection, PageHeader, Toggle } from '../src';
+import { Dialog, Drawer, ResizablePane } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -88,6 +89,45 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps dialog and drawer headers and divider readable with decoration=%s', async decoration => {
+    const themeProps = { theme, texture: decoration, motion: decoration, tilt: decoration, style: font };
+    const header = {
+      title: <span data-contrast="title">Print proof</span>,
+      eyebrow: <Stamp size="sm" tone="blue" data-contrast="stamp">Draft</Stamp>,
+      description: <p data-contrast="description">Review the <strong>trim and margins</strong> before sending the proof to print.</p>,
+      actions: <Button size="sm" variant="text"><span data-contrast="action">Pin</span></Button>,
+    };
+    const view = render(<ThemeProvider {...themeProps}>
+      <ResizablePane style={{ width: 800, height: 240 }} main={<Text>Session notes</Text>}
+        pane={<Drawer {...header} data-testid="contrast-matrix" onClose={() => {}} />} />
+    </ThemeProvider>);
+    const separator = view.getByRole('separator');
+    const desk = channels(getComputedStyle(separator.closest('.kraft-root')!).backgroundColor);
+    expect(contrast(channels(getComputedStyle(separator, '::before').borderInlineStartColor), desk), 'divider line').toBeGreaterThanOrEqual(3);
+    act(() => separator.focus());
+    const focus = getComputedStyle(separator);
+    expect(focus.outlineStyle).toBe('solid');
+    expect(contrast(channels(focus.outlineColor), desk), 'divider focus').toBeGreaterThanOrEqual(3);
+
+    async function verifyHeader(close: HTMLElement) {
+      const matrix = view.getByTestId('contrast-matrix');
+      await verifyPaintedContrast(matrix);
+      matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+      close.querySelector('svg')!.setAttribute('data-contrast', 'close glyph');
+      await verifyPaintedContrast(matrix, 3);
+      act(() => close.focus());
+      const css = getComputedStyle(close);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), channels(getComputedStyle(matrix).backgroundColor)), 'close focus').toBeGreaterThanOrEqual(3);
+    }
+
+    await verifyHeader(view.getByRole('button', { name: 'Close panel' }));
+    view.rerender(<ThemeProvider {...themeProps}>
+      <Dialog {...header} data-testid="contrast-matrix" open onOpenChange={() => {}} />
+    </ThemeProvider>);
+    await verifyHeader(view.getByRole('button', { name: 'Close dialog' }));
+  });
+
   it.each([true, false])('keeps button labels, glyphs, badges, and indicators readable with decoration=%s', async decoration => {
     const variants = [...tones, 'ghost', 'text', 'dashed', 'danger-text'] as const;
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}

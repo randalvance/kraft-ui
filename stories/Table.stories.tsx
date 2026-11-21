@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { Badge, DescriptionList, Drawer, ResizablePane, Table, TableRowAction, type TableColumn } from '../src';
@@ -29,6 +29,7 @@ export const GroupedWithDrawer: Story = {
     const opener = useRef<HTMLButtonElement | null>(null);
     const drawerId = useId();
     const server = servers.find(item => item.id === current);
+    useEffect(() => { if (!server) opener.current?.focus(); }, [server]);
     const rows = servers.map(item => ({
       id: item.id,
       current: item.id === current,
@@ -48,10 +49,7 @@ export const GroupedWithDrawer: Story = {
         { id: 'workspace', caption: 'Workspace', rows: rows.slice(0, 2) },
         { id: 'local', caption: 'Local', rows: rows.slice(2) },
       ]} />}
-      pane={server && <Drawer id={drawerId} title={server.name} onClose={() => {
-        setCurrent(null);
-        opener.current?.focus();
-      }}>
+      pane={server && <Drawer id={drawerId} title={server.name} onClose={() => setCurrent(null)}>
         <DescriptionList items={[
           { id: 'transport', label: 'Transport', value: server.transport },
           { id: 'tools', label: 'Tools', value: server.tools },

@@ -1,34 +1,54 @@
-import { forwardRef, useEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { forwardRef, useCallback, useEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { ScrollRegion } from './scroll-region.js';
 
 export type DrawerProps = Omit<ComponentPropsWithoutRef<'aside'>, 'title'> & {
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   leading?: ReactNode;
+  /** A tag or stamp displayed above the title. */
+  eyebrow?: ReactNode;
+  /** Controls displayed beside the close button. */
+  actions?: ReactNode;
   footer?: ReactNode;
+  footerPlacement?: 'fixed' | 'scroll';
   closeLabel?: string;
-  onClose: () => void;
+  /** Omit to hide the close button. */
+  onClose?: () => void;
 };
 
 /** A titled paper side sheet. The surrounding layout owns whether it is shown. */
 export const Drawer = forwardRef<HTMLElement, DrawerProps>(function Drawer({
-  title, description, leading, footer, closeLabel = 'Close panel', onClose, children,
+  title, description, leading, eyebrow, actions, footer, footerPlacement = 'fixed', closeLabel = 'Close panel', onClose, children,
   className, 'aria-label': ariaLabel, 'aria-labelledby': labelledBy, 'aria-describedby': describedBy, ...props
 }, ref) {
   const id = useId();
+  const hasDescription = description != null && typeof description !== 'boolean' && description !== '';
+  const footerContent = footer != null && <div className="kraft-drawer-footer">{footer}</div>;
+  const headingId = labelledBy ?? (ariaLabel ? undefined : `${id}-title`);
   return <aside {...props} ref={ref} className={className ? `kraft-drawer ${className}` : 'kraft-drawer'}
-    aria-label={ariaLabel} aria-labelledby={labelledBy ?? (ariaLabel ? undefined : `${id}-title`)}
-    aria-describedby={[describedBy, description ? `${id}-description` : undefined].filter(Boolean).join(' ') || undefined}>
+    aria-label={ariaLabel} aria-labelledby={headingId}
+    aria-describedby={[describedBy, hasDescription ? `${id}-description` : undefined].filter(Boolean).join(' ') || undefined}>
     <div className="kraft-drawer-header">
-      {leading != null && <span className="kraft-drawer-leading" aria-hidden="true">{leading}</span>}
-      <div className="kraft-drawer-heading"><h2 id={`${id}-title`} className="kraft-drawer-title">{title}</h2>
-        {description && <p id={`${id}-description`} className="kraft-drawer-description">{description}</p>}
+      <div className="kraft-drawer-header-row">
+        {leading != null && <span className="kraft-drawer-leading" aria-hidden="true">{leading}</span>}
+        <div className="kraft-drawer-heading">
+          {eyebrow != null && <div className="kraft-drawer-eyebrow">{eyebrow}</div>}
+          <h2 id={`${id}-title`} className="kraft-drawer-title">{title}</h2>
+        </div>
+        {(actions != null || onClose) && <div className="kraft-drawer-actions">
+          {actions}
+          {onClose && <button type="button" className="kraft-overlay-close" aria-label={closeLabel} onClick={onClose}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>}
+        </div>}
       </div>
-      <button type="button" className="kraft-overlay-close" aria-label={closeLabel} onClick={onClose}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
-      </button>
+      {hasDescription && <div id={`${id}-description`} className="kraft-drawer-description">{description}</div>}
     </div>
-    <div className="kraft-drawer-body">{children}</div>
-    {footer != null && <div className="kraft-drawer-footer">{footer}</div>}
+    <ScrollRegion className="kraft-drawer-scroll" label={ariaLabel} labelledBy={headingId}>
+      <div className="kraft-drawer-body">{children}</div>
+      {footerPlacement === 'scroll' && footerContent}
+    </ScrollRegion>
+    {footerPlacement === 'fixed' && footerContent}
   </aside>;
 });
 
@@ -43,6 +63,8 @@ export type ResizablePaneProps = Omit<ComponentPropsWithoutRef<'div'>, 'children
   maxSize?: number;
   onSizeChange?: (size: number) => void;
   resizeLabel?: string;
+  mainLabel?: string;
+  paneLabel?: string;
 };
 
 type Drag = { pointerId: number; x: number; size: number };
@@ -50,13 +72,19 @@ type Drag = { pointerId: number; x: number; size: number };
 /** A split layout whose side pane can be resized by pointer or keyboard. Sizes are CSS pixels. */
 export const ResizablePane = forwardRef<HTMLDivElement, ResizablePaneProps>(function ResizablePane({
   main, pane, open = true, side = 'end', size, defaultSize = 360, minSize = 240, maxSize = 720,
-  onSizeChange, resizeLabel = 'Resize side pane', className, style, ...props
+  onSizeChange, resizeLabel = 'Resize side pane', mainLabel = 'Main pane', paneLabel = 'Side pane', className, style, ...props
 }, ref) {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const paneId = useId();
   const dragRef = useRef<Drag | null>(null);
   const [localSize, setLocalSize] = useState(defaultSize);
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   const currentSize = size ?? localSize;
+  const setRef = useCallback((node: HTMLDivElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === 'function') return ref(node);
+    if (ref) ref.current = node;
+  }, [ref]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -72,15 +100,17 @@ export const ResizablePane = forwardRef<HTMLDivElement, ResizablePaneProps>(func
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  function bounds() {
-    const available = Math.max(0, (rootRef.current?.clientWidth || containerWidth || maxSize + 160) - 160);
-    const high = Math.min(maxSize, available);
-    return { low: Math.min(minSize, high), high };
+  const reservedWidth = 184; // 160px of main content plus the 24px divider.
+  const high = Math.max(0, Math.floor(Math.min(maxSize, containerWidth ? containerWidth - reservedWidth : maxSize)));
+  const low = Math.max(0, Math.ceil(Math.min(minSize, high)));
+  const displayedSize = clampSize(currentSize);
+
+  function clampSize(next: number) {
+    return Math.max(low, Math.min(high, Math.round(next)));
   }
 
   function changeSize(next: number) {
-    const { low, high } = bounds();
-    const clamped = Math.round(Math.max(low, Math.min(high, next)));
+    const clamped = clampSize(next);
     if (clamped === displayedSize) return;
     if (size === undefined) setLocalSize(clamped);
     onSizeChange?.(clamped);
@@ -105,7 +135,6 @@ export const ResizablePane = forwardRef<HTMLDivElement, ResizablePaneProps>(func
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    const { low, high } = bounds();
     let next: number;
     if (event.key === 'Home') next = low;
     else if (event.key === 'End') next = high;
@@ -116,20 +145,18 @@ export const ResizablePane = forwardRef<HTMLDivElement, ResizablePaneProps>(func
     changeSize(next);
   }
 
-  const { low, high } = bounds();
-  const displayedSize = Math.round(Math.max(low, Math.min(high, currentSize)));
   const paneStyle = { '--kraft-pane-size': `${displayedSize}px` } as React.CSSProperties;
-  return <div {...props} ref={node => { rootRef.current = node; if (typeof ref === 'function') ref(node); else if (ref) ref.current = node; }}
+  const mainPane = <ScrollRegion key="main" className="kraft-pane-main" label={mainLabel}>{main}</ScrollRegion>;
+  const sidePane = open && <ScrollRegion key="side" id={paneId} className="kraft-pane-side" label={paneLabel}>{pane}</ScrollRegion>;
+  const separator = open && <div key="separator" className="kraft-pane-separator" role="separator" tabIndex={0}
+    aria-label={resizeLabel} aria-orientation="vertical" aria-controls={paneId}
+    aria-valuemin={low} aria-valuemax={high} aria-valuenow={displayedSize}
+    onPointerDown={onPointerDown} onPointerMove={onPointerMove}
+    onLostPointerCapture={event => { if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null; }}
+    onKeyDown={onKeyDown} />;
+  return <div {...props} ref={setRef}
     className={className ? `kraft-resizable-pane ${className}` : 'kraft-resizable-pane'}
     data-side={side} data-open={open} style={{ ...paneStyle, ...style }}>
-    <div className="kraft-pane-main">{main}</div>
-    {open && <>
-      <div className="kraft-pane-separator" role="separator" tabIndex={0} aria-label={resizeLabel} aria-orientation="vertical"
-        aria-valuemin={low} aria-valuemax={high} aria-valuenow={displayedSize}
-        onPointerDown={onPointerDown} onPointerMove={onPointerMove}
-        onPointerUp={event => { if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null; }}
-        onPointerCancel={() => { dragRef.current = null; }} onKeyDown={onKeyDown} />
-      <div className="kraft-pane-side">{pane}</div>
-    </>}
+    {side === 'start' ? [sidePane, separator, mainPane] : [mainPane, separator, sidePane]}
   </div>;
 });

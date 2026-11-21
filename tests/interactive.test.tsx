@@ -1,9 +1,9 @@
 import { createRef, useState } from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { ActionableList, ActionableListItem, Drawer, RadioGroup, ResizablePane } from '../src';
+import { ActionableList, ActionableListItem, Dialog, Drawer, RadioGroup, ResizablePane } from '../src';
 
 describe('RadioGroup', () => {
   const options = [
@@ -73,12 +73,28 @@ describe('Drawer and ResizablePane', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
+  it('forwards native aside props and supports rich heading content without a close action', () => {
+    const ref = createRef<HTMLElement>();
+    render(<Drawer ref={ref} id="proofs" title={<>Print <em>proofs</em></>}
+      eyebrow={<span>Draft</span>} description={<p>Ready for <strong>review</strong></p>}
+      actions={<button>Pin</button>} footer="Last edited today" footerPlacement="scroll" />);
+    const drawer = screen.getByRole('complementary', { name: 'Print proofs' });
+    expect(ref.current).toBe(drawer);
+    expect(drawer.tagName).toBe('ASIDE');
+    expect(drawer).toHaveAttribute('id', 'proofs');
+    expect(drawer).toHaveAccessibleDescription('Ready for review');
+    expect(within(drawer).getByRole('heading').previousElementSibling).toHaveTextContent('Draft');
+    expect(within(drawer).getByRole('button', { name: 'Pin' })).toBeEnabled();
+    expect(within(drawer).queryByRole('button', { name: 'Close panel' })).not.toBeInTheDocument();
+  });
+
   it('resizes with keyboard and keeps the main pane when closed', async () => {
     const sizes: number[] = [];
     const ref = createRef<HTMLDivElement>();
     const { rerender } = render(<ResizablePane ref={ref} main={<p>Main</p>} pane={<p>Side</p>}
       defaultSize={360} onSizeChange={next => sizes.push(next)} />);
     Object.defineProperty(ref.current, 'clientWidth', { value: 900, configurable: true });
+    fireEvent(window, new Event('resize'));
     const handle = screen.getByRole('separator', { name: 'Resize side pane' });
     handle.focus();
     await userEvent.keyboard('{ArrowLeft}');
@@ -90,5 +106,47 @@ describe('Drawer and ResizablePane', () => {
     expect(screen.queryByRole('separator')).not.toBeInTheDocument();
     expect(screen.getByText('Main')).toBeInTheDocument();
     expect(screen.queryByText('Side')).not.toBeInTheDocument();
+  });
+
+  it('renders a split pane and stacked drawers on the server', () => {
+    const html = renderToString(<ResizablePane side="start" main="Session notes" pane={<>
+      <Drawer title="Print files" />
+      <Drawer title="Approvals" />
+    </>} />);
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const divider = doc.querySelector('[role="separator"]')!;
+    const side = doc.getElementById(divider.getAttribute('aria-controls')!);
+    expect(side?.nextElementSibling).toBe(divider);
+    expect(side?.querySelectorAll('aside')).toHaveLength(2);
+    expect(divider.nextElementSibling?.textContent).toBe('Session notes');
+  });
+});
+
+describe('Dialog', () => {
+  it('forwards the native element, props, and ref and associates rich content', () => {
+    const ref = createRef<HTMLDialogElement>();
+    const { getByTestId } = render(<Dialog ref={ref} data-testid="proof-dialog" titleAs="h3"
+      open={false} onOpenChange={() => {}} title={<em>Print proof</em>} description={<p>Ready for <strong>review</strong>.</p>}
+      eyebrow={<span>Draft</span>} size="sm" actions={<button>Pin proof</button>} />);
+    const dialog = getByTestId('proof-dialog') as HTMLDialogElement;
+    expect(ref.current).toBe(dialog);
+    expect(dialog).toBeInstanceOf(HTMLDialogElement);
+    expect(dialog).toHaveAttribute('data-size', 'sm');
+    expect(dialog).not.toHaveAttribute('open');
+    const heading = document.getElementById(dialog.getAttribute('aria-labelledby')!);
+    expect(heading?.tagName).toBe('H3');
+    expect(heading).toHaveTextContent('Print proof');
+    expect(heading?.previousElementSibling).toHaveTextContent('Draft');
+    expect(document.getElementById(dialog.getAttribute('aria-describedby')!)?.querySelector('p')).toHaveTextContent('Ready for review.');
+    expect(dialog.querySelector('button')?.textContent).toBe('Pin proof');
+  });
+
+  it('renders an initially open dialog as native markup on the server for modal activation on mount', () => {
+    const html = renderToString(<Dialog open onOpenChange={() => {}} title="Proof" description="Ready for review." />);
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const dialog = doc.querySelector('dialog')!;
+    expect(dialog.hasAttribute('open')).toBe(false);
+    expect(doc.getElementById(dialog.getAttribute('aria-labelledby')!)?.textContent).toBe('Proof');
+    expect(doc.getElementById(dialog.getAttribute('aria-describedby')!)?.textContent).toBe('Ready for review.');
   });
 });

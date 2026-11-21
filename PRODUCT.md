@@ -52,6 +52,12 @@ Icon supplies 48 single-ink glyphs: the 29 original design-system icons and 19 a
 
 `FormSection` and `FormSectionProps` group form content in a paper `<section>` named by its serif `title`. The optional `hint` appears in handwriting beside the title, and `children` hold the controls below. Set `titleAs` (`h2` by default) to match nested heading levels. `PageHeader` and `PageHeaderProps` render a sticky native `<header>` with `title`, `titleAs` (`h1` by default), and optional `back`, `leading`, `status`, and `actions` slots above a dashed rule. Both forward native root props and refs. Place the header above an independently scrolling edit form to preserve visible keyboard focus. Compose save feedback with a persistent live status for “All saved”, “Unsaved changes”, and a brief “Saved” confirmation. Compose setting rows with a visible name and note, optional metadata, and a native switch labelled and described by the row text.
 
+`Dialog`, `DialogProps`, and `DialogSize` provide a native modal with controlled `open` and `onOpenChange`. Pass rich `title` and `description` content, an optional `titleAs`, and use `leading`, `eyebrow`, `actions`, and `footer` for header and footer content. Choose `size="sm" | "md" | "lg"`. The top edge stays anchored as content grows or shrinks. The browser confines focus and returns it when the modal closes. Set `initialFocusRef`, `dismissible`, or `closeLabel` to customize focus and dismissal.
+
+`Drawer` and `DrawerProps` provide a native aside with rich `title` and `description` and slots for `leading`, `eyebrow`, `actions`, and `footer`. Supply `onClose` to show the close button and use `closeLabel` to name it. Set `footerPlacement="scroll"` to scroll it with the body.
+
+`ResizablePane` and `ResizablePaneProps` fill a bounded container with scrolling flex columns for `main` and `pane`. The side pane supports stacked drawers and takes the full width in narrow containers. The application controls `open`, `side`, and focus return. Set `defaultSize` or control `size` and `onSizeChange`, with optional `minSize` and `maxSize`. The divider takes `resizeLabel` and supports pointer dragging, arrows, Home, and End. Use `mainLabel` and `paneLabel` to name overflowing columns for keyboard navigation.
+
 ## Brand Commitments
 
 The name is Kraft UI. Preserve its established paper, cardboard, and sticker identity. Its character is tactile, calm, and playful.
