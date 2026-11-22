@@ -220,12 +220,51 @@
 .kraft-choice:has(.kraft-choice-input:disabled) { cursor: not-allowed; }
 .kraft-choice:has(.kraft-choice-input:disabled) .kraft-choice-text { color: var(--kraft-faint); }
 .kraft-choice:has(.kraft-choice-input:disabled) .kraft-choice-description { color: var(--kraft-faint); }
-.kraft-checkbox-box { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; color: var(--kraft-control-on-ink); background: var(--kraft-card); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-recess); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
-.kraft-checkbox-box svg { grid-area: 1 / 1; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.6); transition: opacity var(--kraft-motion-duration, 150ms) var(--kraft-ease), transform var(--kraft-motion-duration, 150ms) var(--kraft-ease-pop); }
-.kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box { background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-control-on); border-color: var(--kraft-control-on-edge); box-shadow: 1px 2px 0 var(--kraft-control-on-edge); }
-.kraft-choice-input:checked:not(:indeterminate) + .kraft-checkbox-box .kraft-checkbox-check, .kraft-choice-input:indeterminate + .kraft-checkbox-box .kraft-checkbox-mixed { opacity: 1; transform: none; }
-.kraft-choice-input:hover:enabled:not(:checked):not(:indeterminate) + .kraft-checkbox-box { border-color: var(--kraft-ink); }
+.kraft-checkbox { min-width: 24px; }
+.kraft-checkbox-leading { display: inline-flex; flex: none; }
+.kraft-checkbox-trailing { min-width: 0; max-width: 40%; margin-inline-start: auto; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; line-height: 21px; text-align: end; overflow-wrap: anywhere; }
+.kraft-checkbox:has(.kraft-choice-input:disabled) .kraft-checkbox-trailing { color: var(--kraft-faint); }
+.kraft-checkbox[data-strike]:has(.kraft-choice-input:checked:not(:indeterminate)) .kraft-choice-label { text-decoration: line-through; }
+.kraft-checkbox-box { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; color: var(--kraft-control-on-ink, var(--kraft-on-blue)); background: var(--kraft-card); border: 1.5px solid var(--kraft-control-edge, var(--kraft-mute)); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-recess); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-checkbox-box svg { grid-area: 1 / 1; width: var(--kraft-checkbox-glyph-size, 16px); height: var(--kraft-checkbox-glyph-size, 16px); fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.6); transition: opacity var(--kraft-motion-duration, 150ms) var(--kraft-ease), transform var(--kraft-motion-duration, 150ms) var(--kraft-ease-pop); }
+:where(.kraft-choice-input:is(:checked, :indeterminate)) + .kraft-checkbox-box,
+.kraft-checkbox-status:where([data-state="checked"], [data-state="mixed"]) {
+  background: var(--kraft-checkbox-fill, linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-control-on, var(--kraft-blue)));
+  border-color: var(--kraft-checkbox-edge, var(--kraft-control-on-edge, var(--kraft-blue-2)));
+  box-shadow: var(--kraft-checkbox-shadow, 1px 2px 0 var(--kraft-control-on-edge, var(--kraft-blue-2)));
+}
+:is(.kraft-checkbox, .kraft-checkbox-status)[data-variant="pen"] {
+  --kraft-checkbox-fill: var(--kraft-card);
+  --kraft-checkbox-edge: var(--kraft-link-paper);
+  --kraft-checkbox-shadow: var(--kraft-recess);
+}
+.kraft-checkbox[data-variant="pen"] .kraft-checkbox-box, .kraft-checkbox-status[data-variant="pen"] { color: var(--kraft-link-paper); }
+:is(.kraft-checkbox, .kraft-checkbox-status)[data-variant="pen"] .kraft-checkbox-check { rotate: calc(-5deg * var(--kraft-tilt-factor, 1)); }
+:is(.kraft-choice-input:checked:not(:indeterminate) + .kraft-checkbox-box, .kraft-checkbox-status[data-state="checked"]) .kraft-checkbox-check,
+:is(.kraft-choice-input:indeterminate + .kraft-checkbox-box, .kraft-checkbox-status[data-state="mixed"]) .kraft-checkbox-mixed { opacity: 1; transform: none; }
+.kraft-checkbox:hover .kraft-choice-input:enabled:not(:checked):not(:indeterminate) + .kraft-checkbox-box { border-color: var(--kraft-ink); }
 .kraft-choice-input:active:enabled + .kraft-checkbox-box { transform: translate(1px, 1px); box-shadow: var(--kraft-recess); }
+.kraft-checkbox-status { --kraft-checkbox-glyph-size: 28px; width: 36px; height: 36px; margin: 0; vertical-align: middle; }
+.kraft-checkbox-group { min-inline-size: 0; margin: 0; padding: 0; border: 0; color: var(--kraft-content-ink, var(--kraft-ink)); }
+.kraft-checkbox-group-legend { box-sizing: border-box; inline-size: 100%; padding: 0 var(--kraft-space-8); font: 700 15px/1.4 var(--kraft-font-sans); }
+.kraft-checkbox-group-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0 var(--kraft-space-12); overflow-wrap: anywhere; }
+.kraft-checkbox-group-tally { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kraft-checkbox-group-grid { --kraft-checkbox-column-width: 10rem; position: relative; display: grid; overflow: clip; }
+.kraft-checkbox-group-grid[data-columns] { --kraft-checkbox-column-width: max(10rem, 100% / var(--kraft-checkbox-columns)); }
+.kraft-checkbox-group-grid[data-orientation="horizontal"], .kraft-checkbox-group-grid[data-columns] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--kraft-checkbox-column-width)), 1fr));
+}
+.kraft-checkbox-group-item { display: flex; min-inline-size: 0; padding: var(--kraft-space-8); }
+/* A line spans the grid from each item's row start. The grid clips the first line. */
+.kraft-checkbox-group-item::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  margin-block-start: calc(-1 * var(--kraft-space-8) - 1px);
+  border-block-start: 1px dashed var(--kraft-edge);
+  pointer-events: none;
+}
+.kraft-checkbox-group-item > .kraft-checkbox { inline-size: 100%; }
 .kraft-toggle .kraft-choice-text { padding-top: 2px; }
 .kraft-toggle-track { position: relative; display: inline-flex; align-items: center; width: 44px; height: 26px; padding: 3px; background: var(--kraft-rail); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-recess); transition: background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
 .kraft-toggle-knob { width: 17px; height: 17px; background: linear-gradient(135deg, var(--kraft-gloss), transparent 60%), var(--kraft-knob); border: 1px solid var(--kraft-control-edge); border-radius: 50%; box-shadow: 1px 2px 0 var(--kraft-edge-2), 2px 3px 4px var(--kraft-amb-2); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
@@ -377,8 +416,11 @@
   .kraft-field-input[aria-invalid="true"] { border-bottom-color: Highlight; }
   .kraft-form-field-error { color: CanvasText; }
   .kraft-checkbox-box, .kraft-toggle-track, .kraft-toggle-knob { border-color: CanvasText; background: Canvas; box-shadow: none; }
-  .kraft-checkbox-box { color: HighlightText; }
-  .kraft-choice-input:checked + .kraft-checkbox-box, .kraft-choice-input:indeterminate + .kraft-checkbox-box, .kraft-choice-input:checked + .kraft-toggle-track { border-color: Highlight; background: Highlight; }
+  :where(.kraft-choice-input:is(:checked, :indeterminate)) + .kraft-checkbox-box,
+  .kraft-checkbox-status:where([data-state="checked"], [data-state="mixed"]) { forced-color-adjust: none; color: HighlightText; border-color: Highlight; background: Highlight; box-shadow: none; }
+  .kraft-checkbox[data-variant="pen"] .kraft-checkbox-box, .kraft-checkbox-status[data-variant="pen"] { color: CanvasText; border-color: CanvasText; background: Canvas; box-shadow: none; }
+  .kraft-choice-input:checked + .kraft-toggle-track { border-color: Highlight; background: Highlight; }
   .kraft-choice-input:checked + .kraft-toggle-track .kraft-toggle-knob { background: HighlightText; border-color: HighlightText; }
   .kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track, .kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { border-color: GrayText; }
+  .kraft-choice-input:disabled + .kraft-checkbox-box { color: GrayText; background: Canvas; box-shadow: none; }
 }
