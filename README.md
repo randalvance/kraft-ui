@@ -53,7 +53,7 @@ export function Note() {
 | Long-form content | `Prose`, `CodeBlock`, `Code`, `Blockquote` |
 | Navigation | `Tabs` |
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
-| Marks | `Separator`, `Badge`, `Sticker`, `Stamp`, `StampProps`, `StampSize` |
+| Marks | `Separator`, `Badge`, `Sticker`, `Stamp`, `StampProps`, `StampSize`, `Tag`, `TagProps`, `TagVariant` |
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors.
 
@@ -233,6 +233,23 @@ function ApprovalStamp({ approved, onToggle }: { approved: boolean; onToggle: ()
   return <Stamp as="button" tone="sage" size="sm" signature="Mara" animate
     pressed={approved} onClick={onToggle}>Done</Stamp>;
 }
+```
+
+### Tag
+
+`Tag` takes a text label in `children`. The default `variant="kraft"` has a pointed edge, a punched hole, and monospaced ink for ticket keys, branches, models, and PR numbers. Use `variant="paper"` for workspace labels. Pass `leading` for a decorative icon or `swatch` for a decorative CSS color. The label truncates with an ellipsis in narrow layouts and retains its full accessible name. Optional `tilt` sets a rotation in degrees and defaults to `0`. Tag follows `ThemeProvider` for texture, motion, and tilt, and respects system reduced motion.
+
+By default Tag renders a static `span`. Set `as="a"` with `href` for navigation or `as="button"` for an action. Native props and the ref reach the chosen element. The button defaults to `type="button"`. `className` and `style` apply to the outer tag, so `maxInlineSize` can constrain the whole tag.
+
+Pass `onRemove` with a `removeLabel` such as “Remove Print Studio” to add a separately focusable close button. The application removes the tag in the callback and can move focus to the next tag or a nearby control. A disabled primary button still allows removal.
+
+```tsx
+import { Icon, Tag } from '@randalvance/kraft-ui';
+
+<Tag as="a" href="/branches/main" leading={<Icon name="branch" />}>main</Tag>;
+<Tag as="button" onClick={openTicket}>KW-19</Tag>;
+<Tag variant="paper" swatch="var(--kraft-teal)" onRemove={removeWorkspace}
+  removeLabel="Remove Print Studio">Print Studio</Tag>;
 ```
 
 ### CorkBoard and Pin

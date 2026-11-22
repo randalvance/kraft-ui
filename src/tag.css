@@ -1,0 +1,176 @@
+.kraft-tag {
+  --kraft-tag-ground: var(--kraft-sheet-warm);
+  --kraft-tag-ink: var(--kraft-ink);
+  --kraft-tag-texture: var(--kraft-texture-paper, var(--kraft-pulp-paper));
+  --kraft-tag-edge: color-mix(in srgb, var(--kraft-tag-ink) 65%, var(--kraft-tag-ground));
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 28px;
+  align-items: stretch;
+  vertical-align: middle;
+  rotate: calc(var(--kraft-tag-tilt) * var(--kraft-tilt-factor, 1));
+  color: var(--kraft-tag-ink);
+  font: 800 12px/1.25 var(--kraft-font-sans);
+}
+
+.kraft-tag[data-variant="kraft"] {
+  --kraft-tag-ground: var(--kraft-kraft);
+  --kraft-tag-ink: var(--kraft-ink-kraft);
+  --kraft-tag-texture: var(--kraft-texture-board, var(--kraft-pulp-board));
+  font: 700 12px/1.25 var(--kraft-font-mono);
+}
+
+.kraft-tag::before,
+.kraft-tag::after {
+  position: absolute;
+  content: '';
+  border-radius: var(--kraft-radius-4);
+  pointer-events: none;
+}
+
+.kraft-tag::before {
+  z-index: -2;
+  inset: 0;
+  background: var(--kraft-tag-edge);
+}
+
+.kraft-tag::after {
+  z-index: -1;
+  inset: 1px;
+  background: var(--kraft-tag-texture) var(--kraft-tag-ground);
+}
+
+/* The edge and face share a cut silhouette. The smaller cutout leaves a rim around the hole. */
+.kraft-tag[data-variant="kraft"]::before,
+.kraft-tag[data-variant="kraft"]::after {
+  border-radius: 2px;
+  clip-path: polygon(0 50%, 9px 0, 100% 0, 100% 100%, 9px 100%);
+  mask-image: radial-gradient(circle at var(--kraft-tag-hole-x, var(--kraft-tag-hole-offset)) center,
+    transparent var(--kraft-tag-hole-radius), #000 calc(var(--kraft-tag-hole-radius) + .5px));
+}
+
+.kraft-tag[data-variant="kraft"]::before {
+  --kraft-tag-hole-offset: 12px;
+  --kraft-tag-hole-radius: 3px;
+}
+
+.kraft-tag[data-variant="kraft"]::after {
+  --kraft-tag-hole-offset: 11px;
+  --kraft-tag-hole-radius: 4px;
+}
+
+.kraft-tag[data-variant="kraft"]:dir(rtl)::before,
+.kraft-tag[data-variant="kraft"]:dir(rtl)::after {
+  --kraft-tag-hole-x: calc(100% - var(--kraft-tag-hole-offset));
+  clip-path: polygon(100% 50%, calc(100% - 9px) 0, 0 0, 0 100%, calc(100% - 9px) 100%);
+}
+
+.kraft-tag-target,
+.kraft-tag-remove {
+  appearance: none;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  margin: 0;
+  border: 0;
+  border-radius: var(--kraft-radius-4);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.kraft-tag-target {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  gap: var(--kraft-space-6);
+  padding: 3px var(--kraft-space-8);
+  text-align: start;
+  text-decoration: none;
+}
+
+.kraft-tag[data-variant="kraft"] .kraft-tag-target { padding-inline-start: var(--kraft-space-24); }
+
+.kraft-tag-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-underline-offset: .16em;
+}
+
+.kraft-tag-leading,
+.kraft-tag-swatch { display: inline-flex; flex: none; }
+.kraft-tag-leading svg { width: 14px; height: 14px; }
+
+.kraft-tag-swatch {
+  inline-size: 10px;
+  block-size: 10px;
+  border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  border-radius: 2px;
+}
+
+.kraft-tag-remove {
+  position: relative;
+  flex: none;
+  min-inline-size: 26px;
+  justify-content: center;
+  padding: 0;
+}
+
+.kraft-tag-remove::before {
+  position: absolute;
+  inset-block: 7px;
+  inset-inline-start: 0;
+  border-inline-start: 1px dashed color-mix(in srgb, currentColor 55%, transparent);
+  content: '';
+}
+
+a.kraft-tag-target,
+button.kraft-tag-target:enabled,
+.kraft-tag-remove { cursor: pointer; }
+
+a.kraft-tag-target,
+button.kraft-tag-target { min-inline-size: 24px; }
+
+a.kraft-tag-target .kraft-tag-label,
+button.kraft-tag-target:enabled:hover .kraft-tag-label { text-decoration: underline; }
+
+.kraft-tag-remove:hover {
+  background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.kraft-tag:has(> :is(a.kraft-tag-target, button.kraft-tag-target:enabled):active)::after {
+  background-color: color-mix(in srgb, var(--kraft-tag-ink) 8%, var(--kraft-tag-ground));
+}
+
+.kraft-tag-remove:active { background-color: color-mix(in srgb, currentColor 18%, transparent); }
+
+button.kraft-tag-target:disabled {
+  color: color-mix(in srgb, var(--kraft-tag-ink) 70%, var(--kraft-tag-ground));
+  cursor: not-allowed;
+}
+
+.kraft-tag > :is(a.kraft-tag-target, button):focus-visible {
+  outline: 2px solid var(--kraft-tag-ink);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kraft-tag::after,
+  .kraft-tag-remove {
+    transition: background-color var(--kraft-motion-duration, var(--kraft-dur-hover)) var(--kraft-ease);
+  }
+}
+
+@media (forced-colors: active) {
+  .kraft-tag::before { forced-color-adjust: none; background: CanvasText; }
+  .kraft-tag::after { forced-color-adjust: none; background: Canvas; }
+  .kraft-tag a.kraft-tag-target { color: LinkText; }
+  .kraft-tag button.kraft-tag-target:disabled { color: GrayText; }
+  .kraft-tag > :is(a.kraft-tag-target, button):focus-visible { outline-color: Highlight; }
+}
