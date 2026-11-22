@@ -8,7 +8,7 @@ import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
-import { FormSection, PageHeader, Toggle } from '../src';
+import { Checkbox, CheckboxGroup, CheckboxStatus, FormSection, PageHeader, Toggle } from '../src';
 import { Dialog, Drawer, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
@@ -402,6 +402,77 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       expect(css.outlineStyle).toBe('solid');
       expect(contrast(channels(css.outlineColor), channels(surface.backgroundColor))).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it.each([true, false])('keeps checkbox labels, status marks, and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 520, padding: 24 }}>
+      <Surface padding={16}>
+        <Stack gap={12}>
+          <CheckboxGroup label="Print jobs" columns={2} tally="2 of 4">
+            <Checkbox defaultChecked trailing="Today">Covers</Checkbox>
+            <Checkbox variant="pen" defaultChecked strikeWhenChecked description="Finished proof">Inserts</Checkbox>
+            <Checkbox variant="pen" indeterminate>Booklets</Checkbox>
+            <Checkbox>Labels</Checkbox>
+          </CheckboxGroup>
+          <Inline gap={12}>
+            <CheckboxStatus label="Covers approved" checked />
+            <CheckboxStatus label="Some booklets approved" variant="pen" indeterminate />
+          </Inline>
+        </Stack>
+      </Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const text = matrix.querySelectorAll<HTMLElement>(
+      '.kraft-checkbox-group-legend [id], .kraft-choice-label, .kraft-choice-description, .kraft-checkbox-trailing',
+    );
+    text.forEach((sample, index) => { sample.dataset.contrast = `checkbox-text-${index}`; });
+    await verifyPaintedContrast(matrix);
+    text.forEach(sample => { delete sample.dataset.contrast; });
+
+    const marks = matrix.querySelectorAll<SVGElement>([
+      '.kraft-choice-input:checked + .kraft-checkbox-box .kraft-checkbox-check',
+      '.kraft-choice-input:indeterminate + .kraft-checkbox-box .kraft-checkbox-mixed',
+      '.kraft-checkbox-status[data-state="checked"] .kraft-checkbox-check',
+      '.kraft-checkbox-status[data-state="mixed"] .kraft-checkbox-mixed',
+    ].join(', '));
+    expect(marks).toHaveLength(5);
+    marks.forEach((mark, index) => { mark.dataset.contrast = `checkbox-mark-${index}`; });
+    await verifyPaintedContrast(matrix, 3);
+
+    const paper = channels(getComputedStyle(matrix.querySelector('.kraft-surface')!).backgroundColor);
+    for (const input of view.getAllByRole('checkbox')) {
+      const row = input.closest('label')!;
+      const mark = input.nextElementSibling!;
+      act(() => input.focus());
+      const css = getComputedStyle(mark);
+      expect(row.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+      expect(row.getBoundingClientRect().width).toBeGreaterThanOrEqual(24);
+      expect(css.outlineStyle).toBe('solid');
+      expect(contrast(channels(css.outlineColor), paper)).toBeGreaterThanOrEqual(3);
+    }
+    const pen = view.getByRole('checkbox', { name: 'Inserts' }).nextElementSibling!.querySelector('.kraft-checkbox-check')!;
+    expect(getComputedStyle(pen).rotate).toBe(decoration ? '-5deg' : '0deg');
+    if (!decoration) expect(getComputedStyle(pen).transitionDuration).toBe('0s, 0s');
+
+    const group = view.getByRole('group', { name: 'Print jobs' });
+    const items = group.querySelectorAll('.kraft-checkbox-group-item');
+    const rule = channels(getComputedStyle(items[2], '::before').borderBlockStartColor);
+    const screenshot = await pixels((await page.getByRole('group', { name: 'Print jobs' }).screenshot({ base64: true })).base64);
+    const groupTop = group.getBoundingClientRect().top;
+    const countRulePixels = (y: number) => {
+      let count = 0;
+      for (let x = 60; x < 100; x++) {
+        const offset = (y * screenshot.width + x) * 4;
+        if (rule.slice(0, 3).every((channel, i) => screenshot.data[offset + i] === channel)) count++;
+      }
+      return count;
+    };
+    const ruleRow = Math.round(items[2].getBoundingClientRect().top - groupTop) - 1;
+    const dashes = countRulePixels(ruleRow);
+    expect(dashes).toBeGreaterThan(0);
+    expect(dashes).toBeLessThan(40);
+    expect(countRulePixels(Math.round(items[0].getBoundingClientRect().top - groupTop))).toBe(0);
   });
 
   it.each([true, false])('keeps segment labels, counts, selection marks, and focus readable with decoration=%s', async decoration => {

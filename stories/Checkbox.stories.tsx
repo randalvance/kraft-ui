@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Checkbox, Stack, Surface } from '../src';
+import { Avatar, Checkbox, CheckboxStatus, Inline, Stack, Surface } from '../src';
 const meta = { title: 'Primitives/Checkbox', component: Checkbox,
  parameters: { docs: { description: { component: 'A native checkbox printed as a small paper box. Checking fills it with blue ink. Use it to choose items that take effect when a form is submitted; use Toggle for settings that apply immediately. The whole label is the hit target. `className` and `style` style the label; other props and the ref reach the input.' } } },
  args: { children: 'Keep drafts on this desk', onChange: fn() },
@@ -39,3 +39,78 @@ export const KeyboardFocus: Story = { render: () => <Checkbox>Focused choice</Ch
  await expect(box.matches(':focus-visible')).toBe(true);
  await expect(getComputedStyle(box.nextElementSibling!).outlineStyle).toBe('solid');
 } };
+
+export const MediaAndTrailing: Story = {
+ render: () => <Surface style={{ width: 'min(100%, 320px)' }}>
+  <Stack gap={12}>
+   <Checkbox
+    leading={<Avatar decorative size={24} initial="MP" tone="sage" tilt={-4} />}
+    trailing="Due Friday"
+    description="Ask for one copy on uncoated stock."
+   >
+    Send the revised cover to the print studio
+   </Checkbox>
+   <Checkbox
+    leading={<span aria-label="Blue swatch" style={{ display: 'block', width: 20, height: 20, background: 'var(--kraft-blue)', borderRadius: 4 }} />}
+    trailing="Pantone 286"
+   >
+    Use blue ink
+   </Checkbox>
+  </Stack>
+ </Surface>,
+ play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const cover = canvas.getByRole('checkbox', { name: 'Send the revised cover to the print studio' });
+  const row = cover.closest('label')!;
+  await expect(cover).toHaveAccessibleDescription('Ask for one copy on uncoated stock. Due Friday');
+  await userEvent.click(canvas.getByText('MP'));
+  await expect(cover).toBeChecked();
+  await userEvent.click(canvas.getByText('Due Friday'));
+  await expect(cover).not.toBeChecked();
+  const box = row.querySelector('.kraft-checkbox-box')!.getBoundingClientRect();
+  const label = row.querySelector('.kraft-choice-label')!.getBoundingClientRect();
+  await expect(Math.abs(box.top - label.top)).toBeLessThanOrEqual(2);
+  await expect(label.height).toBeGreaterThan(box.height);
+ },
+};
+
+export const PenTick: Story = {
+ render: () => <Stack gap={8}>
+  <Checkbox variant="pen" strikeWhenChecked>Fold the inserts</Checkbox>
+  <Checkbox variant="pen" strikeWhenChecked defaultChecked trailing="Monday">Cut the covers</Checkbox>
+  <Checkbox variant="pen" strikeWhenChecked defaultChecked indeterminate>Assemble the booklets</Checkbox>
+  <Checkbox variant="pen" defaultChecked disabled>Send the proofs</Checkbox>
+ </Stack>,
+ play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const item = canvas.getByText('Fold the inserts');
+  const box = canvas.getByRole('checkbox', { name: 'Fold the inserts' });
+  await userEvent.tab();
+  await expect(box).toHaveFocus();
+  await userEvent.keyboard(' ');
+  await expect(box).toBeChecked();
+  await expect(getComputedStyle(item).textDecorationLine).toBe('line-through');
+  await expect(getComputedStyle(canvas.getByText('Monday')).textDecorationLine).toBe('none');
+  await expect(getComputedStyle(canvas.getByText('Assemble the booklets')).textDecorationLine).toBe('none');
+  await userEvent.keyboard(' ');
+  await expect(getComputedStyle(item).textDecorationLine).toBe('none');
+ },
+};
+
+export const StaticStatus: Story = {
+ render: () => <Inline gap={16}>
+  <CheckboxStatus label="Proof pending" />
+  <CheckboxStatus label="Proof approved" checked />
+  <CheckboxStatus label="Some proofs approved" indeterminate />
+  <CheckboxStatus label="Proof signed" variant="pen" checked />
+ </Inline>,
+ play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(canvas.queryAllByRole('checkbox')).toHaveLength(0);
+  const status = canvas.getByRole('img', { name: 'Proof approved' });
+  await expect(status.getBoundingClientRect().width).toBe(36);
+  await userEvent.click(status);
+  await expect(status).not.toHaveFocus();
+  await expect(status).toHaveAttribute('data-state', 'checked');
+ },
+};

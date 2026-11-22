@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { Checkbox, Toggle } from '../src';
+import { Checkbox, CheckboxGroup, CheckboxStatus, Toggle } from '../src';
 
 describe('Checkbox', () => {
  it('is a labelled native checkbox toggled by pointer, label, and Space', async () => {
@@ -53,6 +53,87 @@ describe('Checkbox', () => {
   const { container } = render(<form><Checkbox name="tags" value="ideas" defaultChecked>Ideas</Checkbox></form>);
   expect(new FormData(container.querySelector('form')!).get('tags')).toBe('ideas');
   expect(renderToString(<Checkbox>Server</Checkbox>)).toContain('type="checkbox"');
+ });
+ it('toggles from both slots and announces trailing text as a description', async () => {
+  const change = vi.fn();
+  render(<>
+   <span id="hint">Shared hint</span>
+   <Checkbox leading={<img src="/portrait.png" alt="Portrait" />} trailing="Due Friday"
+    description="Cover stock" aria-describedby="hint" onChange={change}>Print covers</Checkbox>
+  </>);
+  const box = screen.getByRole('checkbox', { name: 'Print covers' });
+  expect(box).toHaveAccessibleDescription('Shared hint Cover stock Due Friday');
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  await userEvent.click(screen.getByAltText('Portrait'));
+  expect(box).toBeChecked();
+  await userEvent.click(screen.getByText('Due Friday'));
+  expect(box).not.toBeChecked();
+  expect(change).toHaveBeenCalledTimes(2);
+ });
+});
+
+describe('CheckboxStatus', () => {
+ it('renders a named static mark with a span ref on the client and server', async () => {
+  const ref = createRef<HTMLSpanElement>();
+  const { container } = render(<form><CheckboxStatus ref={ref} checked label="Cover approved" /></form>);
+  const status = screen.getByRole('img', { name: 'Cover approved' });
+  expect(ref.current).toBe(status);
+  expect(status.tagName).toBe('SPAN');
+  expect(status).toHaveAttribute('data-state', 'checked');
+  expect(container.querySelector('input')).toBeNull();
+  expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  await userEvent.tab();
+  expect(status).not.toHaveFocus();
+  expect(renderToString(<CheckboxStatus label="Some approved" indeterminate />))
+   .toMatch(/role="img".*aria-label="Some approved".*data-state="mixed"/);
+ });
+});
+
+describe('CheckboxGroup', () => {
+ it('names a native fieldset and submits, resets and disables its checkbox children', async () => {
+  const ref = createRef<HTMLFieldSetElement>();
+  function Choices({ disabled = false }: { disabled?: boolean }) {
+   return <form>
+    <p id="group-hint">Choose any</p>
+    <CheckboxGroup ref={ref} label="Print jobs" tally="1 of 2" aria-describedby="group-hint" disabled={disabled}>
+     <Checkbox name="jobs" value="covers" defaultChecked>Covers</Checkbox>
+     {false && <Checkbox>Hidden</Checkbox>}
+     <Checkbox name="jobs" value="inserts">Inserts</Checkbox>
+    </CheckboxGroup>
+    <button type="reset">Reset</button>
+   </form>;
+  }
+  const { container, rerender } = render(<Choices />);
+  const group = screen.getByRole('group', { name: 'Print jobs' });
+  const form = container.querySelector('form')!;
+  const covers = screen.getByRole('checkbox', { name: 'Covers' });
+  const inserts = screen.getByRole('checkbox', { name: 'Inserts' });
+  expect(ref.current).toBe(group);
+  expect(group.tagName).toBe('FIELDSET');
+  expect(group.firstElementChild?.tagName).toBe('LEGEND');
+  expect(group).toHaveAccessibleDescription('Choose any 1 of 2');
+  expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+  await userEvent.tab();
+  expect(covers).toHaveFocus();
+  await userEvent.tab();
+  expect(inserts).toHaveFocus();
+  await userEvent.keyboard(' ');
+  expect(new FormData(form).getAll('jobs')).toEqual(['covers', 'inserts']);
+  await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
+  expect(new FormData(form).getAll('jobs')).toEqual(['covers']);
+  rerender(<Choices disabled />);
+  expect(covers).toBeDisabled();
+  expect(inserts).toBeDisabled();
+  expect(new FormData(form).has('jobs')).toBe(false);
+ });
+
+ it('renders a legend, tally and native checkboxes on the server', () => {
+  const html = renderToString(<CheckboxGroup label="Print jobs" tally="1 of 2" columns={2}>
+   <Checkbox defaultChecked>Covers</Checkbox>
+   <Checkbox>Inserts</Checkbox>
+  </CheckboxGroup>);
+  expect(html).toMatch(/<fieldset.*<legend.*Print jobs.*1 of 2.*<input.*type="checkbox"/);
+  expect(html).toContain('data-columns="2"');
  });
 });
 

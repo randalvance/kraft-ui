@@ -45,7 +45,7 @@ export function Note() {
 | Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
 | Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link` |
-| Form choices | `Checkbox`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
+| Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
@@ -309,6 +309,25 @@ function Choices() {
     <Toggle checked={autosave} onChange={event => setAutosave(event.target.checked)}>Autosave</Toggle>
   </>;
 }
+```
+
+`CheckboxProps` adds `leading` for a decorative portrait or swatch and `trailing` for a note announced with the description. Both slots take noninteractive content and toggle the checkbox when clicked. The box stays aligned to the first line as the label wraps. Set `strikeWhenChecked` to cross out the main label when checked. `CheckboxVariant` offers `"ink"` (default, filled box) and `"pen"` (a handwritten tick on paper).
+
+`CheckboxGroup` and `CheckboxGroupProps` provide a native fieldset and ref, with a `label` as its legend and dashed rules between rows. Pass one checkbox child per cell. `orientation` defaults to `"vertical"`. Use `"horizontal"` for choices that wrap, or use `columns` to cap the number of equal-width columns. The grid drops columns in narrow containers. Supply `tally` as optional progress text, such as `"4 of 8"`. Calculate it from application state. Each checkbox keeps its own native state and form props, and setting `disabled` on the fieldset disables its choices.
+
+`CheckboxStatus` and `CheckboxStatusProps` provide a 36px static mark with `checked`, `indeterminate`, and `variant`. Supply a `label` that describes the item and its state, such as `"Cover proof approved"`. Native span props and the ref reach the mark.
+
+```tsx
+import { Avatar, Checkbox, CheckboxGroup, CheckboxStatus } from '@randalvance/kraft-ui';
+
+<CheckboxGroup label="Print jobs" columns={2} tally="1 of 2">
+  <Checkbox variant="pen" strikeWhenChecked defaultChecked trailing="Tuesday">Trim covers</Checkbox>
+  <Checkbox variant="pen" strikeWhenChecked leading={<Avatar decorative initial="MP" size={24} />}>
+    Check the proofs
+  </Checkbox>
+</CheckboxGroup>;
+
+<CheckboxStatus variant="pen" checked label="Cover proof approved" />;
 ```
 
 `TextField`, `Textarea`, and `SearchField` keep native input behavior, including refs, controlled or initial values, validation, and form submission. Put one control inside `FormField` to connect a visible `label`, optional `description`, and `error` to that control automatically. An error draws a dashed red field edge, sets `aria-invalid`, and becomes part of its accessible description; application code decides when to show it. Set `controlId` on `FormField` when another element needs the input ID. Each control can also stand alone with an external `<label>` and `id`, or an `aria-label`. `className` and `style` on a control apply to its native input or textarea; on `FormField` they apply to the wrapper.

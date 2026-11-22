@@ -8,6 +8,7 @@ export * from './tag.js';
 export * from './cork-board.js';
 export * from './avatar.js';
 export * from './controls.js';
+export * from './checkbox-group.js';
 export * from './tree-view.js';
 export * from './dialog.js';
 export * from './tabs.js';
