@@ -4,6 +4,7 @@ export * from './paper-panel.js';
 export * from './card.js';
 export * from './sticky-note.js';
 export * from './stamp.js';
+export * from './tag.js';
 export * from './cork-board.js';
 export * from './avatar.js';
 export * from './controls.js';

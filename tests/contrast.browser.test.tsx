@@ -11,6 +11,7 @@ import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
 import { FormSection, PageHeader, Toggle } from '../src';
 import { Dialog, Drawer, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
+import { Tag } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -90,6 +91,56 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps tag labels, glyphs, and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 490, padding: 24 }}>
+      <Stack align="start" gap={12}>
+        <Inline gap={12}>
+          <Tag tilt={-3}>KW-19</Tag>
+          <Tag as="a" href="#pull" leading={<Icon name="branch" />}>PR #42</Tag>
+          <Tag as="button" onRemove={() => {}} removeLabel="Remove main">main</Tag>
+        </Inline>
+        <Inline gap={12}>
+          <Tag variant="paper" swatch="var(--kraft-teal)" tilt={2}>Print Studio</Tag>
+          <Tag variant="paper" as="a" href="#editorial" swatch="var(--kraft-plum)">Editorial</Tag>
+          <Tag variant="paper" as="button" onRemove={() => {}} removeLabel="Remove Proofs">Proofs</Tag>
+        </Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const labels = matrix.querySelectorAll<HTMLElement>('.kraft-tag-label');
+    for (const label of labels) label.dataset.contrast = label.textContent!;
+    await verifyPaintedContrast(matrix);
+    for (const label of labels) label.removeAttribute('data-contrast');
+
+    const closes = [view.getByRole('button', { name: 'Remove main' }), view.getByRole('button', { name: 'Remove Proofs' })];
+    const branch = matrix.querySelector('.kraft-tag-leading svg')!;
+    branch.setAttribute('data-contrast', 'branch glyph');
+    for (const close of closes) close.querySelector('svg')!.dataset.contrast = close.ariaLabel!;
+    await verifyPaintedContrast(matrix, 3);
+    const kraftClose = page.getByRole('button', { name: 'Remove main' });
+    await kraftClose.hover();
+    try {
+      await Promise.all(closes[0].getAnimations().map(animation => animation.finished));
+      await verifyPaintedContrast(matrix, 3);
+    } finally {
+      await kraftClose.unhover({ position: { x: 1, y: 1 } });
+    }
+
+    const desk = channels(getComputedStyle(matrix).backgroundColor);
+    for (const action of [...view.getAllByRole('link'), ...view.getAllByRole('button')]) {
+      const tag = action.closest('.kraft-tag')!;
+      const face = channels(getComputedStyle(tag, '::after').backgroundColor);
+      const edge = channels(getComputedStyle(tag, '::before').backgroundColor);
+      expect(contrast(edge, desk), `${action.textContent || action.ariaLabel}: tag edge`).toBeGreaterThanOrEqual(3);
+      act(() => action.focus());
+      const focus = getComputedStyle(action);
+      expect(focus.outlineStyle).toBe('solid');
+      expect(contrast(channels(focus.outlineColor), desk)).toBeGreaterThanOrEqual(3);
+      expect(contrast(channels(focus.outlineColor), face)).toBeGreaterThanOrEqual(3);
+    }
+  });
+
   it.each([true, false])('keeps collection row ink and focus readable with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration}
       style={{ ...font, width: 480, padding: 24 }}>
