@@ -1,5 +1,19 @@
 # @randalvance/kraft-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- 507e118: Add compact ActionableList and TreeView rows with rich labels and descriptions, optional ellipsis and line clamping, flexible trailing detail, done styling, and reserved hover and focus actions. TreeView supports plain branches and typeahead for rich labels. ActionableListItem renders static content when given neither a destination nor an activation callback.
+- 39d58af: Add leading media, trailing notes, checked-label strikethrough, and a pen-tick variant to Checkbox. Add CheckboxStatus for static marks and CheckboxGroup for labeled checklists with dashed row rules, responsive columns, and an optional tally.
+- 104d7b2: Add `Tag` in kraft and paper variants with optional icons or color swatches. Tags truncate long labels, support native links and buttons, and can include a separately named removal control.
+- edfbdfb: Add underlined text fields in four sizes, ruled textareas with optional monospaced text, auto-grow and a counter footer, and small uppercase field labels. Add InlineEdit for editing handwritten titles in place and a compact Select trigger that shows the selected option’s icon, status dot and label.
+- 3daf975: Add rich headings, eyebrow slots, and header actions to Dialog and Drawer. Dialog supports three widths and keeps its top edge steady as content changes. Drawer supports an optional close button and a scrolling footer. ResizablePane fills its container with independently scrolling columns and supports stacked drawers in the side pane.
+
+### Patch Changes
+
+- b7403c0: Keep the paper-theme blue Button label at 4.5:1 across the whole face by multiplying the paper texture instead of letting its light fibres lighten the blue beneath white ink.
+
 ## 0.4.0
 
 ### Minor Changes
