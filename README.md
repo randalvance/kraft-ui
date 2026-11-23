@@ -51,6 +51,7 @@ export function Note() {
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
 | Long-form content | `Prose`, `CodeBlock`, `Code`, `Blockquote` |
+| App layout | `AppShell`, `AppShellProps`, `RailTile`, `RailTileProps` |
 | Navigation | `Tabs` |
 | Overlays and panes | `Tooltip`, `TooltipProvider`, `Popover`, `Menu`, `Dialog`, `Drawer`, `ResizablePane` |
 | Marks | `Separator`, `Badge`, `Sticker`, `Stamp`, `StampProps`, `StampSize`, `Tag`, `TagProps`, `TagVariant` |
@@ -293,6 +294,30 @@ function Wall({ notes, onMove, onUnpin }: WallProps) {
 ```
 
 The package exports `CorkBoardProps`, `CorkBoardLayout`, `CorkBoardItemProps`, `CorkBoardPosition`, `CorkBoardColumnProps`, `PinProps`, and `PinTone`.
+
+### AppShell and RailTile
+
+`AppShell` lays out a full application page: a `rail` of navigation tiles, an optional `topBar`, an optional cardboard `board`, and one paper sheet. The shell fills the viewport (`block-size: 100dvh`; override it with `style` or `className`) with a 3px margin, and the rail, board, and sheet body each scroll on their own. `sheetHead` stays fixed above the scrolling sheet body, which is rendered in `main`. The rail is a `nav` named by `railLabel` (default “Main”), and `railFooter` sits at its foot. A `board` needs a `boardLabel`, which names its `aside`.
+
+When the shell is 720px wide or less (a container query on the shell, not the viewport), the board becomes a dismissible overlay. A tile-shaped toggle at the top of the rail opens it and moves focus inside; its close button or Escape closes it and returns focus to the toggle. Control it with `boardOpen` and `onBoardOpenChange`, or start it open with `defaultBoardOpen`. `boardToggleLabel` and `boardCloseLabel` default to “Show {boardLabel}” and “Close {boardLabel}”.
+
+`RailTile` is a 44px card tile in any `CardTone`. It renders an `a` by default; pass a router link through `as`, with the link component forwarding its ref so the tooltip can attach. `label` is the accessible name and the tooltip. `current` sets `aria-current="page"` and presses the tile flat; an `aria-current` set by your router wins. `count` adds a badge (shown as “99+” above 99), and the accessible name becomes “Inbox, 3 new” — change the suffix with `countLabel`. Put tiles in a list.
+
+```tsx
+import { AppShell, Icon, RailTile } from '@randalvance/kraft-ui';
+import { Link } from '@tanstack/react-router';
+
+<AppShell
+  rail={<ul>
+    <li><RailTile as={Link} to="/inbox" tone="blue" label="Inbox" current count={3}><Icon name="inbox" /></RailTile></li>
+    <li><RailTile as={Link} to="/boards" tone="sage" label="Boards"><Icon name="kanban" /></RailTile></li>
+  </ul>}
+  railFooter={<RailTile href="/settings" label="Settings"><Icon name="settings" /></RailTile>}
+  board={<SavedFilters />} boardLabel="Filters"
+  sheetHead={<h1>Inbox</h1>} sheetLabel="Inbox">
+  <Letters />
+</AppShell>;
+```
 
 ### Interactive components and compositions
 

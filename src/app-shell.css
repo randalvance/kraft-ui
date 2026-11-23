@@ -1,0 +1,178 @@
+/* RailTile: a 44px card tile on the AppShell rail. */
+.kraft-rail-tile, .kraft-app-board-toggle {
+  --kraft-rail-tile-face: var(--kraft-paper);
+  --kraft-rail-tile-ink: var(--kraft-ink);
+  --kraft-rail-tile-edge: color-mix(in srgb, var(--kraft-ink) 72%, var(--kraft-rail));
+  position: relative;
+  box-sizing: border-box;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--kraft-rail-tile-ink);
+  background: linear-gradient(145deg, var(--kraft-face, transparent), transparent 60%),
+    var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-rail-tile-face);
+  border: 1.5px solid var(--kraft-rail-tile-edge);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-lift-board-sm);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  translate: 0 0;
+}
+.kraft-rail-tile-glyph { display: inline-grid; place-items: center; width: 22px; height: 22px; }
+.kraft-rail-tile-glyph > svg { width: 22px; height: 22px; }
+
+/* Glyph ink is chosen per tone and theme so the glyph keeps 3:1 against the face. */
+.kraft-rail-tile[data-tone="neutral"] { --kraft-rail-tile-face: var(--kraft-paper); --kraft-rail-tile-ink: var(--kraft-ink); }
+.kraft-rail-tile[data-tone="blue"] { --kraft-rail-tile-face: var(--kraft-blue); --kraft-rail-tile-ink: #fbf7ee; }
+.kraft-rail-tile[data-tone="sage"] { --kraft-rail-tile-face: var(--kraft-mat-green); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="danger"] { --kraft-rail-tile-face: var(--kraft-mat-red); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="attention"] { --kraft-rail-tile-face: var(--kraft-attention); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="ochre"] { --kraft-rail-tile-face: var(--kraft-ochre); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="teal"] { --kraft-rail-tile-face: var(--kraft-teal); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="violet"] { --kraft-rail-tile-face: var(--kraft-violet); --kraft-rail-tile-ink: #fbf7ee; }
+.kraft-rail-tile[data-tone="plum"] { --kraft-rail-tile-face: var(--kraft-plum); --kraft-rail-tile-ink: #fbf7ee; }
+.kraft-rail-tile[data-tone="blush"] { --kraft-rail-tile-face: var(--kraft-blush); --kraft-rail-tile-ink: #2a2219; }
+.kraft-rail-tile[data-tone="navy"] { --kraft-rail-tile-face: var(--kraft-blue-2); --kraft-rail-tile-ink: #fbf7ee; }
+
+[data-kraft-theme="night"] .kraft-rail-tile[data-tone="blue"],
+[data-kraft-theme="night"] .kraft-rail-tile[data-tone="teal"],
+[data-kraft-theme="night"] .kraft-rail-tile[data-tone="violet"],
+[data-kraft-theme="night"] .kraft-rail-tile[data-tone="plum"],
+[data-kraft-theme="night"] .kraft-rail-tile[data-tone="attention"] { --kraft-rail-tile-ink: #1c1712; }
+[data-kraft-theme="night"] .kraft-rail-tile:is([data-tone="sage"], [data-tone="danger"], [data-tone="ochre"], [data-tone="blush"], [data-tone="navy"]) { --kraft-rail-tile-ink: #efe6d3; }
+
+.kraft-app-board-toggle svg { width: 22px; height: 22px; }
+.kraft-app-board-toggle[aria-expanded="true"] { box-shadow: inset 0 0 0 2px var(--kraft-ink), var(--kraft-press-board); translate: 2px 2px; }
+:is(.kraft-rail-tile, .kraft-app-board-toggle):hover { box-shadow: var(--kraft-lift-board-up); translate: 0 -1px; }
+.kraft-rail-tile:active,
+.kraft-rail-tile[aria-current]:not([aria-current="false"]) { box-shadow: var(--kraft-press-board); translate: 2px 2px; }
+.kraft-rail-tile[aria-current]:not([aria-current="false"]) {
+  box-shadow: inset 0 0 0 2px var(--kraft-ink), var(--kraft-press-board);
+  border-color: var(--kraft-ink);
+}
+:is(.kraft-rail-tile, .kraft-app-board-toggle):focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+
+.kraft-rail-tile-count {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: -6px;
+  box-sizing: border-box;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  color: var(--kraft-sheet);
+  background: var(--kraft-ink);
+  border-radius: var(--kraft-radius-pill);
+  font: 800 11px/18px var(--kraft-font-sans);
+  text-align: center;
+  white-space: nowrap;
+}
+.kraft-rail-tile-count-label { display: inline-block; line-height: 12px; vertical-align: 1px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.kraft-rail-tile, .kraft-app-board-toggle) { transition: box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease), translate var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+}
+
+@media (forced-colors: active) {
+  :is(.kraft-rail-tile, .kraft-app-board-toggle) { color: LinkText; background: Canvas; border-color: LinkText; box-shadow: none; }
+  .kraft-rail-tile[aria-current]:not([aria-current="false"]) { color: HighlightText; background: Highlight; border-color: Highlight; }
+  .kraft-rail-tile-count { color: Canvas; background: CanvasText; forced-color-adjust: none; }
+}
+
+/* AppShell: the root is the query container; the inner grid carries the layout. */
+.kraft-app-shell {
+  container: kraft-app-shell / inline-size;
+  box-sizing: border-box;
+  block-size: 100dvh;
+  overflow: hidden;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  background: var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-rail);
+}
+.kraft-app-shell-grid {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  block-size: 100%;
+  padding: var(--kraft-space-3);
+  gap: var(--kraft-space-3);
+  grid-template: "rail sheet" minmax(0, 1fr) / auto minmax(0, 1fr);
+}
+.kraft-app-shell-grid[data-has-topbar] { grid-template: "rail top" auto "rail sheet" minmax(0, 1fr) / auto minmax(0, 1fr); }
+.kraft-app-shell-grid[data-has-board] { grid-template: "rail board sheet" minmax(0, 1fr) / auto auto minmax(0, 1fr); }
+.kraft-app-shell-grid[data-has-board][data-has-topbar] { grid-template: "rail top top" auto "rail board sheet" minmax(0, 1fr) / auto auto minmax(0, 1fr); }
+
+.kraft-app-rail {
+  grid-area: rail;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 0;
+  padding: 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.kraft-app-rail :is(ul, ol) { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 0; padding: 4px 0; list-style: none; }
+.kraft-app-rail-footer { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-block-start: auto; padding-block-start: 8px; }
+
+.kraft-app-topbar { grid-area: top; min-inline-size: 0; }
+
+.kraft-app-board {
+  --kraft-content-muted: var(--kraft-ink);
+  --kraft-content-link: var(--kraft-link-board);
+  grid-area: board;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  inline-size: clamp(220px, 24cqi, 320px);
+  min-block-size: 0;
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-board);
+  border: 1.5px solid var(--kraft-board-2);
+  border-radius: var(--kraft-radius-10);
+  box-shadow: var(--kraft-lift-board);
+}
+.kraft-app-board-body { flex: 1; min-block-size: 0; padding: 12px; overflow: auto; }
+
+.kraft-app-sheet {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  grid-area: sheet;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: 0;
+  color: var(--kraft-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-lift-paper-1);
+}
+.kraft-app-sheet-head { flex: none; min-inline-size: 0; padding: 16px 24px 12px; border-block-end: 1px solid var(--kraft-edge); }
+.kraft-app-sheet-body { flex: 1; min-block-size: 0; padding: 24px; overflow: auto; }
+:is(.kraft-app-sheet-body, .kraft-app-board-body):focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: -2px; }
+
+.kraft-app-board-toggle, .kraft-app-board-close { display: none; }
+.kraft-app-board-close { align-self: flex-end; margin: 8px 8px 0 0; }
+.kraft-app-board-close:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
+
+/* Narrow shells: the board leaves the grid and becomes a dismissible overlay beside the rail. */
+@container kraft-app-shell (max-width: 720px) {
+  .kraft-app-shell-grid[data-has-board] { grid-template: "rail sheet" minmax(0, 1fr) / auto minmax(0, 1fr); }
+  .kraft-app-shell-grid[data-has-board][data-has-topbar] { grid-template: "rail top" auto "rail sheet" minmax(0, 1fr) / auto minmax(0, 1fr); }
+  .kraft-app-board {
+    position: absolute;
+    z-index: 2;
+    inset-block: var(--kraft-space-3);
+    inset-inline-start: calc(60px + 2 * var(--kraft-space-3));
+    inline-size: min(320px, calc(100% - 60px - 4 * var(--kraft-space-3) - 16px));
+    display: none;
+  }
+  .kraft-app-shell[data-board-open] .kraft-app-board { display: flex; }
+  .kraft-app-board-toggle, .kraft-app-board-close { display: inline-grid; }
+}
