@@ -12,6 +12,7 @@ import { Checkbox, CheckboxGroup, CheckboxStatus, FormSection, PageHeader, Toggl
 import { Dialog, Drawer, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
+import { RailTile, type CardTone as RailTone } from '../src';
 import { FormField, InlineEdit, Select, Textarea, TextField } from '../src';
 
 afterEach(cleanup);
@@ -153,6 +154,37 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     expect(contrast(channels(titleStyle.outlineColor), desk), 'restored title focus').toBeGreaterThanOrEqual(3);
     await userEvent.tab();
     expect(document.activeElement).toBe(followingField);
+  });
+
+  it.each([true, false])('keeps rail tiles, counts, and focus readable with decoration=%s', async decoration => {
+    const railTones: RailTone[] = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy'];
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 490, padding: 24 }}>
+      <ul data-testid="rail" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, margin: 0, padding: 16, listStyle: 'none', background: 'var(--kraft-rail)' }}>
+        {railTones.map((tone, i) => <li key={tone}><RailTile href={`#${tone}`} tone={tone} label={tone} current={i === 0} count={7}>
+          <Icon name="inbox" /></RailTile></li>)}
+      </ul>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const counts = matrix.querySelectorAll<HTMLElement>('.kraft-rail-tile-count-label');
+    counts.forEach((count, i) => { count.dataset.contrast = `${railTones[i]} count`; });
+    await verifyPaintedContrast(matrix);
+    counts.forEach(count => count.removeAttribute('data-contrast'));
+    const glyphs = matrix.querySelectorAll<SVGElement>('.kraft-rail-tile-glyph svg');
+    glyphs.forEach((glyph, i) => glyph.setAttribute('data-contrast', `${railTones[i]} glyph`));
+    await verifyPaintedContrast(matrix, 3);
+    glyphs.forEach(glyph => glyph.removeAttribute('data-contrast'));
+
+    const rail = channels(getComputedStyle(view.getByTestId('rail')).backgroundColor);
+    for (const tile of view.getAllByRole('link')) {
+      const style = getComputedStyle(tile);
+      const name = tile.getAttribute('href')!.slice(1);
+      const boundary = Math.max(contrast(channels(style.backgroundColor), rail), contrast(channels(style.borderTopColor), rail));
+      expect(boundary, `${name}: tile boundary against the rail`).toBeGreaterThanOrEqual(3);
+      act(() => tile.focus());
+      expect(style.outlineStyle, `${name}: focus`).toBe('solid');
+      expect(contrast(channels(style.outlineColor), rail), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+    }
   });
 
   it.each([true, false])('keeps tag labels, glyphs, and focus readable with decoration=%s', async decoration => {

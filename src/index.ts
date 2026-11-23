@@ -26,6 +26,7 @@ export * from './description-list.js';
 export * from './prose.js';
 export * from './code-block.js';
 export * from './drawer.js';
+export * from './app-shell.js';
 export * from './tooltip.js';
 export * from './icon.js';
 export * from './create-icon.js';

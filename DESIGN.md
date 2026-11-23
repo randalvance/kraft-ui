@@ -454,6 +454,12 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 `Pin` is a round tack with a white highlight and an ink rim. The rim keeps every tone distinct on cork and on any note. A button pin has a 28px target, lifts on hover, and is hollow and dashed when disabled. Focus rings for the board, a movable item, and a pin are ink, drawn on cork rather than on the frame, and the item in use comes to the front.
 
+### App shell and rail
+
+`AppShell` is the diorama page. The rail colour is the ground: it frames the page, carries the navigation tiles, and shows through a 3px margin around everything. The optional board is a raised piece of cardboard with a darker cut edge that holds lists and filters, and one paper sheet carries the words. The sheet can keep a fixed head above a body that scrolls on its own. When the shell is narrow, the board lifts off the layout and lies over the sheet beside the rail until it is dismissed.
+
+`RailTile` is a 44px card tile in any card tone, with an icon inked in whichever of dark or light ink keeps 3:1 on its face. The neutral tile is paper, so it stands apart from the rail. Tiles lift on hover and press flat for the current page, with an inset ink keyline so the state never depends on shadow alone. A small ink pill carries the count, and tiles stay upright when theme tilt is on.
+
 ### Avatars
 
 `Avatar` is a portrait sticker with a white cut border and no cast shadow. Images fill the circle; monograms and glyphs use the five shared tones with paper texture and readable ink. Diameters run from tiny 18px marks to 84px portraits. A labelled corner status uses a solid, dashed, square, checked, or hollow mark, carrying meaning beyond color. Portraits stay upright by default; their optional tilt follows the theme preference. This opt-in portrait tilt is the exception to the upright sticker rule.
