@@ -1,7 +1,8 @@
-import { useId, type CSSProperties, type ReactElement, type ReactNode } from 'react';
+import { forwardRef, useId, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as MenuPrimitive from '@radix-ui/react-dropdown-menu';
 import * as SelectPrimitive from '@radix-ui/react-select';
+import type { Tone } from './primitives.js';
 
 type Placement = { side?: 'top' | 'right' | 'bottom' | 'left'; align?: 'start' | 'center' | 'end' };
 
@@ -87,11 +88,14 @@ export type SelectOption = {
   description?: string;
   disabled?: boolean;
   leading?: ReactNode;
+  /** Decorative color marker. Include any status meaning in the option's label. */
+  statusDot?: Tone;
 };
 
 export type SelectProps = {
   label: string;
   options: readonly SelectOption[];
+  variant?: 'default' | 'compact';
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string, option: SelectOption | undefined) => void;
@@ -107,16 +111,29 @@ export type SelectProps = {
   portalContainer?: HTMLElement;
 };
 
+function SelectOptionMarks({ option }: { option: SelectOption }) {
+  return <>
+    {option.leading != null && <span className="kraft-select-leading" aria-hidden="true">{option.leading}</span>}
+    {option.statusDot && <span className="kraft-select-status-dot" data-tone={option.statusDot} aria-hidden="true" />}
+  </>;
+}
+
 /** A single choice button and listbox with native form submission. */
-export function Select({ label, options, value, defaultValue, onValueChange, name, required, disabled,
-  placeholder = 'Choose an option', hideLabel = false, description, className, style, dir, portalContainer }: SelectProps) {
+export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select({
+  label, options, variant = 'default', value, defaultValue, onValueChange, name, required, disabled,
+  placeholder = 'Choose an option', hideLabel = false, description, className, style, dir, portalContainer,
+}, ref) {
   const id = useId();
+  const [localValue, setLocalValue] = useState(defaultValue);
+  const compact = variant === 'compact';
+  const selected = compact ? options.find(option => option.value === (value ?? localValue)) : undefined;
+  const descriptionIds = [description && `${id}-description`, compact && `${id}-value`].filter(Boolean).join(' ');
   const content = <SelectPrimitive.Content className="kraft-select-content" position="popper" sideOffset={6} collisionPadding={12}>
     <SelectPrimitive.Viewport className="kraft-select-viewport">
       {options.map(option => <SelectPrimitive.Item key={option.value} value={option.value} disabled={option.disabled}
         className="kraft-select-item">
         <span className="kraft-select-indicator"><SelectPrimitive.ItemIndicator aria-hidden="true">✓</SelectPrimitive.ItemIndicator></span>
-        {option.leading != null && <span className="kraft-select-leading" aria-hidden="true">{option.leading}</span>}
+        <SelectOptionMarks option={option} />
         <span className="kraft-select-copy"><SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
           {option.description && <span className="kraft-select-option-description">{option.description}</span>}
         </span>
@@ -125,14 +142,23 @@ export function Select({ label, options, value, defaultValue, onValueChange, nam
   </SelectPrimitive.Content>;
   return <div className={className ? `kraft-select ${className}` : 'kraft-select'} style={style} dir={dir}>
     <SelectPrimitive.Root value={value} defaultValue={defaultValue} name={name} required={required} disabled={disabled} dir={dir}
-      onValueChange={next => onValueChange?.(next, options.find(option => option.value === next))}>
+      onValueChange={next => {
+        if (value === undefined) setLocalValue(next);
+        onValueChange?.(next, options.find(option => option.value === next));
+      }}>
       <label htmlFor={`${id}-trigger`} className={hideLabel ? 'kraft-visually-hidden' : 'kraft-select-label'}>{label}</label>
       {description && <span className="kraft-select-description" id={`${id}-description`}>{description}</span>}
-      <SelectPrimitive.Trigger id={`${id}-trigger`} className="kraft-select-trigger" aria-describedby={description ? `${id}-description` : undefined}>
-        <SelectPrimitive.Value placeholder={placeholder} />
+      <SelectPrimitive.Trigger ref={ref} id={`${id}-trigger`} className="kraft-select-trigger" data-variant={variant}
+        aria-describedby={descriptionIds || undefined}>
+        {compact ? <span className="kraft-select-trigger-copy">
+          {selected && <SelectOptionMarks option={selected} />}
+          <span className="kraft-select-trigger-value">
+            <SelectPrimitive.Value id={`${id}-value`} placeholder={placeholder}>{selected?.label}</SelectPrimitive.Value>
+          </span>
+        </span> : <SelectPrimitive.Value placeholder={placeholder} />}
         <SelectPrimitive.Icon className="kraft-select-chevron" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m3 6 5 5 5-5" /></svg></SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
       {portalContainer ? <SelectPrimitive.Portal container={portalContainer}>{content}</SelectPrimitive.Portal> : content}
     </SelectPrimitive.Root>
   </div>;
-}
+});

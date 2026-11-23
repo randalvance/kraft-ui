@@ -280,17 +280,43 @@
 [data-kraft-theme="night"] .kraft-form-field { --kraft-form-error-ink: var(--kraft-red); }
 .kraft-form-field-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--kraft-space-4) var(--kraft-space-12); min-width: 0; }
 .kraft-form-field-label { font: 800 13px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }
+.kraft-form-field-label[data-label-style="uppercase"] { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .kraft-form-field-description { color: var(--kraft-text-muted-paper); font: 500 15px/1.25 var(--kraft-font-hand); overflow-wrap: anywhere; }
 .kraft-form-field-error { color: var(--kraft-form-error-ink); font: 700 13px/1.35 var(--kraft-font-sans); overflow-wrap: anywhere; }
 .kraft-field-input { --kraft-form-error-ink: var(--kraft-red-2); box-sizing: border-box; display: block; width: 100%; min-width: 0; min-height: 40px; margin: 0; padding: 8px 12px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); font: 400 14px/1.5 var(--kraft-font-sans); caret-color: currentColor; }
 [data-kraft-theme="night"] .kraft-field-input { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-field-input[data-size="sm"] { min-height: 32px; padding-block: 5px; font-size: 13px; }
+.kraft-field-input[data-size="lg"] { min-height: 44px; font-size: 20px; line-height: 1.3; }
+.kraft-field-input[data-variant="underline"] { padding-inline: 0; background: transparent; border: 0; border-bottom: 1px solid var(--kraft-mute); border-radius: 0; box-shadow: none; }
 .kraft-field-input::placeholder { color: var(--kraft-faint); opacity: 1; }
-.kraft-field-input:hover:not(:disabled):not(:focus) { border-color: var(--kraft-mute); }
+.kraft-field-input:hover:where(:enabled:not(:focus)) { border-color: var(--kraft-mute); }
+.kraft-field-input[data-variant="underline"]:hover:where(:enabled:not(:focus):not([aria-invalid="true"])) { border-bottom-color: var(--kraft-ink); }
 .kraft-field-input:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-field-input:disabled { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
+.kraft-field-input[data-variant="underline"]:disabled { background: transparent; }
 .kraft-field-input:disabled::placeholder { color: var(--kraft-faint); }
-.kraft-field-input[aria-invalid="true"] { border-bottom: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
 .kraft-textarea { resize: vertical; }
+.kraft-textarea[data-variant="ruled"] {
+  --kraft-textarea-rules: repeating-linear-gradient(transparent 0 23px, var(--kraft-rule) 23px 24px) 0 8px / 100% auto no-repeat local;
+  line-height: 24px;
+  border-color: var(--kraft-mute);
+  background: var(--kraft-textarea-rules),
+    linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+}
+.kraft-textarea[data-variant="ruled"]:where(:disabled) { background: var(--kraft-textarea-rules), var(--kraft-paper-2); border-color: var(--kraft-line); }
+.kraft-field-input[aria-invalid="true"] { border-bottom: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
+.kraft-textarea[data-mono] { font-family: var(--kraft-font-mono); }
+.kraft-textarea[data-auto-grow] { height: var(--kraft-textarea-height, auto); resize: none; }
+.kraft-textarea-footer { margin-block-start: var(--kraft-space-4); color: var(--kraft-text-muted-paper); font: 700 12px/1.3 var(--kraft-font-sans); text-align: end; overflow-wrap: anywhere; }
+.kraft-form-field > .kraft-textarea-footer { margin-block-start: 0; }
+.kraft-inline-edit { min-width: 0; }
+.kraft-inline-edit-heading, .kraft-field-input[data-size="title"] { font: 600 38px/1.05 var(--kraft-font-hand); }
+.kraft-inline-edit-heading { margin: 0; color: var(--kraft-ink); overflow-wrap: anywhere; }
+.kraft-inline-edit-heading > span:where(:not(.kraft-visually-hidden)) { display: block; padding-block: 8px; }
+.kraft-inline-edit-trigger { display: inline-flex; align-items: baseline; gap: var(--kraft-space-8); max-width: 100%; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: start; cursor: text; }
+.kraft-inline-edit-trigger > svg { align-self: center; }
+.kraft-inline-edit-trigger:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .12em; }
+.kraft-inline-edit-trigger:focus-visible, .kraft-inline-edit-input:focus { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-search-field { position: relative; display: block; width: 100%; min-width: 0; }
 .kraft-search-mark { position: absolute; z-index: 1; inset-block-start: 50%; inset-inline-start: 12px; width: 16px; height: 16px; color: var(--kraft-mute); pointer-events: none; transform: translateY(-50%); }
 .kraft-search-input { padding-inline-start: 38px; }
@@ -412,6 +438,9 @@
   .kraft-tab[aria-selected="true"], .kraft-tabs[data-orientation="vertical"] > .kraft-tab-strip .kraft-tab[aria-selected="true"] { border-color: CanvasText; border-top-color: Highlight; border-inline-start-color: Highlight; }
   .kraft-tab:disabled { color: GrayText; }
   .kraft-field-input { color: FieldText; background: Field; border-color: FieldText; box-shadow: none; }
+  .kraft-field-input[data-variant="underline"] { border-color: FieldText; }
+  .kraft-textarea[data-variant="ruled"] { --kraft-textarea-rules: none; color: FieldText; background: Field; border-color: FieldText; }
+  .kraft-inline-edit-trigger:focus-visible, .kraft-inline-edit-input:focus { outline-color: Highlight; }
   .kraft-field-input:disabled, .kraft-field-input:disabled::placeholder, .kraft-search-field:has(.kraft-search-input:disabled) .kraft-search-mark { color: GrayText; border-color: GrayText; }
   .kraft-field-input[aria-invalid="true"] { border-bottom-color: Highlight; }
   .kraft-form-field-error { color: CanvasText; }

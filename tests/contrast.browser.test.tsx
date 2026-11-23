@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { cdp, page } from 'vitest/browser';
+import { cdp, page, userEvent } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
 import { Avatar, AvatarGroup, AvatarPicker, Card, CardAddTile, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus, type CardTone } from '../src';
@@ -12,6 +12,7 @@ import { Checkbox, CheckboxGroup, CheckboxStatus, FormSection, PageHeader, Toggl
 import { Dialog, Drawer, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
+import { FormField, InlineEdit, Select, Textarea, TextField } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -91,6 +92,69 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
 }
 
 describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
+  it.each([true, false])('keeps paper field variants and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 490, padding: 24 }}>
+      <Stack gap={24}>
+        <InlineEdit label="Edit title" defaultValue="Letterpress proof" />
+        <FormField label="Proofreader" labelStyle="uppercase" description="Cover and interior">
+          <TextField variant="underline" defaultValue="Mina Park" data-contrast="underlined ink" />
+        </FormField>
+        <FormField label="Edition" error="Check the edition number">
+          <TextField variant="underline" defaultValue="Second printing" size="title" data-contrast="handwritten ink" />
+        </FormField>
+        <FormField label="Margin notes" labelStyle="uppercase">
+          <Textarea variant="ruled" mono autoGrow rows={3} defaultValue={'Check page numbers.\nRead the margins.'}
+            footer={<span data-contrast="counter">36 characters</span>} data-contrast="ruled mono ink" />
+        </FormField>
+        <Select label="Status" variant="compact" defaultValue="review" options={[
+          { value: 'review', label: 'In review', leading: <Icon name="clock" />, statusDot: 'attention' },
+        ]} />
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-form-field-label, .kraft-form-field-description, .kraft-form-field-error, .kraft-inline-edit-trigger > span, .kraft-select-trigger-value')
+      .forEach(sample => { sample.dataset.contrast = sample.textContent!; });
+    await verifyPaintedContrast(matrix);
+
+    const desk = channels(getComputedStyle(matrix).backgroundColor);
+    const select = view.getByRole('combobox', { name: 'Status' });
+    const selectCss = getComputedStyle(select);
+    const selectFace = channels(selectCss.backgroundColor);
+    const dot = select.querySelector('.kraft-select-status-dot')!;
+    expect(contrast(channels(getComputedStyle(dot).borderTopColor), selectFace), 'status dot rim').toBeGreaterThanOrEqual(3);
+    for (const [name, control, ground] of [
+      ['Proofreader', view.getByRole('textbox', { name: 'Proofreader' }), desk],
+      ['Edition', view.getByRole('textbox', { name: 'Edition' }), desk],
+      ['Margin notes', view.getByRole('textbox', { name: 'Margin notes' }), desk],
+      ['Status', select, desk],
+    ] as const) {
+      const style = getComputedStyle(control);
+      expect(contrast(channels(style.borderBottomColor), ground), `${name}: boundary`).toBeGreaterThanOrEqual(3);
+      if (control !== select) {
+        const placeholderInk = channels(getComputedStyle(control, '::placeholder').color);
+        const fieldFace = style.backgroundColor === 'rgba(0, 0, 0, 0)' ? ground : channels(style.backgroundColor);
+        expect(contrast(placeholderInk, fieldFace), `${name}: placeholder`).toBeGreaterThanOrEqual(4.5);
+      }
+      act(() => control.focus());
+      expect(style.outlineStyle, `${name}: focus`).toBe('solid');
+      expect(contrast(channels(style.outlineColor), desk), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+    }
+    const followingField = view.getByRole('textbox', { name: 'Proofreader' });
+    act(() => followingField.focus());
+    await userEvent.tab({ shift: true });
+    const editor = view.getByRole('textbox', { name: 'Edit title' });
+    const editorStyle = getComputedStyle(editor);
+    expect(editorStyle.outlineStyle).toBe('solid');
+    expect(contrast(channels(editorStyle.outlineColor), desk), 'InlineEdit focus outline').toBeGreaterThanOrEqual(3);
+    await userEvent.keyboard('{Escape}');
+    const titleStyle = getComputedStyle(view.getByRole('button', { name: /Edit title/ }));
+    expect(titleStyle.outlineStyle).toBe('solid');
+    expect(contrast(channels(titleStyle.outlineColor), desk), 'restored title focus').toBeGreaterThanOrEqual(3);
+    await userEvent.tab();
+    expect(document.activeElement).toBe(followingField);
+  });
+
   it.each([true, false])('keeps tag labels, glyphs, and focus readable with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
       motion={decoration} tilt={decoration} style={{ ...font, width: 490, padding: 24 }}>
