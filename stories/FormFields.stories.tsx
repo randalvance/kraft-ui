@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { Button, FormField, SearchField, Stack, Textarea, TextField } from '../src';
 
 const meta = {
@@ -52,3 +52,61 @@ export const States: Story = { render: () => <Stack gap={16} style={{ width: 'mi
 
 export const RightToLeft: Story = { render: () => <div dir="rtl" lang="ar" style={{ maxWidth: 430 }}><FormField label="ابحث في الملاحظات" description="ابحث بالعنوان"><SearchField placeholder="ابحث…" /></FormField></div> };
 export const Night: Story = { ...Form, globals: { theme: 'night' } };
+
+export const Underline: Story = {
+  render: () => <Stack gap={24} style={{ width: 'min(100%, 480px)' }}>
+    <FormField label="Desk" labelStyle="uppercase"><TextField variant="underline" size="sm" defaultValue="Binding room" /></FormField>
+    <FormField label="Proofreader" labelStyle="uppercase"><TextField variant="underline" size="md" placeholder="Name and surname" /></FormField>
+    <FormField label="Edition" labelStyle="uppercase"><TextField variant="underline" size="lg" defaultValue="Second printing" readOnly /></FormField>
+    <FormField label="Project title" labelStyle="uppercase"><TextField variant="underline" size="title" defaultValue="Field notes" /></FormField>
+    <FormField label="Approved title"><TextField variant="underline" defaultValue="Letterpress guide" disabled /></FormField>
+    <FormField label="Project code" error="Enter the code stamped on the proof"><TextField variant="underline" required /></FormField>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const title = canvas.getByRole('textbox', { name: 'Project title' });
+    await userEvent.click(canvas.getByText('Project title'));
+    await expect(title).toHaveFocus();
+    await expect(title).toHaveValue('Field notes');
+    await expect(canvas.getByRole('textbox', { name: 'Project code' })).toHaveAccessibleDescription('Enter the code stamped on the proof');
+  },
+};
+
+export const RuledPaper: Story = {
+  render: function RuledFields() {
+    const [prompt, setPrompt] = useState('Check the page numbers.');
+    return <Stack as="form" aria-label="Proof notes" gap={24} style={{ width: 'min(100%, 480px)' }}>
+      <FormField label="Margin notes" labelStyle="uppercase"><Textarea variant="ruled" rows={3} placeholder="Mark up the proof…" /></FormField>
+      <FormField label="Proofing prompt" labelStyle="uppercase" description="Saved with the proof">
+        <Textarea variant="ruled" mono autoGrow rows={2} value={prompt} onChange={event => setPrompt(event.currentTarget.value)}
+          footer={`${prompt.length} characters`} />
+      </FormField>
+      <FormField label="Checklist" labelStyle="uppercase">
+        <Textarea name="notes" variant="ruled" autoGrow rows={2} defaultValue="Trim the covers." />
+      </FormField>
+      <FormField label="Archived notes"><Textarea variant="ruled" disabled rows={2} defaultValue="Signed off on Tuesday." /></FormField>
+      <Button type="reset" style={{ alignSelf: 'flex-start' }}>Reset notes</Button>
+    </Stack>;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const prompt = canvas.getByRole<HTMLTextAreaElement>('textbox', { name: 'Proofing prompt' });
+    const initialHeight = prompt.offsetHeight;
+    const initialPrompt = prompt.value;
+    await fireEvent.input(prompt, { target: { value: `${initialPrompt}\nCheck the margins.\nRead the caption.\nKeep the cover.` } });
+    await waitFor(() => expect(prompt.offsetHeight).toBeGreaterThan(initialHeight));
+    await expect(prompt).toHaveAccessibleDescription(`Saved with the proof ${prompt.value.length} characters`);
+    await fireEvent.input(prompt, { target: { value: initialPrompt } });
+    await waitFor(() => expect(prompt.offsetHeight).toBe(initialHeight));
+
+    const notes = canvas.getByRole<HTMLTextAreaElement>('textbox', { name: 'Checklist' });
+    const notesHeight = notes.offsetHeight;
+    await fireEvent.input(notes, { target: { value: `${notes.value}\nCheck the margins.\nRead the caption.` } });
+    await waitFor(() => expect(notes.offsetHeight).toBeGreaterThan(notesHeight));
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset notes' }));
+    await expect(notes).toHaveValue('Trim the covers.');
+    await waitFor(() => expect(notes.offsetHeight).toBe(notesHeight));
+  },
+};
+
+export const QuietNight: Story = { ...RuledPaper, globals: { theme: 'night', texture: 'off', motion: 'off', tilt: 'off' } };

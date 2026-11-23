@@ -46,7 +46,7 @@ export function Note() {
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
 | Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link` |
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
-| Form fields | `FormField`, `TextField`, `Textarea`, `SearchField` |
+| Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
@@ -332,15 +332,28 @@ import { Avatar, Checkbox, CheckboxGroup, CheckboxStatus } from '@randalvance/kr
 
 `TextField`, `Textarea`, and `SearchField` keep native input behavior, including refs, controlled or initial values, validation, and form submission. Put one control inside `FormField` to connect a visible `label`, optional `description`, and `error` to that control automatically. An error draws a dashed red field edge, sets `aria-invalid`, and becomes part of its accessible description; application code decides when to show it. Set `controlId` on `FormField` when another element needs the input ID. Each control can also stand alone with an external `<label>` and `id`, or an `aria-label`. `className` and `style` on a control apply to its native input or textarea; on `FormField` they apply to the wrapper.
 
+- `FormField` supports `labelStyle="uppercase"` for small printed labels. The default is `"default"`.
+- `TextField` supports `variant="boxed" | "underline"` and `size="sm" | "md" | "lg" | "title"`. The default appearance is boxed and medium. Title size uses the handwritten face. Numeric `size` values still reach the native input.
+- `Textarea` supports `variant="boxed" | "ruled"`, with `boxed` as the default. Set `mono` for monospaced text and `autoGrow` to fit the content, starting at the native `rows` height. With `autoGrow` off, the textarea keeps its vertical resize handle. Use `footer` for a character or token count below the textarea. Its text contributes to the accessible description.
+- `InlineEdit` renders a heading that opens an editor on click or focus. Supply a `label` for the editing action, `value` or `defaultValue`, and `onValueChange` to handle edits. `placeholder` defaults to “Untitled”, `titleAs` defaults to `h1`, and `disabled` shows a static heading. Enter commits, Escape cancels, and both return focus to the title button. Leaving the field commits and lets focus continue to its destination. The ref and native div props apply to the wrapper.
+
+`FormFieldProps`, `TextFieldProps`, `TextareaProps`, `SearchFieldProps`, and `InlineEditProps` are exported.
+
 ```tsx
-import { FormField, SearchField, Textarea, TextField } from '@randalvance/kraft-ui';
+import { useState } from 'react';
+import { FormField, InlineEdit, SearchField, Textarea, TextField } from '@randalvance/kraft-ui';
 
 function AgentFields() {
+  const [description, setDescription] = useState('');
   return <form>
-    <FormField label="Agent name" description="Shown in sessions">
-      <TextField name="name" required placeholder="Name this agent" />
+    <InlineEdit label="Edit page title" defaultValue="Field notes" />
+    <FormField label="Agent name" labelStyle="uppercase" description="Shown in sessions">
+      <TextField name="name" variant="underline" required placeholder="Name this agent" />
     </FormField>
-    <FormField label="Description"><Textarea name="description" rows={3} /></FormField>
+    <FormField label="Description">
+      <Textarea name="description" variant="ruled" mono autoGrow rows={3} value={description}
+        onChange={event => setDescription(event.currentTarget.value)} footer={`${description.length} characters`} />
+    </FormField>
     <FormField label="Find notes"><SearchField name="query" placeholder="Search notes…" /></FormField>
   </form>;
 }
@@ -374,6 +387,8 @@ function Filters() {
 
 `Select` is a single choice field with a button and listbox. It supports `name`, `required`, disabled options, typeahead, and controlled or initial values. `Menu` is for actions; give it an accessible `label`, an array of actions and separators, and an `onAction` callback. `Popover` holds small structured content with a required title and a close button. Pass a ref forwarding button as a menu or popover `trigger`. These anchored surfaces keep the current theme by default; when an ancestor clips them, pass `portalContainer` pointing to a suitable element within the same theme scope.
 
+Set `variant="compact"` on `Select` for a shorter trigger that fits the selected label. The trigger also displays that option’s `leading` icon and `statusDot` when supplied. `statusDot` takes a `Tone` of `neutral`, `blue`, `sage`, `danger`, or `attention`. Keep status meaning in the visible option label so the marks can stay decorative. `hideLabel` keeps the field name accessible in dense layouts. `SelectProps` and `SelectOption` are exported, and the ref reaches the trigger button.
+
 `Tooltip` shows a short, noninteractive paper label on hover or keyboard focus. Give its `trigger` an accessible name of its own; the tooltip's `content` supplies supporting text. It closes on Escape or activation and keeps focus on the trigger. One tooltip works alone; wrap neighboring tooltips in `TooltipProvider` to share the hover delay. `delayDuration` adjusts an individual tooltip, while the provider also accepts `skipDelayDuration`. It follows the current theme and accepts `portalContainer` for a theme-scoped portal outside a clipping ancestor. Use `Popover` for content with buttons or links.
 
 ```tsx
@@ -388,7 +403,7 @@ function Rail() {
 ```
 
 ```tsx
-import { Button, Menu, RadioGroup, Select } from '@randalvance/kraft-ui';
+import { Button, Icon, Menu, RadioGroup, Select } from '@randalvance/kraft-ui';
 
 function WorkChoices() {
   return <>
@@ -396,8 +411,9 @@ function WorkChoices() {
       { value: 'low', label: 'Low' }, { value: 'medium', label: 'Medium' },
       { value: 'high', label: 'High' },
     ]} />
-    <Select label="Workspace" name="workspace" options={[
-      { value: 'desk', label: 'Desk' }, { value: 'shelf', label: 'Shelf' },
+    <Select label="Proof status" name="status" variant="compact" defaultValue="review" options={[
+      { value: 'review', label: 'In review', leading: <Icon name="clock" />, statusDot: 'attention' },
+      { value: 'approved', label: 'Approved', leading: <Icon name="check" />, statusDot: 'sage' },
     ]} />
     <Menu label="Note actions" trigger={<Button>Actions</Button>} items={[
       { id: 'copy', label: 'Copy note' }, { id: 'delete', label: 'Delete note', destructive: true },

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Select, type SelectOption } from '../src';
+import { Icon, Select, type SelectOption } from '../src';
 
 const options: SelectOption[] = [
   { value: 'all', label: 'All workspaces' },
@@ -35,3 +35,35 @@ export const FormValue: Story = { render: () => <form aria-label="Workspace form
   await expect(new FormData(form).get('workspace')).toBe('orbit');
 } };
 export const Night: Story = { ...Default, globals: { theme: 'night' } };
+
+const statuses: SelectOption[] = [
+  { value: 'review', label: 'In review', leading: <Icon name="clock" />, statusDot: 'attention' },
+  { value: 'approved', label: 'Approved', leading: <Icon name="check" />, statusDot: 'sage' },
+  { value: 'archived', label: 'Archived', leading: <Icon name="inbox" />, statusDot: 'neutral', disabled: true },
+];
+
+export const Compact: Story = {
+  args: { variant: 'compact', label: 'Proof status', hideLabel: true, name: 'status', options: statuses, defaultValue: 'review' },
+  render: args => <form aria-label="Proof details"><Select {...args} /></form>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox', { name: 'Proof status' });
+    const form = canvas.getByRole<HTMLFormElement>('form', { name: 'Proof details' });
+    await expect(trigger).toHaveAccessibleDescription('In review');
+    await expect(trigger.querySelector('[data-tone="attention"]')).toBeVisible();
+    trigger.focus();
+    await expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    const listbox = canvas.getByRole('listbox');
+    await expect(within(listbox).getByRole('option', { name: 'Archived' })).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await expect(trigger).toHaveFocus();
+    await expect(trigger).toHaveAccessibleDescription('Approved');
+    await expect(trigger.querySelector('[data-tone="sage"]')).toBeVisible();
+    await expect(new FormData(form).get('status')).toBe('approved');
+  },
+};
+
+export const CompactEmpty: Story = { args: { ...Compact.args, defaultValue: undefined, placeholder: 'Set proof status' } };
+export const CompactDisabled: Story = { args: { ...Compact.args, disabled: true } };
+export const CompactQuietNight: Story = { ...Compact, globals: { theme: 'night', texture: 'off', motion: 'off', tilt: 'off' } };

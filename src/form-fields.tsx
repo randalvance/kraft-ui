@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useContext, useId, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
 
 type FieldContextValue = {
   id: string;
@@ -13,6 +13,7 @@ export type FormFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> &
   /** One TextField, Textarea, or SearchField belongs inside each FormField. */
   children: ReactNode;
   label: ReactNode;
+  labelStyle?: 'default' | 'uppercase';
   description?: ReactNode;
   error?: ReactNode;
   /** Sets the native control's ID when an external element needs to refer to it. */
@@ -21,7 +22,7 @@ export type FormFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> &
 
 /** A visible field label and its supporting or validation text. */
 export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(function FormField({
-  children, label, description, error, controlId, className, ...props
+  children, label, labelStyle = 'default', description, error, controlId, className, ...props
 }, ref) {
   const generatedId = useId();
   const id = controlId ?? `${generatedId}-control`;
@@ -37,7 +38,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(function For
   return <FieldContext.Provider value={context}>
     <div {...props} ref={ref} className={className ? `kraft-form-field ${className}` : 'kraft-form-field'} data-invalid={invalid || undefined}>
       <div className="kraft-form-field-heading">
-        <label className="kraft-form-field-label" htmlFor={id}>{label}</label>
+        <label className="kraft-form-field-label" data-label-style={labelStyle} htmlFor={id}>{label}</label>
         {hasDescription && <span id={context.descriptionId} className="kraft-form-field-description">{description}</span>}
       </div>
       {children}
@@ -57,26 +58,98 @@ function useFieldRelations(id: string | undefined, describedBy: string | undefin
 
 type FieldInputProps = Omit<ComponentPropsWithoutRef<'input'>, 'children' | 'type'>;
 
-export type TextFieldProps = FieldInputProps & {
+export type TextFieldProps = Omit<FieldInputProps, 'size'> & {
   type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number';
+  variant?: 'boxed' | 'underline';
+  /** String sizes style the field. A numeric size is forwarded to the input. */
+  size?: 'sm' | 'md' | 'lg' | 'title' | number;
 };
 
 /** A paper input with native text, email, password, telephone, URL, or number behavior. */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField({
-  type = 'text', className, id, 'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
+  type = 'text', variant = 'boxed', size, className, id, 'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
 }, ref) {
   const relations = useFieldRelations(id, describedBy, invalid);
-  return <input {...props} {...relations} ref={ref} type={type} className={className ? `kraft-field-input ${className}` : 'kraft-field-input'} />;
+  return <input {...props} {...relations} ref={ref} type={type} data-variant={variant}
+    data-size={typeof size === 'string' ? size : undefined} size={typeof size === 'number' ? size : undefined}
+    className={className ? `kraft-field-input ${className}` : 'kraft-field-input'} />;
 });
 
-export type TextareaProps = Omit<ComponentPropsWithoutRef<'textarea'>, 'children'>;
+export type TextareaProps = Omit<ComponentPropsWithoutRef<'textarea'>, 'children'> & {
+  variant?: 'boxed' | 'ruled';
+  mono?: boolean;
+  /** Grows and shrinks to fit the content, starting at the native rows height. */
+  autoGrow?: boolean;
+  footer?: ReactNode;
+};
+
+function fitTextarea(node: HTMLTextAreaElement) {
+  node.style.removeProperty('--kraft-textarea-height');
+  // Measure at the native rows height to let the textarea shrink after deletions.
+  if (node.scrollHeight > node.clientHeight) {
+    node.style.setProperty('--kraft-textarea-height', `${node.scrollHeight + node.offsetHeight - node.clientHeight}px`);
+  }
+}
 
 /** A paper multiline field with native resizing and form behavior. */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
-  className, id, 'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
+  variant = 'boxed', mono = false, autoGrow = false, footer, className, id,
+  'aria-describedby': describedBy, 'aria-invalid': invalid, onChange, ...props
 }, ref) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  useImperativeHandle(ref, () => textareaRef.current!, []);
+  const generatedId = useId();
+  const hasFooter = footer != null && footer !== false && footer !== '';
+  const footerId = `${generatedId}-footer`;
   const relations = useFieldRelations(id, describedBy, invalid);
-  return <textarea {...props} {...relations} ref={ref} className={className ? `kraft-field-input kraft-textarea ${className}` : 'kraft-field-input kraft-textarea'} />;
+
+  useEffect(() => {
+    const node = textareaRef.current!;
+    if (autoGrow) fitTextarea(node);
+    else node.style.removeProperty('--kraft-textarea-height');
+  }, [autoGrow, variant, mono, className, props.style, props.value, props.defaultValue, props.rows, props.wrap,
+    props.placeholder, relations['aria-invalid']]);
+
+  useEffect(() => {
+    if (!autoGrow) return;
+    const node = textareaRef.current!;
+    const update = () => fitTextarea(node);
+    let width: number | undefined;
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(([entry]) => {
+      const nextWidth = entry.borderBoxSize[0].inlineSize;
+      if (nextWidth === width) return;
+      width = nextWidth;
+      update();
+    });
+    observer?.observe(node, { box: 'border-box' });
+    const fonts = node.ownerDocument.fonts;
+    fonts?.addEventListener('loadingdone', update);
+    const form = node.form;
+    let resetFrame = 0;
+    const onReset = () => {
+      cancelAnimationFrame(resetFrame);
+      resetFrame = requestAnimationFrame(update);
+    };
+    form?.addEventListener('reset', onReset);
+    return () => {
+      observer?.disconnect();
+      fonts?.removeEventListener('loadingdone', update);
+      form?.removeEventListener('reset', onReset);
+      cancelAnimationFrame(resetFrame);
+    };
+  }, [autoGrow, props.form]);
+
+  return <>
+    <textarea {...props} {...relations} ref={textareaRef} data-variant={variant} data-mono={mono || undefined}
+      data-auto-grow={autoGrow || undefined}
+      aria-describedby={[relations['aria-describedby'], hasFooter && footerId].filter(Boolean).join(' ') || undefined}
+      className={className ? `kraft-field-input kraft-textarea ${className}` : 'kraft-field-input kraft-textarea'}
+      onChange={autoGrow && props.value == null ? event => {
+        fitTextarea(event.currentTarget);
+        onChange?.(event);
+      } : onChange} />
+    {hasFooter && <div id={footerId} className="kraft-textarea-footer">{footer}</div>}
+  </>;
 });
 
 export type SearchFieldProps = FieldInputProps;
