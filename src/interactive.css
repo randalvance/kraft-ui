@@ -5,7 +5,8 @@
 .kraft-radio-group-description { margin: 0 0 var(--kraft-space-8); color: var(--kraft-text-muted-paper); font: 500 15px/1.3 var(--kraft-font-hand); }
 .kraft-radio-options { display: flex; flex-direction: column; gap: var(--kraft-space-6); }
 .kraft-radio-group[data-orientation="horizontal"] .kraft-radio-options { flex-direction: row; flex-wrap: wrap; }
-.kraft-radio-option { position: relative; display: flex; flex: 1 1 auto; align-items: center; gap: var(--kraft-space-10); min-width: 0; min-height: 42px; padding: 8px 10px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); cursor: pointer; }
+.kraft-radio-group[data-orientation="horizontal"] .kraft-radio-option { flex: 1 1 0; min-inline-size: min(100%, 8rem); }
+.kraft-radio-option { position: relative; box-sizing: border-box; display: flex; flex: 1 1 auto; align-items: center; gap: var(--kraft-space-10); min-width: 0; min-height: 42px; padding: 8px 10px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); cursor: pointer; }
 .kraft-radio-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .kraft-radio-mark { display: grid; flex: none; place-items: center; width: 17px; height: 17px; border: 2px solid var(--kraft-mute); border-radius: 50%; background: var(--kraft-card); }
 .kraft-radio-mark::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--kraft-ink); opacity: 0; }
@@ -15,13 +16,57 @@
 .kraft-radio-option:has(input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-radio-option:has(input:disabled) { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
 .kraft-radio-option:has(input:disabled) .kraft-radio-mark { border-color: var(--kraft-faint); }
-.kraft-radio-copy { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.kraft-radio-copy { display: flex; flex: 1 1 auto; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
 .kraft-radio-label { font-weight: 800; }
 .kraft-radio-description { color: var(--kraft-text-muted-paper); font-size: 12px; }
+/* Muted ink falls below 4.5:1 on the Night highlighter, so the picked row prints its description in ink. */
+.kraft-radio-option:has(input:checked) .kraft-radio-description { color: var(--kraft-ink); }
 .kraft-radio-option:has(input:disabled) .kraft-radio-description { color: var(--kraft-faint); }
 .kraft-radio-leading, .kraft-radio-trailing { display: inline-flex; flex: none; align-items: center; }
 .kraft-radio-leading svg { width: 18px; height: 18px; }
-.kraft-radio-trailing { max-width: 40%; font: 700 11px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }
+.kraft-radio-trailing { flex: 0 1 auto; justify-content: flex-end; min-inline-size: 0; font: 700 11px/1.3 var(--kraft-font-sans); text-align: end; overflow-wrap: anywhere; }
+
+/* Equal-width cards. The column width leaves room for the gaps, minus a hair so rounding never drops a column. */
+.kraft-radio-options[data-columns] {
+  --kraft-radio-column-width: max(10rem, (100% - (var(--kraft-radio-columns) - 1) * var(--kraft-space-6)) / var(--kraft-radio-columns) - .5px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--kraft-radio-column-width)), 1fr));
+}
+.kraft-radio-options[data-columns] > .kraft-radio-option { align-items: flex-start; min-inline-size: 0; padding: var(--kraft-space-12); }
+.kraft-radio-options[data-columns] > .kraft-radio-option > .kraft-radio-mark { margin-block-start: 1px; }
+
+/* Flat rows: only the picked row carries paper. */
+.kraft-radio-group[data-variant="flat"] .kraft-radio-options { gap: var(--kraft-space-2); }
+.kraft-radio-group[data-variant="flat"] .kraft-radio-option:not(:has(input:checked)) { background: transparent; border-color: transparent; box-shadow: none; }
+.kraft-radio-group[data-variant="flat"] .kraft-radio-option:not(:has(input:checked)):has(input:enabled):hover { background: var(--kraft-hover); }
+
+/* Swatches and pictures: the input is named by aria-label, so no label text is drawn or clipped. */
+.kraft-radio-group:is([data-variant="swatch"], [data-variant="picture"]) .kraft-radio-options:not([data-columns]) { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--kraft-space-4); }
+.kraft-radio-group:is([data-variant="swatch"], [data-variant="picture"]) .kraft-radio-option {
+  flex: none; justify-content: center; min-inline-size: 44px; min-block-size: 44px; padding: var(--kraft-space-8);
+  background: transparent; border-color: transparent; box-shadow: none;
+}
+.kraft-radio-group:is([data-variant="swatch"], [data-variant="picture"]) .kraft-radio-option:has(input:enabled):hover { background: var(--kraft-hover); }
+.kraft-radio-group:is([data-variant="swatch"], [data-variant="picture"]) .kraft-radio-option:has(input:disabled) { background: transparent; border-color: transparent; }
+.kraft-radio-swatch, .kraft-radio-picture { position: relative; display: inline-flex; flex: none; pointer-events: none; }
+.kraft-radio-swatch {
+  inline-size: 26px; block-size: 26px; border-radius: 50%;
+  background: var(--kraft-radio-swatch, var(--kraft-mute));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kraft-ink) 30%, transparent);
+}
+.kraft-radio-picture { align-items: center; justify-content: center; border-radius: var(--kraft-radio-picture-radius, 50%); }
+.kraft-radio-option:has(input:checked) > .kraft-radio-swatch {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kraft-ink) 30%, transparent), 0 0 0 2px var(--kraft-sheet), 0 0 0 4px var(--kraft-ink);
+}
+.kraft-radio-option:has(input:checked) > .kraft-radio-picture { box-shadow: 0 0 0 2px var(--kraft-sheet), 0 0 0 4px var(--kraft-ink); }
+.kraft-radio-option:has(input:disabled) > .kraft-radio-swatch {
+  background: linear-gradient(to top right, transparent calc(50% - 1px), var(--kraft-ink) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)), var(--kraft-radio-swatch, var(--kraft-mute));
+  opacity: .5;
+}
+.kraft-radio-option:has(input:disabled) > .kraft-radio-picture { filter: grayscale(1); opacity: .6; }
+@media (prefers-reduced-motion: no-preference) {
+  .kraft-radio-swatch, .kraft-radio-picture { transition: box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+}
 
 .kraft-popover, .kraft-menu, .kraft-select-content { z-index: 60; box-sizing: border-box; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-3); font: 400 14px/1.4 var(--kraft-font-sans); }
 .kraft-popover { position: relative; width: min(320px, calc(100vw - 24px)); max-height: var(--radix-popover-content-available-height, 70vh); overflow: auto; }
@@ -136,6 +181,10 @@
   .kraft-select-trigger[data-variant="compact"] { border-color: CanvasText; }
   .kraft-radio-option:has(input:checked), .kraft-select-item[data-state="checked"], .kraft-list-item[data-current] { background: Highlight; color: HighlightText; }
   .kraft-radio-option:has(input:checked) .kraft-radio-mark::after { background: HighlightText; }
+  .kraft-radio-group:is([data-variant="swatch"], [data-variant="picture"]) .kraft-radio-option { background: Canvas; border-color: transparent; }
+  .kraft-radio-swatch { forced-color-adjust: none; box-shadow: inset 0 0 0 1px CanvasText; }
+  .kraft-radio-option:has(input:checked) > :is(.kraft-radio-swatch, .kraft-radio-picture) { outline: 3px solid Highlight; outline-offset: 2px; box-shadow: none; }
+  .kraft-radio-group[data-variant="flat"] .kraft-radio-option:not(:has(input:checked)) { border-color: transparent; }
   .kraft-radio-option:has(input:disabled), .kraft-menu-item[data-disabled], .kraft-select-item[data-disabled], .kraft-list-item[data-disabled] { color: GrayText; }
   .kraft-menu-item[data-highlighted], .kraft-select-item[data-highlighted] { outline: 2px solid Highlight; outline-offset: -2px; }
   .kraft-pane-separator::before { border-color: CanvasText; }

@@ -413,7 +413,9 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 
 ### Radio choices and select
 
-`RadioGroup` lays native radio inputs on individual paper rows. The chosen row carries a highlighter face and a filled ink dot, so its state remains legible without colour. Descriptions sit below their option labels and are announced separately. The group name comes from a visible fieldset legend. Native arrow navigation, validation, and form submission remain intact.
+`RadioGroup` lays native radio inputs on individual paper rows. The chosen row carries a highlighter face and a filled ink dot, so its state remains legible without colour. Descriptions sit below their option labels and are announced separately. The group name comes from a visible fieldset legend. Native arrow navigation, validation, and form submission remain intact. With `columns` the rows become equal-width cards in a grid; horizontal rows share the width equally. The flat form drops the paper from every row except the picked one, which keeps the highlighter face and dot. On the picked row the description prints in ink, because muted ink falls below 4.5:1 on the Night highlighter. The trailing slot takes as much room as its content needs, so a handwritten note can sit at the end of a row.
+
+Swatch and picture forms show no option text. The radio is named by `aria-label` rather than a clipped label. A picked swatch or picture gets a sheet-coloured gap and an ink ring, focus outlines the whole 44px target separately, and a disabled swatch is struck through and faded. In forced colours the ring becomes a Highlight outline and swatches keep their colour.
 
 `Select` uses a paper trigger and a paper listbox. The trigger has a cut edge and an ink chevron; the open list highlights the focused and chosen options. Option descriptions add context while the short label remains the accessible option name. Use it for one value, including a form value. Menus express actions instead.
 

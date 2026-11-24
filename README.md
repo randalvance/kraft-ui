@@ -429,6 +429,27 @@ import { Inline, Kbd, SearchField } from '@randalvance/kraft-ui';
 
 `RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.
 
+Choose a form with `variant`:
+
+- `rows` (default): paper rows with a radio mark. `trailing` is not width-capped, so it can hold a count, a badge, or a handwritten `<Text as="span" variant="hand">` note.
+- `flat`: plain rows where only the picked row is highlighted, for sort or filter menus.
+- `swatch`: a row of colour swatches. Each option's `swatch` takes any CSS colour, such as `var(--kraft-teal)`.
+- `picture`: picture-only options, such as a portrait picker. Pass decorative content, for example `<Avatar decorative />`, as each option's `picture`.
+
+Swatch and picture options draw no label; `label` becomes the radio's accessible name through `aria-label`, and `description` is still announced. The picked swatch or picture is ringed, keyboard focus outlines the whole 44px target, and a disabled swatch is struck through. Set `columns` to lay options out as equal-width cards (it overrides `orientation`, and the cards drop to fewer columns when each would be narrower than 10rem). With `orientation="horizontal"`, rows share the width equally even when options have descriptions.
+
+```tsx
+<RadioGroup label="Care plan" name="plan" columns={3} defaultValue="pack" options={[
+  { value: 'pup', label: 'Pup', description: 'One pet, weekly walks' },
+  { value: 'pack', label: 'Pack', description: 'Up to four pets, daily walks' },
+  { value: 'shelter', label: 'Shelter', description: 'Unlimited pets and a care log' },
+]} />
+<RadioGroup label="Workspace colour" name="colour" variant="swatch" defaultValue="teal" options={[
+  { value: 'teal', label: 'Teal', swatch: 'var(--kraft-teal)' },
+  { value: 'plum', label: 'Plum', swatch: 'var(--kraft-plum)' },
+]} />
+```
+
 `SegmentedControl` uses native radios for a single choice. `ToggleChips` uses native checkboxes for independent choices. Both take a `label` for the fieldset, a form `name`, and `options` with unique `value` strings and visible `label`s. A `SegmentOption` also accepts a numeric `count`, a second line in `description`, and `disabled`. Counts and second lines are announced as descriptions.
 
 Use `variant="joined" | "chips"` and `tone="highlighter" | "ink"`. The radio strip defaults to joined, the checkbox group defaults to chips, and both default to highlighter. `hideLabel` keeps the group name accessible, and `disabled` disables the fieldset. Native fieldset props and refs pass through, including `form` for association with an external form. `SegmentedControlProps`, `ToggleChipsProps`, and `SegmentOption` are exported.
