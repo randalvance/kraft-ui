@@ -9,7 +9,7 @@ import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 import { SegmentedControl, ToggleChips, type SegmentOption } from '../src';
 import { Checkbox, CheckboxGroup, CheckboxStatus, FormSection, PageHeader, Toggle } from '../src';
-import { Dialog, Drawer, ResizablePane } from '../src';
+import { Dialog, Drawer, Menu, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
@@ -885,6 +885,78 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     </ThemeProvider>);
     await verifyPaintedContrast(view.getByTestId('contrast-matrix'), 3);
   });
+  it.each([true, false])('keeps red and blue text, danger ink, picked-row dots, and sticker glyphs readable with decoration=%s', async decoration => {
+    const accents = { 'red-2': 'var(--kraft-red-2)', 'blue-2': 'var(--kraft-blue-2)', 'content-danger': 'var(--kraft-content-danger)' };
+    const lines = (ground: string) => Object.entries(accents).map(([name, color]) =>
+      <span key={name} style={{ color }} data-contrast={`${ground}-${name}`}>{name} on {ground}</span>);
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 520, padding: 24 }}>
+      <Stack gap={16}>
+        <Inline wrap gap={12}>{lines('desk')}</Inline>
+        <Surface padding={12}><Inline wrap gap={12}>{lines('paper')}</Inline></Surface>
+        <Card title="Proofs"><Inline wrap gap={12}>{lines('card')}</Inline></Card>
+        <FormField label="Edition" error="Check the edition number"><TextField defaultValue="Second" /></FormField>
+        <ActionableList aria-label="Proofs">
+          <ActionableListItem current label="Covers" trailing={<span style={{ color: 'var(--kraft-green)' }} data-contrast="picked green dot">●</span>} />
+          <ActionableListItem label="Inserts" trailing={<span style={{ color: 'var(--kraft-green)' }} data-contrast="green dot">●</span>} />
+        </ActionableList>
+        <Inline gap={16}>{tones.map(tone => <Sticker key={tone} tone={tone} shape="pill">
+          <span style={{ color: 'var(--kraft-attention)' }}><Icon name="bolt" data-contrast={`yellow glyph on ${tone} sticker`} /></span>Rush
+        </Sticker>)}</Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const error = matrix.querySelector<HTMLElement>('.kraft-form-field-error')!;
+    error.dataset.contrast = 'form error';
+    // Paper's green sits under 3:1 on textured paper whether picked or not; the picked-row fix is a Night one.
+    if (theme === 'paper') matrix.querySelectorAll<HTMLElement>('.kraft-list-item [data-contrast]').forEach(dot => { delete dot.dataset.contrast; });
+    const glyphs = [...matrix.querySelectorAll<HTMLElement>('.kraft-sticker [data-contrast], .kraft-list-item [data-contrast]')];
+    glyphs.forEach(glyph => { glyph.dataset.glyph = glyph.dataset.contrast; delete glyph.dataset.contrast; });
+    await verifyPaintedContrast(matrix);
+    matrix.querySelectorAll<HTMLElement>('[data-contrast]').forEach(sample => { delete sample.dataset.contrast; });
+    glyphs.forEach(glyph => { glyph.dataset.contrast = glyph.dataset.glyph; });
+    await verifyPaintedContrast(matrix, 3);
+    const attentionGlyph = matrix.querySelector('.kraft-sticker[data-tone="attention"] .kraft-icon')!;
+    expect(getComputedStyle(attentionGlyph).color, 'attention glyph prints in the sticker ink')
+      .toBe(getComputedStyle(attentionGlyph.closest('.kraft-sticker')!).color);
+  });
+
+  it.each([true, false])('keeps destructive menu items and picked select dots visible with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 520, height: 420, padding: 24 }}>
+      <Inline align="start" gap={24}>
+        <Menu defaultOpen label="Proof actions" trigger={<Button>Actions</Button>} onAction={() => {}} side="bottom" align="start" items={[
+          { id: 'copy', label: 'Duplicate' },
+          { id: 'delete', label: 'Delete proof', destructive: true },
+        ]} />
+      </Inline>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const destructive = await view.findByRole('menuitem', { name: 'Delete proof' });
+    destructive.querySelector<HTMLElement>('.kraft-menu-label')!.dataset.contrast = 'destructive';
+    await verifyPaintedContrast(matrix);
+    act(() => destructive.focus());
+    expect(destructive).toHaveAttribute('data-highlighted');
+    await verifyPaintedContrast(matrix);
+    cleanup();
+
+    const tonesWithDots = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
+    const select = render(<ThemeProvider theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 520, padding: 24 }}>
+      <Select label="Status" variant="compact" defaultValue="sage" options={tonesWithDots.map(tone => ({ value: tone, label: tone, statusDot: tone }))} />
+    </ThemeProvider>);
+    await userEvent.click(select.getByRole('combobox', { name: 'Status' }));
+    const picked = await select.findByRole('option', { name: 'sage' });
+    expect(picked).toHaveAttribute('data-state', 'checked');
+    const row = channels(getComputedStyle(picked).backgroundColor);
+    const dot = picked.querySelector('.kraft-select-status-dot')!;
+    expect(contrast(channels(getComputedStyle(dot).backgroundColor), row), 'green dot on the picked row').toBeGreaterThanOrEqual(3);
+    for (const option of select.getAllByRole('option')) {
+      const rim = channels(getComputedStyle(option.querySelector('.kraft-select-status-dot')!).borderTopColor);
+      expect(contrast(rim, row), `${option.textContent} dot rim on a picked row`).toBeGreaterThanOrEqual(3);
+    }
+    await userEvent.keyboard('{Escape}');
+  });
+
   it('keeps printed-label ink readable across the entire gloss gradient', () => {
     const view = render(<ThemeProvider theme={theme}>{tones.map(tone => <Badge key={tone} tone={tone}>{tone}</Badge>)}</ThemeProvider>);
     for (const mark of view.container.querySelectorAll<HTMLElement>('.kraft-badge')) {
@@ -1008,5 +1080,33 @@ it('animates the ink only with motion enabled and no system reduction', async ()
     expect(css(stamp).rotate).toBe('-4deg');
   } finally {
     await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
+it.each([true, false])('switches checkbox and toggle faces with the theme instead of fading them with motion=%s', async motion => {
+  const view = render(<ThemeProvider theme="night" motion={motion} data-testid="themed">
+    <Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle>
+  </ThemeProvider>);
+  const faces = () => [...view.getByTestId('themed').querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-track')];
+  const settled = (theme: Theme) => {
+    const probe = render(<ThemeProvider theme={theme} motion={false}>
+      <Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle>
+    </ThemeProvider>);
+    const colors = [...probe.container.querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-track')]
+      .map(face => [getComputedStyle(face).backgroundColor, getComputedStyle(face).borderTopColor]);
+    probe.unmount();
+    return colors;
+  };
+  const paper = settled('paper'), night = settled('night');
+  for (const [from, to, expected] of [['night', 'paper', paper], ['paper', 'night', night]] as const) {
+    view.rerender(<ThemeProvider theme={to} motion={motion} data-testid="themed">
+      <Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle>
+    </ThemeProvider>);
+    const now = faces().map(face => [getComputedStyle(face).backgroundColor, getComputedStyle(face).borderTopColor]);
+    expect(now, `${from} → ${to}: faces take the new theme on the first frame`).toEqual(expected);
+    for (const face of faces()) {
+      const colorTransitions = face.getAnimations().filter(animation => /color/i.test((animation as CSSTransition).transitionProperty ?? ''));
+      expect(colorTransitions, `${from} → ${to}: no colour fade`).toEqual([]);
+    }
   }
 });

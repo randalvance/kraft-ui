@@ -31,6 +31,7 @@ colors:
   red-2: "#8f3a2a"
   blue: "#3b5b9a"
   blue-2: "#2a4070"
+  blue-deep: "#2a4070"
   on-blue: "#ffffff"
   green: "#5b8c5a"
   amber: "#b8792f"
@@ -303,13 +304,14 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 
 ### Primary
 
-- **Blue** identifies blue actions and the default sticker; links use material-aware ink roles, while `blue-2` supplies its cut edge and `on-blue` its text.
+- **Blue** identifies blue actions and the default sticker; links use material-aware ink roles, while `blue-deep` supplies its cut edge and `on-blue` its text. `red-2` and `blue-2` are text inks: in Paper they are deep, and in Night they are light tints that clear 4.5:1 on every night paper, including highlighted rows. Structural deep blue (edges, the Night toggle rail, the navy tone) uses `blue-deep`, which keeps the earlier deep values.
 - **Attention** marks deliberate emphasis, paired with `on-attention` and the `highlighter-2` edge.
 
 ### Secondary
 
 - **Mat green / sage** distinguishes the sage button; **st-green** supplies the separate badge and sticker face.
 - **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. **st-red** provides the danger badge and sticker face.
+- **Green** is lifted in Night so a green dot stays at least 3:1 against a highlighted (picked) row.
 - **Red, green, amber, ochre, teal, violet, plum, blush, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
 
 ### Neutral
@@ -329,7 +331,7 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 - **text-faint / text-danger / text-attention**, each with a `-paper`, `-kraft`, and `-board` value, supply the `Text` status tones. Every value clears 4.5:1 against the darkest and lightest texel of its ground, so faint ink sits just lighter than muted, and the night kraft values are near-white tints.
 - **mark-gloss** is the bounded highlight for badges and stickers. It preserves their printed finish without washing out small labels. The original gloss palette token remains available for illustration.
 
-Surface establishes `--kraft-content-ink`, `--kraft-content-link`, and `--kraft-content-muted` for its own material. Each nested Surface and ThemeProvider resets these roles, so outer material ink cannot leak into an inner piece.
+Surface establishes `--kraft-content-ink`, `--kraft-content-link`, `--kraft-content-muted`, `--kraft-content-faint`, `--kraft-content-danger`, and `--kraft-content-attention` for its own material. `--kraft-content-danger` is the semantic danger text role; form errors and destructive menu items use it, and applications should too rather than choosing a raw red. Each nested Surface and ThemeProvider resets these roles, so outer material ink cannot leak into an inner piece.
 
 **The Readable Ink Rule.** Validate text against the fully painted material, including gloss and texture, in both themes; a passing solid swatch is not enough.
 
@@ -397,9 +399,9 @@ Surface outlines lightly mix the material edge with transparency. Raised buttons
 
 ### Checkboxes and toggles
 
-Small, printed, and native. `Checkbox` is a 20px paper box with a recessed face and a muted ink edge; checking fills it with blue and a hand-weight check, and `indeterminate` shows a dash. Checked boxes gain a crisp cut edge down and right. `Toggle` is a native checkbox with `role="switch"`: a 44×26px recessed rail carrying a round paper knob that slides toward the end when on. The rail turns blue when on; Night uses the deeper blue-2 so the knob keeps contrast against it, and the knob travels toward the start in right-to-left text.
+Small, printed, and native. `Checkbox` is a 20px paper box with a recessed face and a muted ink edge; checking fills it with blue and a hand-weight check, and `indeterminate` shows a dash. Checked boxes gain a crisp cut edge down and right. `Toggle` is a native checkbox with `role="switch"`: a 44×26px recessed rail carrying a round paper knob that slides toward the end when on. The rail turns blue when on; Night uses the deeper blue-deep so the knob keeps contrast against it, and the knob travels toward the start in right-to-left text.
 
-Both wrap the input in a label so the box and its text form one target. Focus draws the ink outline around the box or rail. Hover darkens the unchecked edge; press nudges the box down and right. Disabled uses the quiet paper face with a softened but visible edge, and the check or knob position still shows the state. An optional description sits under the label in secondary ink and is announced as the input's description rather than being part of its name. Use `Toggle` for settings that apply immediately and `Checkbox` for choices submitted later; pressed actions remain `Button` with `aria-pressed`.
+Both wrap the input in a label so the box and its text form one target. Focus draws the ink outline around the box or rail. Hover darkens the unchecked edge; press nudges the box down and right. Faces and edges change color instantly; only the tick, the knob, and the press move, so switching themes never shows a box in the previous theme's color. Disabled uses the quiet paper face with a softened but visible edge, and the check or knob position still shows the state. An optional description sits under the label in secondary ink and is announced as the input's description rather than being part of its name. Use `Toggle` for settings that apply immediately and `Checkbox` for choices submitted later; pressed actions remain `Button` with `aria-pressed`.
 
 **The Visible State Rule.** Checked, mixed, and on states change shape as well as color: a check, a dash, or a knob position.
 
@@ -483,7 +485,7 @@ The native modal dialog owns the focus boundary and makes the page behind it ine
 
 ### Badges and stickers
 
-`Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels.
+`Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels. Marks print in a single ink: an icon on a badge or sticker takes the mark's ink, so an accent-colored glyph, such as an attention-yellow one, cannot disappear into a face of the same hue.
 
 ## Do's and Don'ts
 

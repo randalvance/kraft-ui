@@ -36,7 +36,7 @@
 .kraft-card[data-tone="violet"] { --kraft-card-spine-tone: var(--kraft-violet); }
 .kraft-card[data-tone="plum"] { --kraft-card-spine-tone: var(--kraft-plum); }
 .kraft-card[data-tone="blush"] { --kraft-card-spine-tone: var(--kraft-blush); }
-.kraft-card[data-tone="navy"] { --kraft-card-spine-tone: var(--kraft-blue-2); }
+.kraft-card[data-tone="navy"] { --kraft-card-spine-tone: var(--kraft-blue-deep); }
 
 .kraft-card[data-tone]::before {
   content: '';

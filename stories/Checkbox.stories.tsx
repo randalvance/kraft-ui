@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Avatar, Checkbox, CheckboxStatus, Inline, Stack, Surface } from '../src';
+import { Avatar, Checkbox, CheckboxStatus, Inline, Stack, Surface, ThemeProvider, Toggle } from '../src';
 const meta = { title: 'Primitives/Checkbox', component: Checkbox,
  parameters: { docs: { description: { component: 'A native checkbox printed as a small paper box. Checking fills it with blue ink. Use it to choose items that take effect when a form is submitted; use Toggle for settings that apply immediately. The whole label is the hit target. `className` and `style` style the label; other props and the ref reach the input.' } } },
  args: { children: 'Keep drafts on this desk', onChange: fn() },
@@ -113,4 +113,28 @@ export const StaticStatus: Story = {
   await expect(status).not.toHaveFocus();
   await expect(status).toHaveAttribute('data-state', 'checked');
  },
+};
+/** Faces follow the theme on the first frame. Only the tick and the press animate, so switching themes never flashes an unchecked box in the old theme's colour. */
+export const ThemeSwitch: Story = {
+  render: function ThemeSwitch() {
+    const [theme, setTheme] = useState<'paper' | 'night'>('night');
+    return <Stack gap={12}>
+      <button type="button" onClick={() => setTheme(theme === 'night' ? 'paper' : 'night')}>Switch to {theme === 'night' ? 'Paper' : 'Night'}</button>
+      <ThemeProvider theme={theme} style={{ padding: 16 }} data-testid="themed">
+        <Stack gap={8}><Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync proofs</Toggle></Stack>
+      </ThemeProvider>
+    </Stack>;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const face = () => canvas.getByRole('checkbox', { name: 'Labels' }).nextElementSibling!;
+    for (const next of ['Paper', 'Night']) {
+      await userEvent.click(canvas.getByRole('button', { name: `Switch to ${next}` }));
+      const card = getComputedStyle(canvas.getByTestId('themed')).getPropertyValue('--kraft-card').trim();
+      const probe = document.createElement('span');
+      probe.style.color = card; canvas.getByTestId('themed').append(probe);
+      await expect(getComputedStyle(face()).backgroundColor).toBe(getComputedStyle(probe).color);
+      probe.remove();
+    }
+  },
 };
