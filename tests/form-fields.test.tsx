@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { FormField, InlineEdit, SearchField, Select, Textarea, TextField } from '../src';
+import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 
 describe('form fields', () => {
   it('links the label, hint, and error to a native input', async () => {
@@ -170,6 +170,82 @@ describe('InlineEdit', () => {
     expect(title.querySelector('button')?.getAttribute('type')).toBe('button');
     expect(doc.querySelector('h2')?.textContent).toBe('Approved proof');
     expect(doc.querySelector('h2 button, input')).toBeNull();
+  });
+});
+
+describe('SearchField slots', () => {
+  it('sizes the whole field with className and style and styles the input separately', () => {
+    const ref = createRef<HTMLInputElement>();
+    render(<div style={{ display: 'flex' }}>
+      <SearchField ref={ref} aria-label="Search letters" className="toolbar-search" style={{ width: 240, flex: 'none' }}
+        inputClassName="query" inputStyle={{ letterSpacing: '1px' }} name="q" defaultValue="ink" />
+    </div>);
+    const input = screen.getByRole('searchbox', { name: 'Search letters' });
+    const field = input.parentElement!;
+    expect(ref.current).toBe(input);
+    expect(field).toHaveClass('kraft-search-field', 'toolbar-search');
+    expect(field.style.width).toBe('240px');
+    expect(field.style.flexGrow).toBe('0');
+    expect(input).toHaveClass('kraft-search-input', 'query');
+    expect(input).not.toHaveClass('toolbar-search');
+    expect(input.style.letterSpacing).toBe('1px');
+    expect(input.getAttribute('style')).not.toContain('width');
+    expect(input).toHaveAttribute('type', 'search');
+    expect(input).toHaveValue('ink');
+  });
+
+  it('keeps the trailing hint and a replaced mark out of the accessible name', () => {
+    render(<FormField label="Filter mail" description="Sender or subject">
+      <SearchField icon={<svg data-testid="funnel" />} trailing={<Kbd>/</Kbd>} />
+    </FormField>);
+    const input = screen.getByRole('searchbox', { name: 'Filter mail' });
+    expect(input).toHaveAccessibleDescription('Sender or subject');
+    const field = input.parentElement!;
+    expect(field).toHaveAttribute('data-trailing');
+    expect(field).not.toHaveAttribute('data-icon');
+    expect(screen.getByTestId('funnel').parentElement).toHaveAttribute('aria-hidden', 'true');
+    expect(field.querySelector('.kraft-search-trailing kbd')).toHaveTextContent('/');
+    expect(field.querySelector('.kraft-search-trailing')?.previousElementSibling).toBe(input);
+  });
+
+  it('removes the mark with icon={null} and leaves out an empty trailing slot', () => {
+    render(<SearchField aria-label="Find" icon={null} trailing={false} />);
+    const field = screen.getByRole('searchbox', { name: 'Find' }).parentElement!;
+    expect(field).toHaveAttribute('data-icon', 'none');
+    expect(field).not.toHaveAttribute('data-trailing');
+    expect(field.querySelector('.kraft-search-mark, .kraft-search-trailing, svg')).toBeNull();
+  });
+
+  it('focuses the input when the frame or a passive hint is pressed, but not a trailing button', async () => {
+    const clear = vi.fn();
+    render(<SearchField aria-label="Search notes" trailing={<><Kbd>K</Kbd><button type="button" onClick={clear}>Filters</button></>} />);
+    const input = screen.getByRole('searchbox', { name: 'Search notes' });
+    await userEvent.click(screen.getByText('K'));
+    expect(input).toHaveFocus();
+    await userEvent.click(screen.getByRole('button', { name: 'Filters' }));
+    expect(clear).toHaveBeenCalledOnce();
+    expect(screen.getByRole('button', { name: 'Filters' })).toHaveFocus();
+  });
+
+  it('does not move focus into a disabled field', () => {
+    render(<SearchField aria-label="Archived" disabled trailing="12 results" />);
+    const input = screen.getByRole('searchbox', { name: 'Archived' });
+    fireEvent.mouseDown(screen.getByText('12 results'));
+    expect(input).not.toHaveFocus();
+  });
+
+  it('renders its slots on the server', () => {
+    const doc = new DOMParser().parseFromString(renderToString(
+      <SearchField aria-label="Search" className="wide" style={{ width: 320 }} trailing={<Kbd keys={['Ctrl', 'K']} size="sm" />} />,
+    ), 'text/html');
+    const field = doc.querySelector('.kraft-search-field') as HTMLElement;
+    expect(field.className).toBe('kraft-search-field wide');
+    expect(field.style.width).toBe('320px');
+    expect(field.dataset.trailing).toBe('true');
+    expect(field.querySelector('.kraft-search-mark')?.getAttribute('aria-hidden')).toBe('true');
+    expect(field.querySelector('input')?.getAttribute('type')).toBe('search');
+    expect(field.querySelector('input')?.className).toBe('kraft-search-input');
+    expect(field.querySelector('.kraft-search-trailing')?.textContent).toBe('Ctrl+K');
   });
 });
 

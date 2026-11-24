@@ -11,6 +11,7 @@
 @import './card.css';
 @import './edit-page.css';
 @import './app-shell.css';
+@import './kbd.css';
 
 .kraft-root { --kraft-content-ink: var(--kraft-ink); --kraft-content-muted: var(--kraft-text-muted-paper); --kraft-content-link: var(--kraft-link-paper); color: var(--kraft-content-ink); background: var(--kraft-desk); font: 400 14px/1.5 var(--kraft-font-sans); --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); --kraft-motion-duration: var(--kraft-dur-hover); --kraft-decoration-angle: -4deg; accent-color: var(--kraft-blue); caret-color: var(--kraft-ink); }
 [data-kraft-theme] { --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); }
@@ -347,10 +348,21 @@
 .kraft-inline-edit-trigger > svg { align-self: center; }
 .kraft-inline-edit-trigger:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .12em; }
 .kraft-inline-edit-trigger:focus-visible, .kraft-inline-edit-input:focus { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
-.kraft-search-field { position: relative; display: block; width: 100%; min-width: 0; }
-.kraft-search-mark { position: absolute; z-index: 1; inset-block-start: 50%; inset-inline-start: 12px; width: 16px; height: 16px; color: var(--kraft-mute); pointer-events: none; transform: translateY(-50%); }
-.kraft-search-input { padding-inline-start: 38px; }
-.kraft-search-field:has(.kraft-search-input:disabled) .kraft-search-mark { color: var(--kraft-faint); }
+/* The search frame draws the paper so the trailing slot can sit in flow beside the input. */
+.kraft-search-field { --kraft-form-error-ink: var(--kraft-red-2); position: relative; box-sizing: border-box; display: flex; align-items: center; width: 100%; min-width: 0; min-height: 40px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); cursor: text; }
+[data-kraft-theme="night"] .kraft-search-field { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-search-field:hover:where(:not(:focus-within):not(:has(.kraft-search-input:disabled))) { border-color: var(--kraft-mute); }
+.kraft-search-field:has(.kraft-search-input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+.kraft-search-field:has(.kraft-search-input:disabled) { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
+.kraft-search-field:has(.kraft-search-input[aria-invalid="true"]) { border-bottom: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
+.kraft-search-input { box-sizing: border-box; flex: 1 1 0; align-self: stretch; width: 100%; min-width: 0; margin: 0; padding: 8px 12px 8px 37px; padding-inline: 37px 12px; color: inherit; background: transparent; border: 0; border-radius: inherit; outline: none; font: 400 14px/1.5 var(--kraft-font-sans); caret-color: currentColor; cursor: inherit; }
+.kraft-search-input::placeholder { color: var(--kraft-faint); opacity: 1; }
+.kraft-search-field[data-icon="none"] .kraft-search-input { padding-inline-start: 11px; }
+.kraft-search-field[data-trailing] .kraft-search-input { padding-inline-end: 8px; }
+.kraft-search-mark { position: absolute; inset-block-start: 50%; inset-inline-start: 11px; display: flex; width: 16px; height: 16px; color: var(--kraft-mute); pointer-events: none; transform: translateY(-50%); }
+.kraft-search-mark > svg { width: 100%; height: 100%; }
+.kraft-search-trailing { display: inline-flex; flex: none; align-items: center; gap: var(--kraft-space-4); padding-inline-end: 8px; color: var(--kraft-text-muted-paper); font: 700 12px/1.3 var(--kraft-font-sans); white-space: nowrap; }
+.kraft-search-field:has(.kraft-search-input:disabled) :is(.kraft-search-mark, .kraft-search-trailing) { color: var(--kraft-faint); }
 .kraft-tree { min-width: 0; margin: 0; padding: 0; list-style: none; color: var(--kraft-ink); font: 400 13px/1.35 var(--kraft-font-sans); }
 .kraft-tree-item { min-width: 0; margin: 0; padding: 0; list-style: none; outline: none; }
 .kraft-tree-row { box-sizing: border-box; display: flex; align-items: center; gap: var(--kraft-space-8); min-width: 0; min-height: 36px; margin-block-end: var(--kraft-space-4); padding: 6px var(--kraft-space-8); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); }
@@ -471,7 +483,10 @@
   .kraft-field-input[data-variant="underline"] { border-color: FieldText; }
   .kraft-textarea[data-variant="ruled"] { --kraft-textarea-rules: none; color: FieldText; background: Field; border-color: FieldText; }
   .kraft-inline-edit-trigger:focus-visible, .kraft-inline-edit-input:focus { outline-color: Highlight; }
-  .kraft-field-input:disabled, .kraft-field-input:disabled::placeholder, .kraft-search-field:has(.kraft-search-input:disabled) .kraft-search-mark { color: GrayText; border-color: GrayText; }
+  .kraft-search-field { color: FieldText; background: Field; border-color: FieldText; box-shadow: none; }
+  .kraft-search-trailing { color: FieldText; }
+  .kraft-field-input:disabled, .kraft-field-input:disabled::placeholder, .kraft-search-field:has(.kraft-search-input:disabled), .kraft-search-field:has(.kraft-search-input:disabled) :is(.kraft-search-mark, .kraft-search-trailing), .kraft-search-input:disabled::placeholder { color: GrayText; border-color: GrayText; }
+  .kraft-search-field:has(.kraft-search-input[aria-invalid="true"]) { border-bottom-color: Highlight; }
   .kraft-field-input[aria-invalid="true"] { border-bottom-color: Highlight; }
   .kraft-form-field-error { color: CanvasText; }
   .kraft-checkbox-box, .kraft-toggle-track, .kraft-toggle-knob { border-color: CanvasText; background: Canvas; box-shadow: none; }

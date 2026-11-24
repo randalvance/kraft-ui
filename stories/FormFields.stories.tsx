@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
-import { Button, FormField, SearchField, Stack, Textarea, TextField } from '../src';
+import { Button, FormField, IconButton, Inline, Kbd, SearchField, Stack, Textarea, TextField } from '../src';
 
 const meta = {
   title: 'Components/Form fields', component: FormField,
@@ -29,6 +29,100 @@ export const Search: Story = { render: () => <FormField label="Find notes" descr
   await userEvent.type(search, 'paper');
   await expect(search).toHaveValue('paper');
 } };
+
+const funnel = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" /></svg>;
+
+// The trailing slot must sit after the input box, which holds the native clear button.
+async function expectClearOfTrailing(input: HTMLInputElement) {
+  const trailing = input.parentElement!.querySelector('.kraft-search-trailing')!.getBoundingClientRect();
+  const box = input.getBoundingClientRect();
+  const rtl = getComputedStyle(input).direction === 'rtl';
+  if (rtl) await expect(trailing.right).toBeLessThanOrEqual(box.left + 0.5);
+  else await expect(trailing.left).toBeGreaterThanOrEqual(box.right - 0.5);
+  await expect(box.width).toBeGreaterThan(40);
+}
+
+export const SearchSlots: Story = {
+  render: () => <Stack gap={16} style={{ width: 'min(100%, 420px)' }}>
+    <FormField label="Search letters"><SearchField placeholder="Search letters…" trailing={<Kbd size="sm">/</Kbd>} /></FormField>
+    <FormField label="Command"><SearchField placeholder="Jump to…" trailing={<Kbd size="sm" keys={['Ctrl', 'K']} />} /></FormField>
+    <FormField label="Filter senders"><SearchField icon={funnel} defaultValue="studio" trailing="12 results" /></FormField>
+    <FormField label="Plain search"><SearchField icon={null} placeholder="No mark" /></FormField>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const letters = canvas.getByRole<HTMLInputElement>('searchbox', { name: 'Search letters' });
+    await userEvent.type(letters, 'a long query that runs right up to the keycap hint');
+    await expectClearOfTrailing(letters);
+    await expect(letters).toHaveFocus();
+    await expect(getComputedStyle(letters.parentElement!).outlineStyle).toBe('solid');
+    await userEvent.clear(letters);
+    await expect(letters).toHaveValue('');
+
+    const filter = canvas.getByRole<HTMLInputElement>('searchbox', { name: 'Filter senders' });
+    await expect(filter).toHaveAccessibleName('Filter senders');
+    await expectClearOfTrailing(filter);
+    await userEvent.click(canvas.getByText('12 results'));
+    await expect(filter).toHaveFocus();
+
+    const plain = canvas.getByRole('searchbox', { name: 'Plain search' });
+    await expect(parseFloat(getComputedStyle(plain).paddingInlineStart)).toBeLessThan(16);
+  },
+};
+
+export const SearchToolbar: Story = {
+  render: () => <Inline as="div" role="toolbar" aria-label="Letters" gap={8} style={{ alignItems: 'center', width: 'min(100%, 560px)' }}>
+    <SearchField aria-label="Search letters" placeholder="Search…" style={{ width: 240 }} trailing={<Kbd size="sm">/</Kbd>} />
+    <SearchField aria-label="Filter" icon={funnel} placeholder="Filter…" style={{ flex: 1 }} />
+    <IconButton aria-label="New letter">+</IconButton>
+  </Inline>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const search = canvas.getByRole<HTMLInputElement>('searchbox', { name: 'Search letters' });
+    const filter = canvas.getByRole<HTMLInputElement>('searchbox', { name: 'Filter' });
+    await expect(search.parentElement!.getBoundingClientRect().width).toBe(240);
+    await expect(search.parentElement!.parentElement).toBe(filter.parentElement!.parentElement);
+    await expect(filter.parentElement!.getBoundingClientRect().width).toBeGreaterThan(100);
+    await userEvent.click(search);
+    await userEvent.tab();
+    await expect(filter).toHaveFocus();
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'New letter' })).toHaveFocus();
+  },
+};
+
+export const SearchStates: Story = {
+  render: () => <Stack gap={16} style={{ width: 'min(100%, 420px)' }}>
+    <FormField label="Archived letters"><SearchField disabled defaultValue="spring" trailing={<Kbd size="sm">/</Kbd>} /></FormField>
+    <FormField label="Sender" error="Use at least two letters"><SearchField defaultValue="a" trailing="0 results" /></FormField>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const archived = canvas.getByRole('searchbox', { name: 'Archived letters' });
+    await expect(archived).toBeDisabled();
+    await userEvent.click(canvas.getByText('/'));
+    await expect(archived).not.toHaveFocus();
+    const sender = canvas.getByRole('searchbox', { name: 'Sender' });
+    await expect(sender).toHaveAttribute('aria-invalid', 'true');
+    await expect(sender).toHaveAccessibleDescription('Use at least two letters');
+    await expect(getComputedStyle(sender.parentElement!).borderBottomStyle).toBe('dashed');
+  },
+};
+
+export const SearchRightToLeft: Story = {
+  render: () => <div dir="rtl" lang="ar" style={{ maxWidth: 430 }}>
+    <FormField label="ابحث في الرسائل"><SearchField defaultValue="ورق" trailing={<Kbd size="sm">/</Kbd>} /></FormField>
+  </div>,
+  play: async ({ canvasElement }) => {
+    const input = within(canvasElement).getByRole<HTMLInputElement>('searchbox');
+    await expectClearOfTrailing(input);
+    const mark = input.parentElement!.querySelector('.kraft-search-mark')!.getBoundingClientRect();
+    await expect(mark.left).toBeGreaterThan(input.getBoundingClientRect().right - 40);
+  },
+};
+
+export const SearchNight: Story = { ...SearchSlots, globals: { theme: 'night' } };
+export const SearchQuietNight: Story = { ...SearchStates, globals: { theme: 'night', texture: 'off', motion: 'off', tilt: 'off' } };
 
 export const Validation: Story = { render: function ValidationForm() {
   const [name, setName] = useState('');

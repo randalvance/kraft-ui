@@ -47,6 +47,7 @@ export function Note() {
 | Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link`, `LinkProps` |
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
+| Key hints | `Kbd`, `KbdProps`, `KbdSize` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
@@ -383,11 +384,12 @@ import { Avatar, Checkbox, CheckboxGroup, CheckboxStatus } from '@randalvance/kr
 <CheckboxStatus variant="pen" checked label="Cover proof approved" />;
 ```
 
-`TextField`, `Textarea`, and `SearchField` keep native input behavior, including refs, controlled or initial values, validation, and form submission. Put one control inside `FormField` to connect a visible `label`, optional `description`, and `error` to that control automatically. An error draws a dashed red field edge, sets `aria-invalid`, and becomes part of its accessible description; application code decides when to show it. Set `controlId` on `FormField` when another element needs the input ID. Each control can also stand alone with an external `<label>` and `id`, or an `aria-label`. `className` and `style` on a control apply to its native input or textarea; on `FormField` they apply to the wrapper.
+`TextField`, `Textarea`, and `SearchField` keep native input behavior, including refs, controlled or initial values, validation, and form submission. Put one control inside `FormField` to connect a visible `label`, optional `description`, and `error` to that control automatically. An error draws a dashed red field edge, sets `aria-invalid`, and becomes part of its accessible description; application code decides when to show it. Set `controlId` on `FormField` when another element needs the input ID. Each control can also stand alone with an external `<label>` and `id`, or an `aria-label`. `className` and `style` on `TextField` and `Textarea` apply to the native input or textarea; on `SearchField` and `FormField` they apply to the outer element.
 
 - `FormField` supports `labelStyle="uppercase"` for small printed labels. The default is `"default"`.
 - `TextField` supports `variant="boxed" | "underline"` and `size="sm" | "md" | "lg" | "title"`. The default appearance is boxed and medium. Title size uses the handwritten face. Numeric `size` values still reach the native input.
 - `Textarea` supports `variant="boxed" | "ruled"`, with `boxed` as the default. Set `mono` for monospaced text and `autoGrow` to fit the content, starting at the native `rows` height. With `autoGrow` off, the textarea keeps its vertical resize handle. Use `footer` for a character or token count below the textarea. Its text contributes to the accessible description.
+- `SearchField` draws its paper frame around the native search input, so `className` and `style` size the whole field and it can share a flex row, such as a toolbar, without an extra wrapper. Use `inputClassName` and `inputStyle` to reach the input itself. `icon` replaces the leading search mark, for example with a funnel; it is decorative, and `icon={null}` removes it. `trailing` shows content after the text, such as a `Kbd` hint or a result count. It sits beside the input box, so the browser's clear button never covers it. Pressing the frame or a passive hint focuses the input; buttons and links in `trailing` keep their own behavior.
 - `InlineEdit` renders a heading that opens an editor on click or focus. Supply a `label` for the editing action, `value` or `defaultValue`, and `onValueChange` to handle edits. `placeholder` defaults to “Untitled”, `titleAs` defaults to `h1`, and `disabled` shows a static heading. Enter commits, Escape cancels, and both return focus to the title button. Leaving the field commits and lets focus continue to its destination. The ref and native div props apply to the wrapper.
 
 `FormFieldProps`, `TextFieldProps`, `TextareaProps`, `SearchFieldProps`, and `InlineEditProps` are exported.
@@ -410,6 +412,19 @@ function AgentFields() {
     <FormField label="Find notes"><SearchField name="query" placeholder="Search notes…" /></FormField>
   </form>;
 }
+```
+
+`Kbd` draws a small paper keycap for a key hint. Pass one key as children, or a chord as `keys`; a chord renders nested `<kbd>` elements joined by a plus sign, as HTML recommends, so it reads as one combination. `size="sm"` fits inside a field or a menu row; the default is `"md"`. Keycaps stay upright when tilt is on. Native props and the ref reach the outer `<kbd>`.
+
+```tsx
+import { Inline, Kbd, SearchField } from '@randalvance/kraft-ui';
+
+<Inline gap={8}>
+  <SearchField aria-label="Search letters" style={{ width: 240 }} trailing={<Kbd size="sm">/</Kbd>} />
+  <SearchField aria-label="Filter" icon={<FunnelIcon />} style={{ flex: 1 }} trailing="12 results" />
+</Inline>;
+
+<p>Press <Kbd keys={['Ctrl', 'K']} /> to open the command list.</p>;
 ```
 
 `RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.
