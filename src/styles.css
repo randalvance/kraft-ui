@@ -55,7 +55,7 @@
 .kraft-text[data-tone="danger"] { color: var(--kraft-content-danger, var(--kraft-text-danger-paper)); }
 .kraft-text[data-tone="attention"] { color: var(--kraft-content-attention, var(--kraft-text-attention-paper)); }
 /* Tone inks follow the ground: each paper, kraft, and cardboard context names its own readable set. */
-.kraft-root, .kraft-surface, .kraft-paper-panel-body, .kraft-tabs[data-panel="paper"] > .kraft-tab-panel, .kraft-card, .kraft-page-header, .kraft-table-scroll, .kraft-app-sheet {
+:root, [data-kraft-theme], .kraft-root, .kraft-surface, .kraft-paper-panel-body, .kraft-tabs[data-panel="paper"] > .kraft-tab-panel, .kraft-card, .kraft-page-header, .kraft-table-scroll, .kraft-app-sheet {
   --kraft-content-faint: var(--kraft-text-faint-paper); --kraft-content-danger: var(--kraft-text-danger-paper); --kraft-content-attention: var(--kraft-text-attention-paper);
 }
 .kraft-surface[data-material="kraft"] {
@@ -164,7 +164,7 @@
 /* Paper blue carries white ink: multiply keeps the dark pulp fibres but stops light ones from thinning the label's contrast. */
 :root, [data-kraft-theme="paper"] { --kraft-button-blue-texture-blend: multiply; }
 [data-kraft-theme="night"] { --kraft-button-blue-texture-blend: normal; }
-.kraft-button[data-variant="blue"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-2); --kraft-button-ink: var(--kraft-on-blue); background-blend-mode: normal, var(--kraft-button-blue-texture-blend, normal), normal; }
+.kraft-button[data-variant="blue"] { --kraft-button-face: var(--kraft-blue); --kraft-button-edge: var(--kraft-blue-deep); --kraft-button-ink: var(--kraft-on-blue); background-blend-mode: normal, var(--kraft-button-blue-texture-blend, normal), normal; }
 .kraft-button[data-variant="sage"] { --kraft-button-face: var(--kraft-mat-green); --kraft-button-edge: var(--kraft-mat-green-2); }
 .kraft-button[data-variant="danger"] { --kraft-button-face: color-mix(in srgb, var(--kraft-mat-red-2) 85%, var(--kraft-mat-red-3)); --kraft-button-edge: var(--kraft-mat-red-3); --kraft-button-ink: var(--kraft-white); }
 .kraft-button[data-variant="attention"] { --kraft-button-face: var(--kraft-attention); --kraft-button-edge: var(--kraft-highlighter-2); --kraft-button-ink: var(--kraft-on-attention); }
@@ -227,6 +227,8 @@
 .kraft-badge[data-tone="sage"], .kraft-sticker[data-tone="sage"] { --kraft-sticker-face: var(--kraft-st-green); --kraft-sticker-ink: var(--kraft-white); }
 .kraft-badge[data-tone="danger"], .kraft-sticker[data-tone="danger"] { --kraft-sticker-face: var(--kraft-st-red); --kraft-sticker-ink: var(--kraft-white); }
 .kraft-badge[data-tone="attention"], .kraft-sticker[data-tone="attention"] { --kraft-sticker-face: var(--kraft-attention); --kraft-sticker-ink: var(--kraft-on-attention); }
+/* Printed marks are single ink: a glyph on a badge or sticker prints in the mark's ink, so an accent-coloured icon cannot vanish into a face of the same hue. */
+.kraft-badge .kraft-icon, .kraft-sticker .kraft-icon { color: var(--kraft-sticker-ink); }
 .kraft-sticker { transform: none; min-height: 40px; padding: 10px 14px; box-shadow: var(--kraft-sticker); }
 .kraft-sticker[data-shape="round"] { width: var(--kraft-sticker-size, var(--kraft-sticker-diameter, 64px)); height: var(--kraft-sticker-size, var(--kraft-sticker-diameter, 64px)); min-height: 0; padding: 8px; aspect-ratio: 1; border-radius: 50%; text-align: center; }
 .kraft-sticker[data-shape="square"] { border-radius: var(--kraft-radius-10); }
@@ -235,9 +237,9 @@
 .kraft-badge[data-size="count"], .kraft-sticker[data-size="count"] { min-width: 18px; min-height: 18px; padding: 0 4px; font: 900 11px/1 var(--kraft-font-sans); font-variant-numeric: tabular-nums; }
 .kraft-sticker[data-shape="round"][data-size="count"] { --kraft-sticker-diameter: 18px; min-width: 0; min-height: 0; padding: 0; }
 .kraft-sticker[data-shape="square"][data-size="count"] { border-radius: var(--kraft-radius-4); }
-.kraft-choice { --kraft-control-on: var(--kraft-blue); --kraft-control-on-edge: var(--kraft-blue-2); --kraft-control-on-ink: var(--kraft-on-blue); --kraft-control-edge: var(--kraft-mute); --kraft-control-disabled-edge: color-mix(in srgb, var(--kraft-mute) 65%, var(--kraft-paper-2)); display: inline-flex; align-items: flex-start; gap: var(--kraft-space-10); max-width: 100%; min-height: 24px; color: var(--kraft-content-ink, var(--kraft-ink)); font: 400 14px/1.5 var(--kraft-font-sans); cursor: pointer; }
-:root, [data-kraft-theme="paper"] { --kraft-toggle-on: var(--kraft-blue); --kraft-toggle-on-edge: var(--kraft-blue-2); }
-[data-kraft-theme="night"] { --kraft-toggle-on: var(--kraft-blue-2); --kraft-toggle-on-edge: var(--kraft-blue); }
+.kraft-choice { --kraft-control-on: var(--kraft-blue); --kraft-control-on-edge: var(--kraft-blue-deep); --kraft-control-on-ink: var(--kraft-on-blue); --kraft-control-edge: var(--kraft-mute); --kraft-control-disabled-edge: color-mix(in srgb, var(--kraft-mute) 65%, var(--kraft-paper-2)); display: inline-flex; align-items: flex-start; gap: var(--kraft-space-10); max-width: 100%; min-height: 24px; color: var(--kraft-content-ink, var(--kraft-ink)); font: 400 14px/1.5 var(--kraft-font-sans); cursor: pointer; }
+:root, [data-kraft-theme="paper"] { --kraft-toggle-on: var(--kraft-blue); --kraft-toggle-on-edge: var(--kraft-blue-deep); }
+[data-kraft-theme="night"] { --kraft-toggle-on: var(--kraft-blue-deep); --kraft-toggle-on-edge: var(--kraft-blue); }
 .kraft-toggle { --kraft-control-on: var(--kraft-toggle-on); --kraft-control-on-edge: var(--kraft-toggle-on-edge); }
 .kraft-choice-control { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; min-height: 21px; }
 .kraft-choice-input { position: absolute; inset: -2px; z-index: 1; width: calc(100% + 4px); height: calc(100% + 4px); margin: 0; opacity: 0; cursor: inherit; }
@@ -252,13 +254,14 @@
 .kraft-checkbox-trailing { min-width: 0; max-width: 40%; margin-inline-start: auto; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; line-height: 21px; text-align: end; overflow-wrap: anywhere; }
 .kraft-checkbox:has(.kraft-choice-input:disabled) .kraft-checkbox-trailing { color: var(--kraft-faint); }
 .kraft-checkbox[data-strike]:has(.kraft-choice-input:checked:not(:indeterminate)) .kraft-choice-label { text-decoration: line-through; }
-.kraft-checkbox-box { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; color: var(--kraft-control-on-ink, var(--kraft-on-blue)); background: var(--kraft-card); border: 1.5px solid var(--kraft-control-edge, var(--kraft-mute)); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-recess); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease), background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+/* Faces and edges take theme and state colors at once; a color transition would show the previous theme for a frame after a theme switch. */
+.kraft-checkbox-box { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; color: var(--kraft-control-on-ink, var(--kraft-on-blue)); background: var(--kraft-card); border: 1.5px solid var(--kraft-control-edge, var(--kraft-mute)); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-recess); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
 .kraft-checkbox-box svg { grid-area: 1 / 1; width: var(--kraft-checkbox-glyph-size, 16px); height: var(--kraft-checkbox-glyph-size, 16px); fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.6); transition: opacity var(--kraft-motion-duration, 150ms) var(--kraft-ease), transform var(--kraft-motion-duration, 150ms) var(--kraft-ease-pop); }
 :where(.kraft-choice-input:is(:checked, :indeterminate)) + .kraft-checkbox-box,
 .kraft-checkbox-status:where([data-state="checked"], [data-state="mixed"]) {
   background: var(--kraft-checkbox-fill, linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-control-on, var(--kraft-blue)));
-  border-color: var(--kraft-checkbox-edge, var(--kraft-control-on-edge, var(--kraft-blue-2)));
-  box-shadow: var(--kraft-checkbox-shadow, 1px 2px 0 var(--kraft-control-on-edge, var(--kraft-blue-2)));
+  border-color: var(--kraft-checkbox-edge, var(--kraft-control-on-edge, var(--kraft-blue-deep)));
+  box-shadow: var(--kraft-checkbox-shadow, 1px 2px 0 var(--kraft-control-on-edge, var(--kraft-blue-deep)));
 }
 :is(.kraft-checkbox, .kraft-checkbox-status)[data-variant="pen"] {
   --kraft-checkbox-fill: var(--kraft-card);
@@ -293,7 +296,7 @@
 }
 .kraft-checkbox-group-item > .kraft-checkbox { inline-size: 100%; }
 .kraft-toggle .kraft-choice-text { padding-top: 2px; }
-.kraft-toggle-track { position: relative; display: inline-flex; align-items: center; width: 44px; height: 26px; padding: 3px; background: var(--kraft-rail); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-recess); transition: background-color var(--kraft-motion-duration, 150ms) var(--kraft-ease), border-color var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-toggle-track { position: relative; display: inline-flex; align-items: center; width: 44px; height: 26px; padding: 3px; background: var(--kraft-rail); border: 1.5px solid var(--kraft-control-edge); border-radius: var(--kraft-radius-pill); box-shadow: var(--kraft-recess); }
 .kraft-toggle-knob { width: 17px; height: 17px; background: linear-gradient(135deg, var(--kraft-gloss), transparent 60%), var(--kraft-knob); border: 1px solid var(--kraft-control-edge); border-radius: 50%; box-shadow: 1px 2px 0 var(--kraft-edge-2), 2px 3px 4px var(--kraft-amb-2); transition: transform var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
 .kraft-choice-input:checked + .kraft-toggle-track { background: var(--kraft-control-on); border-color: var(--kraft-control-on-edge); }
 .kraft-choice-input:checked + .kraft-toggle-track .kraft-toggle-knob { border-color: var(--kraft-control-on-edge); transform: translateX(18px); }
@@ -303,14 +306,14 @@
 .kraft-choice-input:focus-visible + .kraft-checkbox-box, .kraft-choice-input:focus-visible + .kraft-toggle-track { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
 .kraft-choice-input:disabled + .kraft-checkbox-box, .kraft-choice-input:disabled + .kraft-toggle-track { background: var(--kraft-paper-2); border-color: var(--kraft-control-disabled-edge); color: var(--kraft-control-disabled-edge); box-shadow: none; }
 .kraft-choice-input:disabled + .kraft-toggle-track .kraft-toggle-knob { background: var(--kraft-control-disabled-edge); border-color: var(--kraft-control-disabled-edge); box-shadow: none; }
-.kraft-form-field { --kraft-form-error-ink: var(--kraft-red-2); display: flex; flex-direction: column; gap: var(--kraft-space-8); min-width: 0; max-width: 100%; color: var(--kraft-ink); }
+.kraft-form-field { --kraft-form-error-ink: var(--kraft-content-danger, var(--kraft-red-2)); display: flex; flex-direction: column; gap: var(--kraft-space-8); min-width: 0; max-width: 100%; color: var(--kraft-ink); }
 [data-kraft-theme="night"] .kraft-form-field { --kraft-form-error-ink: var(--kraft-red); }
 .kraft-form-field-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--kraft-space-4) var(--kraft-space-12); min-width: 0; }
 .kraft-form-field-label { font: 800 13px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }
 .kraft-form-field-label[data-label-style="uppercase"] { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 .kraft-form-field-description { color: var(--kraft-text-muted-paper); font: 500 15px/1.25 var(--kraft-font-hand); overflow-wrap: anywhere; }
 .kraft-form-field-error { color: var(--kraft-form-error-ink); font: 700 13px/1.35 var(--kraft-font-sans); overflow-wrap: anywhere; }
-.kraft-field-input { --kraft-form-error-ink: var(--kraft-red-2); box-sizing: border-box; display: block; width: 100%; min-width: 0; min-height: 40px; margin: 0; padding: 8px 12px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); font: 400 14px/1.5 var(--kraft-font-sans); caret-color: currentColor; }
+.kraft-field-input { --kraft-form-error-ink: var(--kraft-content-danger, var(--kraft-red-2)); box-sizing: border-box; display: block; width: 100%; min-width: 0; min-height: 40px; margin: 0; padding: 8px 12px; color: var(--kraft-ink); background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet); border: 1px solid var(--kraft-edge); border-radius: var(--kraft-radius-4); box-shadow: var(--kraft-lift-paper-1); font: 400 14px/1.5 var(--kraft-font-sans); caret-color: currentColor; }
 [data-kraft-theme="night"] .kraft-field-input { --kraft-form-error-ink: var(--kraft-red); }
 .kraft-field-input[data-size="sm"] { min-height: 32px; padding-block: 5px; font-size: 13px; }
 .kraft-field-input[data-size="lg"] { min-height: 44px; font-size: 20px; line-height: 1.3; }

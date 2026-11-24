@@ -44,9 +44,9 @@
   box-sizing: border-box;
   inline-size: clamp(8px, calc(var(--kraft-avatar-size, 36px) * .24), 12px);
   block-size: clamp(8px, calc(var(--kraft-avatar-size, 36px) * .24), 12px);
-  border: 1.5px solid var(--kraft-blue-2);
+  border: 1.5px solid var(--kraft-blue-deep);
   border-radius: 50%;
-  background: var(--kraft-blue-2);
+  background: var(--kraft-blue-deep);
   box-shadow: 0 0 0 2px var(--kraft-white);
 }
 .kraft-avatar-status[data-tone="waiting"] { background: var(--kraft-white); border-color: var(--kraft-st-amber); border-style: dashed; }
@@ -86,7 +86,7 @@
 }
 .kraft-avatar-option > input { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; margin: 0; opacity: 0; cursor: inherit; }
 .kraft-avatar-option > .kraft-avatar { pointer-events: none; }
-.kraft-avatar-option:has(input:checked) > .kraft-avatar { box-shadow: 0 0 0 2px var(--kraft-blue-2), 0 0 0 4px var(--kraft-white); }
+.kraft-avatar-option:has(input:checked) > .kraft-avatar { box-shadow: 0 0 0 2px var(--kraft-blue-deep), 0 0 0 4px var(--kraft-white); }
 .kraft-avatar-option:has(input:enabled):hover { background: var(--kraft-hover); }
 .kraft-avatar-option:has(input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
 .kraft-avatar-option:has(input:disabled) { cursor: not-allowed; }

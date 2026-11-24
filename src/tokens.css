@@ -30,6 +30,7 @@
   --kraft-red-2: #8f3a2a;
   --kraft-blue: #3b5b9a;
   --kraft-blue-2: #2a4070;
+  --kraft-blue-deep: #2a4070;
   --kraft-on-blue: #ffffff;
   --kraft-green: #5b8c5a;
   --kraft-amber: #b8792f;
@@ -172,11 +173,12 @@
   --kraft-white: #ffffff;
   --kraft-sticker-cut: #d9cfb8;
   --kraft-red: #d9654c;
-  --kraft-red-2: #a8432e;
+  --kraft-red-2: #f8b8a9;
   --kraft-blue: #7d9bd8;
-  --kraft-blue-2: #3d5a94;
+  --kraft-blue-2: #a6c2f5;
+  --kraft-blue-deep: #3d5a94;
   --kraft-on-blue: #1c1712;
-  --kraft-green: #78a876;
+  --kraft-green: #86b884;
   --kraft-amber: #d6964a;
   --kraft-ochre: #8c6436;
   --kraft-ochre-soft: #5f4425;
@@ -219,7 +221,7 @@
   --kraft-text-muted-kraft: #fffbf2;
   --kraft-link-board: #d5e4ff;
   --kraft-text-faint-paper: #bfb5a3;
-  --kraft-text-danger-paper: #f4a593;
+  --kraft-text-danger-paper: #f8b8a9;
   --kraft-text-attention-paper: #e3b53a;
   --kraft-text-faint-kraft: #f8f6f1;
   --kraft-text-danger-kraft: #fff4f1;

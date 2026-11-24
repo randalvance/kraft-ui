@@ -40,8 +40,7 @@
 .kraft-menu-item { display: flex; align-items: center; gap: var(--kraft-space-8); min-height: 36px; padding: 7px 9px; border-radius: var(--kraft-radius-4); outline: none; cursor: pointer; user-select: none; }
 .kraft-menu-item[data-highlighted] { background: var(--kraft-highlighter); }
 .kraft-menu-item[data-disabled] { color: var(--kraft-faint); cursor: not-allowed; }
-.kraft-menu-item[data-destructive] { color: var(--kraft-red-2); }
-[data-kraft-theme="night"] .kraft-menu-item[data-destructive] { color: var(--kraft-red); }
+.kraft-menu-item[data-destructive] { color: var(--kraft-content-danger, var(--kraft-red-2)); }
 .kraft-menu-label { flex: 1; min-width: 0; font-weight: 800; overflow-wrap: anywhere; }
 .kraft-menu-leading, .kraft-menu-trailing { display: inline-flex; flex: none; align-items: center; }
 .kraft-menu-leading svg { width: 16px; height: 16px; }

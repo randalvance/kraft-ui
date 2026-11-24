@@ -36,7 +36,7 @@
 .kraft-rail-tile[data-tone="violet"] { --kraft-rail-tile-face: var(--kraft-violet); --kraft-rail-tile-ink: #fbf7ee; }
 .kraft-rail-tile[data-tone="plum"] { --kraft-rail-tile-face: var(--kraft-plum); --kraft-rail-tile-ink: #fbf7ee; }
 .kraft-rail-tile[data-tone="blush"] { --kraft-rail-tile-face: var(--kraft-blush); --kraft-rail-tile-ink: #2a2219; }
-.kraft-rail-tile[data-tone="navy"] { --kraft-rail-tile-face: var(--kraft-blue-2); --kraft-rail-tile-ink: #fbf7ee; }
+.kraft-rail-tile[data-tone="navy"] { --kraft-rail-tile-face: var(--kraft-blue-deep); --kraft-rail-tile-ink: #fbf7ee; }
 
 [data-kraft-theme="night"] .kraft-rail-tile[data-tone="blue"],
 [data-kraft-theme="night"] .kraft-rail-tile[data-tone="teal"],
