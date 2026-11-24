@@ -12,6 +12,7 @@ import { Checkbox, CheckboxGroup, CheckboxStatus, FormSection, PageHeader, Toggl
 import { Dialog, Drawer, Menu, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
+import { StatusDot, StatusSticker, type StatusTone } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
 import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 import { RadioGroup } from '../src';
@@ -219,6 +220,48 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       act(() => tile.focus());
       expect(style.outlineStyle, `${name}: focus`).toBe('solid');
       expect(contrast(channels(style.outlineColor), rail), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it.each([true, false])('keeps status dots and stickers readable on every material with decoration=%s', async decoration => {
+    const statusTones: StatusTone[] = ['working', 'waiting', 'blocked', 'done', 'idle'];
+    const grounds = ['desk', 'paper', 'kraft', 'cardboard'] as const;
+    const row = (ground: string) => <Stack gap={8}>
+      <Inline gap={8}>{(['solid', 'hollow', 'dashed'] as const).flatMap(variant => (['round', 'square'] as const).flatMap(shape =>
+        statusTones.map(tone => <StatusDot key={`${variant}-${shape}-${tone}`} tone={tone} variant={variant} shape={shape}
+          size={variant === 'solid' ? 8 : 12} label={`${ground} ${tone} ${variant} ${shape}`} />)))}</Inline>
+      <Inline gap={8}>{statusTones.map(tone => <StatusDot key={tone} tone={tone}>{tone}</StatusDot>)}</Inline>
+      {(['solid', 'paper', 'ghost'] as const).map(variant => <Inline key={variant} gap={8}>
+        {statusTones.map(tone => <StatusSticker key={tone} tone={tone} variant={variant}
+          indicator={tone === 'working' ? 'spinner' : 'dot'}>{tone}</StatusSticker>)}
+        <StatusSticker tone="blocked" variant={variant} size="sm" style={{ fontSize: 8 }}>tiny</StatusSticker>
+      </Inline>)}
+    </Stack>;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 760, padding: 24 }}>
+      <Stack gap={12}>{grounds.map(ground => ground === 'desk'
+        ? <div key={ground}>{row(ground)}</div>
+        : <Surface key={ground} material={ground} padding={12}>{row(ground)}</Surface>)}</Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('.kraft-status-dot-label, .kraft-status-sticker-label')
+      .forEach((label, index) => { label.dataset.contrast = `status text ${index} ${label.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll<SVGElement>('.kraft-status-dot-mark, .kraft-status-sticker .kraft-pinwheel > svg').forEach((mark, index) => {
+      mark.dataset.contrast = `status mark ${index} ${mark.closest('[data-tone]')?.getAttribute('data-tone')}`;
+      for (const animation of mark.getAnimations()) { animation.pause(); animation.currentTime = 0; }
+    });
+    await verifyPaintedContrast(matrix, 3);
+
+    for (const mark of matrix.querySelectorAll('.kraft-status-dot, .kraft-status-sticker')) {
+      expect(getComputedStyle(mark).rotate, 'status marks stay upright').toBe('none');
+      expect(mark.getAnimations()).toHaveLength(0);
+    }
+    for (const sticker of matrix.querySelectorAll<HTMLElement>('.kraft-status-sticker[data-variant="paper"], .kraft-status-sticker[data-variant="solid"]')) {
+      const edge = channels(getComputedStyle(sticker).borderTopColor);
+      expect(edge.length === 3 || edge[3] === 1, 'sticker edge is opaque').toBe(true);
     }
   });
 

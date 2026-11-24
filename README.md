@@ -48,6 +48,7 @@ export function Note() {
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
 | Key hints | `Kbd`, `KbdProps`, `KbdSize` |
+| Status marks | `StatusDot`, `StatusDotProps`, `StatusDotVariant`, `StatusDotShape`, `StatusDotSize`, `StatusSticker`, `StatusStickerProps`, `StatusStickerVariant`, `StatusStickerIndicator`, `StatusStickerSize`, `StatusTone` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
 | Data display | `Table`, `TableRowAction`, `DescriptionList` |
@@ -263,6 +264,21 @@ function ApprovalStamp({ approved, onToggle }: { approved: boolean; onToggle: ()
   return <Stamp as="button" tone="sage" size="sm" signature="Mara" animate
     pressed={approved} onClick={onToggle}>Done</Stamp>;
 }
+```
+
+### StatusDot and StatusSticker
+
+`StatusDot` is a small coloured mark for the state of something: beside a word, in a legend, or on the corner of a portrait. `tone` is required and takes a `StatusTone`: `working`, `waiting`, `blocked`, `done`, or `idle`. Colour is never the only signal. Pass visible `children` to print a label beside the dot, or an accessible `label` when the dot stands alone; a labelled dot is one named image. Each tone also has its own form by default: working is a solid disc, waiting a dashed ring, blocked a solid square, done a disc with a tick, and idle a hollow ring. `variant="solid" | "hollow" | "dashed"` and `shape="round" | "square"` override the form. `size` takes `8`, `10` (default), or `12` pixels; the cut ring, stroke, and number of dashes scale together, so every size keeps its shape. The cut ring uses the theme's light or dark backing, so a dot stays at 3:1 or better on paper, kraft, and cardboard in both themes.
+
+`StatusSticker` is a small uppercase sticker for a state such as RUNNING, IDLE, or BLOCKED. Its `children` are the words, read as written; the capitals are only drawn. `tone` takes a `StatusTone`. `variant="solid"` (default) fills the sticker with the tone, `"paper"` prints ink on plain paper inside a tone edge, and `"ghost"` draws a dashed tone outline over the surrounding material in its ink. `indicator="dot"` adds a decorative dot in the tone's form, and `indicator="spinner"` adds the shared Pinwheel, which stops when motion is off. `size` is `"sm"` (10px text) or `"md"` (11px, default); every length is in em, so a custom font size from 8 to 12px keeps the shape. Both components are noninteractive spans that stay upright when tilt is on. Native props and the ref reach the outer span. Add `role="status"` to a sticker yourself if its changes should be announced.
+
+```tsx
+import { StatusDot, StatusSticker } from '@randalvance/kraft-ui';
+
+<StatusDot tone="working">Working</StatusDot>;
+<StatusDot tone="blocked" size={12} label="Blocked" />;
+<StatusSticker tone="working" indicator="spinner">Running</StatusSticker>;
+<StatusSticker tone="idle" variant="ghost">Idle</StatusSticker>;
 ```
 
 ### Tag
