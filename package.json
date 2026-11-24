@@ -1,6 +1,6 @@
 {
   "name": "@randalvance/kraft-ui",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Tactile React primitives made of paper, cardboard, and stickers.",
   "type": "module",
   "license": "MIT",

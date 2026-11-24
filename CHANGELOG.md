@@ -1,5 +1,14 @@
 # @randalvance/kraft-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- 7ff2ac7: Add AppShell for the diorama page layout: a rail of navigation tiles, an optional top bar, an optional cardboard board, and one paper sheet filling the viewport with a 3px margin, where each region scrolls on its own and the sheet can keep a fixed head. On narrow shells the board becomes a dismissible overlay opened from the rail. Add RailTile, a 44px navigation card tile in any card tone that renders any router link through `as`, presses flat for the current page, and carries a count badge and a tooltip.
+- c6e5098: Add `Kbd` for keycap hints, one key or a chord such as `keys={['Ctrl', 'K']}`, in `sm` and `md` sizes. SearchField gains a `trailing` slot for a Kbd or a count that stays clear of the native clear button, and an `icon` prop to replace or remove the leading mark. SearchField's frame now draws the paper: `className` and `style` size the whole field, so it can share a flex row without a wrapper, and the new `inputClassName` and `inputStyle` reach the input. Adds the `KbdProps` and `KbdSize` types.
+- b529585: Fix Night theme contrast. `--kraft-red-2` and `--kraft-blue-2` are now light tints in Night, so red and blue text is readable on night paper. A new `--kraft-blue-deep` token keeps the deep blue for button and checkbox edges, the Night toggle rail, the navy tone, and avatar marks. Use the documented `--kraft-content-danger` ink role for danger text: it follows the material and theme, and form errors and destructive menu items now use it. Destructive menu items in Night no longer use the raw `--kraft-red`. Night `--kraft-green` is lighter so a green dot stays visible on a highlighted (picked) row. Icons on a Badge or Sticker print in the mark's ink, so a yellow glyph on an attention Sticker stays visible. Checkbox and toggle faces no longer fade between colors, so switching themes doesn't flash unchecked checkboxes dark.
+- 565b7ae: Widen the type range. Text gains `serif` and italic `lead` variants, a `size` for the hand variant from 17px to a 52px display size, and `faint`, `danger`, and `attention` tones that stay readable on paper, kraft, and cardboard in both themes. Heading gains handwritten `title-sm` and `display` sizes. `measure={false}` on Text and `balance={false}` on Heading turn off the 72ch cap and balanced wrapping, and code text in a `pre` is no longer capped. Link gains `tone="inherit"` and `underline="hover"` for links inside headings. Adds the `TextVariant`, `TextTone`, `HandSize`, `HeadingSize`, and `LinkProps` types and nine `text-*` ink tokens.
+
 ## 0.5.0
 
 ### Minor Changes
