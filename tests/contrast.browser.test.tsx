@@ -13,7 +13,7 @@ import { Dialog, Drawer, Menu, ResizablePane } from '../src';
 import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
-import { FormField, InlineEdit, Select, Textarea, TextField } from '../src';
+import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -155,6 +155,39 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     expect(contrast(channels(titleStyle.outlineColor), desk), 'restored title focus').toBeGreaterThanOrEqual(3);
     await userEvent.tab();
     expect(document.activeElement).toBe(followingField);
+  });
+
+  it.each([true, false])('keeps search slots, keycaps, and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 490, padding: 24 }}>
+      <Stack gap={24}>
+        <SearchField aria-label="Search letters" defaultValue="studio" data-contrast="search ink"
+          trailing={<><span data-contrast="search count">12 results</span><Kbd size="sm" keys={['Ctrl', 'K']} /></>} />
+        <SearchField aria-label="Filter" placeholder="Filter senders" icon={<svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" /></svg>} trailing={<Kbd size="sm">/</Kbd>} />
+        <Text>Press <Kbd>Esc</Kbd> on the desk.</Text>
+        <Surface material="paper" padding={12}><Text>Press <Kbd keys={['Shift', '?']} /> on paper.</Text></Surface>
+        <Surface material="kraft" padding={12}><Text>Press <Kbd>Enter</Kbd> on kraft.</Text></Surface>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    matrix.querySelectorAll<HTMLElement>('kbd.kraft-kbd, .kraft-kbd-join').forEach((key, index) => { key.dataset.contrast = `key ${index} ${key.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    const desk = channels(getComputedStyle(matrix).backgroundColor);
+    for (const name of ['Search letters', 'Filter']) {
+      const input = view.getByRole('searchbox', { name });
+      const field = input.parentElement!;
+      const face = channels(getComputedStyle(field).backgroundColor);
+      expect(contrast(channels(getComputedStyle(input, '::placeholder').color), face), `${name}: placeholder`).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(channels(getComputedStyle(field.querySelector('.kraft-search-mark')!).color), face), `${name}: mark`).toBeGreaterThanOrEqual(3);
+      act(() => input.focus());
+      const style = getComputedStyle(field);
+      expect(style.outlineStyle, `${name}: focus`).toBe('solid');
+      expect(contrast(channels(style.outlineColor), desk), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+    }
+    for (const key of matrix.querySelectorAll('kbd.kraft-kbd')) {
+      expect(getComputedStyle(key).rotate, 'keycaps stay upright').toBe('none');
+    }
   });
 
   it.each([true, false])('keeps rail tiles, counts, and focus readable with decoration=%s', async decoration => {

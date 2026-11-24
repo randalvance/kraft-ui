@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode } from 'react';
 
 type FieldContextValue = {
   id: string;
@@ -152,15 +152,40 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   </>;
 });
 
-export type SearchFieldProps = FieldInputProps;
+export type SearchFieldProps = FieldInputProps & {
+  /** Replaces the leading search mark, for example with a funnel. It is decorative. `null` removes it. */
+  icon?: ReactNode;
+  /** Content after the text, such as a `Kbd` hint or a result count. It stays clear of the browser's clear button. */
+  trailing?: ReactNode;
+  /** Applies to the native input. `className` and `style` size and place the whole field. */
+  inputClassName?: string;
+  inputStyle?: CSSProperties;
+};
 
-/** A native search field with a decorative search mark and the browser's clear behavior. */
+const searchMark = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>;
+const interactive = 'a[href], button, input, select, textarea, [tabindex], [contenteditable]';
+
+/** A native search field with a replaceable leading mark, an optional trailing slot, and the browser's clear behavior. */
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField({
-  className, id, 'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
+  icon, trailing, className, style, inputClassName, inputStyle, id, 'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
 }, ref) {
   const relations = useFieldRelations(id, describedBy, invalid);
-  return <span className="kraft-search-field">
-    <svg className="kraft-search-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
-    <input {...props} {...relations} ref={ref} type="search" className={className ? `kraft-field-input kraft-search-input ${className}` : 'kraft-field-input kraft-search-input'} />
+  const leading = icon === undefined ? searchMark : icon;
+  const hasLeading = leading != null && leading !== false;
+  const hasTrailing = trailing != null && trailing !== false && trailing !== '';
+  return <span className={className ? `kraft-search-field ${className}` : 'kraft-search-field'} style={style}
+    data-icon={hasLeading ? undefined : 'none'} data-trailing={hasTrailing || undefined}
+    onMouseDown={event => {
+      // Pressing the frame, mark, or a passive hint behaves like pressing the input.
+      const target = event.target as Element;
+      const input = event.currentTarget.querySelector('input');
+      if (!input || target === input || target.closest(interactive) || input.disabled) return;
+      event.preventDefault();
+      input.focus();
+    }}>
+    {hasLeading && <span className="kraft-search-mark" aria-hidden="true">{leading}</span>}
+    <input {...props} {...relations} ref={ref} type="search" style={inputStyle}
+      className={inputClassName ? `kraft-search-input ${inputClassName}` : 'kraft-search-input'} />
+    {hasTrailing && <span className="kraft-search-trailing">{trailing}</span>}
   </span>;
 });

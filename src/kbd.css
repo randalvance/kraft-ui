@@ -1,0 +1,39 @@
+/* Keycaps: a small paper cap with a deeper bottom edge, set upright on the line. */
+.kraft-kbd {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 22px;
+  block-size: 22px;
+  margin: 0;
+  padding: 0 6px;
+  vertical-align: middle;
+  color: var(--kraft-ink);
+  background: linear-gradient(180deg, var(--kraft-face), transparent 70%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border: 1px solid var(--kraft-edge);
+  border-block-end-width: 2px;
+  border-radius: var(--kraft-radius-4);
+  font: 700 12px/1 var(--kraft-font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.kraft-kbd[data-size="sm"], .kraft-kbd-chord[data-size="sm"] .kraft-kbd { min-inline-size: 18px; block-size: 18px; padding: 0 4px; font-size: 11px; }
+
+.kraft-kbd-chord {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 3px;
+  vertical-align: middle;
+  font: inherit;
+  white-space: nowrap;
+}
+.kraft-kbd-join { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font: 700 11px/1 var(--kraft-font-sans); }
+
+@media (forced-colors: active) {
+  .kraft-kbd { color: CanvasText; background: Canvas; border-color: CanvasText; }
+  .kraft-kbd-join { color: CanvasText; }
+}
