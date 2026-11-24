@@ -38,6 +38,70 @@ describe('RadioGroup', () => {
     expect(screen.getByRole('radio', { name: 'Night' })).toBeChecked();
     expect(renderToString(<RadioGroup label="Theme" name="theme" options={options} />)).toContain('type="radio"');
   });
+
+  it('lays options out in equal-width columns and keeps the trailing slot uncapped', () => {
+    const { container } = render(<RadioGroup label="Plan" name="plan" columns={3} orientation="horizontal"
+      options={[{ value: 'a', label: 'A', trailing: 'Picked by Mochi on Tuesday' }, { value: 'b', label: 'B' }]} />);
+    const grid = container.querySelector('.kraft-radio-options')!;
+    expect(grid).toHaveAttribute('data-columns', '3');
+    expect(grid).toHaveStyle('--kraft-radio-columns: 3');
+    expect(screen.getByText('Picked by Mochi on Tuesday')).toHaveClass('kraft-radio-trailing');
+    for (const columns of [0, 2.7, Number.NaN]) {
+      const { container: next } = render(<RadioGroup label="Plan" name={`plan-${columns}`} columns={columns} options={options} />);
+      expect(next.querySelector('.kraft-radio-options')?.getAttribute('data-columns'))
+        .toBe(Number.isNaN(columns) ? null : String(Math.max(1, Math.floor(columns))));
+    }
+  });
+
+  it('names swatches and pictures without drawing or clipping a label', async () => {
+    const ref = createRef<HTMLFieldSetElement>();
+    const onValueChange = vi.fn();
+    const swatches = [
+      { value: 'teal', label: 'Teal', swatch: 'rgb(40, 120, 120)', description: 'Calm' },
+      { value: 'plum', label: 'Plum', swatch: 'rgb(110, 50, 90)' },
+      { value: 'ochre', label: 'Ochre', swatch: 'rgb(190, 140, 40)', disabled: true },
+    ];
+    const { container } = render(<form><RadioGroup ref={ref} label="Colour" name="colour" variant="swatch"
+      options={swatches} defaultValue="teal" onValueChange={onValueChange} /></form>);
+    expect(ref.current).toHaveAttribute('data-variant', 'swatch');
+    const teal = screen.getByRole('radio', { name: 'Teal' });
+    expect(teal).toBeChecked();
+    expect(teal).toHaveAccessibleDescription('Calm');
+    expect(screen.getByRole('radio', { name: 'Ochre' })).toBeDisabled();
+    expect(container.querySelector('.kraft-radio-label, .kraft-visually-hidden:not(legend)')).toBeNull();
+    expect(screen.queryByText('Teal')).toBeNull();
+    expect(container.querySelector('.kraft-radio-swatch')).toHaveStyle('--kraft-radio-swatch: rgb(40, 120, 120)');
+    await userEvent.click(container.querySelectorAll('.kraft-radio-swatch')[1]);
+    expect(onValueChange).toHaveBeenCalledWith('plum', swatches[1]);
+    expect(new FormData(container.querySelector('form')!).get('colour')).toBe('plum');
+
+    render(<RadioGroup label="Portrait" name="portrait" variant="picture" defaultValue="pip" options={[
+      { value: 'pip', label: 'Pip', picture: <img src="pip.png" alt="" /> },
+      { value: 'kit', label: 'Kit', picture: <img src="kit.png" alt="" /> },
+    ]} />);
+    const portrait = screen.getByRole('group', { name: 'Portrait' });
+    expect(within(portrait).getByRole('radio', { name: 'Pip' })).toBeChecked();
+    expect(portrait.querySelectorAll('.kraft-radio-picture img')).toHaveLength(2);
+    expect(within(portrait).queryByText('Pip')).toBeNull();
+  });
+
+  it('marks flat rows and server renders every variant', () => {
+    render(<RadioGroup label="Sort" name="sort" variant="flat" options={options} defaultValue="night" />);
+    expect(screen.getByRole('group', { name: 'Sort' })).toHaveAttribute('data-variant', 'flat');
+    expect(screen.getByRole('radio', { name: 'Night' })).toBeChecked();
+    for (const variant of ['rows', 'flat', 'swatch', 'picture'] as const) {
+      const html = renderToString(<RadioGroup label="Theme" name="theme" variant={variant} columns={2}
+        options={[{ value: 'a', label: 'A', swatch: 'red', picture: <b>A</b> }]} />);
+      expect(html).toContain('type="radio"');
+      expect(html).toContain(`data-variant="${variant}"`);
+    }
+  });
+
+  it('associates every radio with an external form', () => {
+    render(<><form id="settings" /><RadioGroup label="Theme" name="theme" form="settings" variant="swatch"
+      options={[{ value: 'a', label: 'A', swatch: 'red' }]} defaultValue="a" /></>);
+    expect(screen.getByRole('radio', { name: 'A' })).toHaveAttribute('form', 'settings');
+  });
 });
 
 describe('ActionableList', () => {

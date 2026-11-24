@@ -14,6 +14,7 @@ import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
 import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
+import { RadioGroup } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -642,6 +643,66 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
         expect(contrast(channels(css.outlineColor), face)).toBeGreaterThanOrEqual(3);
       }
     }
+  });
+
+  it.each([true, false])('keeps radio rows, cards, swatches, pictures, selection, and focus readable with decoration=%s', async decoration => {
+    const rows = [
+      { value: 'a', label: 'Pup', description: 'One pet', trailing: <Text as="span" variant="hand" size="md">our pick</Text> },
+      { value: 'b', label: 'Pack', description: 'Four pets', trailing: 'Medium' },
+      { value: 'c', label: 'Retired', description: 'No longer sold', disabled: true },
+    ];
+    const swatches = ['ochre', 'teal', 'violet', 'plum', 'blush'].map((tone, index) => ({
+      value: tone, label: tone, swatch: `var(--kraft-${tone})`, disabled: index === 4,
+    }));
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 760, padding: 24 }}>
+      <Surface padding={16}>
+        <Stack gap={16}>
+          <RadioGroup label="Plan" name="plan" options={rows} defaultValue="a" description="Pick one" />
+          <RadioGroup label="Cards" name="cards" options={rows} defaultValue="b" columns={3} />
+          <RadioGroup label="Sort" name="sort" variant="flat" options={rows} defaultValue="a" />
+          <RadioGroup label="Colour" name="colour" variant="swatch" options={swatches} defaultValue="teal" />
+          <RadioGroup label="Portrait" name="portrait" variant="picture" defaultValue="pip" options={[
+            { value: 'pip', label: 'Pip', picture: <Avatar initial="P" size={28} decorative /> },
+            { value: 'kit', label: 'Kit', picture: <Avatar initial="K" size={28} tone="sage" tilt={-4} decorative /> },
+          ]} />
+        </Stack>
+      </Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    const text = matrix.querySelectorAll<HTMLElement>(
+      '.kraft-radio-group-label, .kraft-radio-group-description, .kraft-radio-option:has(input:enabled) :is(.kraft-radio-label, .kraft-radio-description, .kraft-radio-trailing > *, .kraft-radio-trailing:not(:has(*)))',
+    );
+    text.forEach((sample, index) => { sample.dataset.contrast = `radio-text-${index}`; });
+    await verifyPaintedContrast(matrix);
+    text.forEach(sample => { delete sample.dataset.contrast; });
+
+    const paper = channels(getComputedStyle(matrix.querySelector('.kraft-surface')!).backgroundColor);
+    for (const input of view.getAllByRole('radio') as HTMLInputElement[]) {
+      const target = input.closest('label')!;
+      const name = input.getAttribute('aria-label') ?? input.value;
+      const rect = target.getBoundingClientRect();
+      const visual = target.closest('[data-variant="swatch"], [data-variant="picture"]');
+      expect(rect.width, `${name}: target width`).toBeGreaterThanOrEqual(visual ? 44 : 24);
+      expect(rect.height, `${name}: target height`).toBeGreaterThanOrEqual(visual ? 44 : 24);
+      if (visual && input.checked) {
+        const ring = channels(getComputedStyle(target.querySelector('.kraft-radio-swatch, .kraft-radio-picture')!).boxShadow.match(/(?:rgba?|oklab|color)\([^)]+\)/g)!.at(-1)!);
+        expect(contrast(ring, paper), `${name}: selection ring`).toBeGreaterThanOrEqual(3);
+      }
+      if (!visual && input.checked) {
+        const dot = channels(getComputedStyle(target.querySelector('.kraft-radio-mark')!, '::after').backgroundColor);
+        expect(contrast(dot, channels(getComputedStyle(target).backgroundColor)), `${name}: selection dot`).toBeGreaterThanOrEqual(3);
+      }
+      if (input.disabled) continue;
+      act(() => input.focus());
+      const css = getComputedStyle(target);
+      expect(css.outlineStyle, `${name}: focus outline`).toBe('solid');
+      expect(contrast(channels(css.outlineColor), paper), `${name}: focus contrast`).toBeGreaterThanOrEqual(3);
+    }
+    const tilted = matrix.querySelectorAll('.kraft-radio-picture .kraft-avatar')[1];
+    expect(getComputedStyle(tilted).rotate).toBe(decoration ? '-4deg' : '0deg');
+    const swatch = matrix.querySelector('.kraft-radio-swatch')!;
+    expect(getComputedStyle(swatch).transitionDuration).toBe(decoration ? '0.15s' : '0s');
   });
 
   it.each([true, false])('keeps cork board headers, pins, and focus rings readable with decoration=%s', async decoration => {
