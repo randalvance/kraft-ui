@@ -14,6 +14,7 @@ export * from './dialog.js';
 export * from './tabs.js';
 export * from './form-fields.js';
 export * from './kbd.js';
+export * from './status.js';
 export * from './inline-edit.js';
 export * from './form-section.js';
 export * from './page-header.js';

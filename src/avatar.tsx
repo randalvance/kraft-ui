@@ -1,8 +1,9 @@
 import { forwardRef, useId, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode } from 'react';
 import type { Tone } from './primitives.js';
+import type { StatusTone } from './status.js';
 
 export type AvatarStatus = {
-  tone: 'working' | 'waiting' | 'blocked' | 'done' | 'idle';
+  tone: StatusTone;
   /** Included in the portrait's accessible name, or the picker option's description. */
   label: string;
 };

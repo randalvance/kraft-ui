@@ -1,0 +1,109 @@
+/* Status inks. Each keeps 3:1 against its cut ring, and every ring is the
+   theme's light or dark backing, so a dot reads on paper, kraft, and board alike. */
+:root, [data-kraft-theme="paper"] {
+  --kraft-status-working: var(--kraft-blue-deep);
+  --kraft-status-waiting: var(--kraft-st-amber);
+  --kraft-status-blocked: var(--kraft-st-red);
+  --kraft-status-done: var(--kraft-st-green);
+  --kraft-status-idle: var(--kraft-mute);
+  --kraft-status-cut: var(--kraft-white);
+  --kraft-status-on: var(--kraft-white);
+}
+[data-kraft-theme="night"] {
+  --kraft-status-working: var(--kraft-blue);
+  --kraft-status-waiting: var(--kraft-amber);
+  --kraft-status-blocked: var(--kraft-red);
+  --kraft-status-done: var(--kraft-green);
+  --kraft-status-idle: var(--kraft-mute);
+  --kraft-status-cut: var(--kraft-desk);
+  --kraft-status-on: var(--kraft-desk);
+}
+
+.kraft-status-dot, .kraft-status-sticker { --kraft-status-color: var(--kraft-status-idle); }
+:is(.kraft-status-dot, .kraft-status-sticker)[data-tone="working"] { --kraft-status-color: var(--kraft-status-working); }
+:is(.kraft-status-dot, .kraft-status-sticker)[data-tone="waiting"] { --kraft-status-color: var(--kraft-status-waiting); }
+:is(.kraft-status-dot, .kraft-status-sticker)[data-tone="blocked"] { --kraft-status-color: var(--kraft-status-blocked); }
+:is(.kraft-status-dot, .kraft-status-sticker)[data-tone="done"] { --kraft-status-color: var(--kraft-status-done); }
+
+/* The dot: a mark with a cut ring, beside optional visible text. */
+.kraft-status-dot {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--kraft-space-6);
+  max-inline-size: 100%;
+  vertical-align: middle;
+}
+.kraft-status-dot[data-size="8"] { --kraft-status-dot-size: 8px; }
+.kraft-status-dot[data-size="12"] { --kraft-status-dot-size: 12px; }
+.kraft-status-dot-label { min-inline-size: 0; }
+
+.kraft-status-dot-mark {
+  display: block;
+  flex: none;
+  inline-size: var(--kraft-status-dot-size, 10px);
+  block-size: var(--kraft-status-dot-size, 10px);
+  color: var(--kraft-status-color);
+  overflow: visible;
+}
+.kraft-status-dot-cut { fill: var(--kraft-status-dot-cut, var(--kraft-status-cut)); }
+.kraft-status-dot-stroke { fill: currentColor; stroke: currentColor; }
+.kraft-status-dot-mark:not([data-variant="solid"]) .kraft-status-dot-stroke { fill: var(--kraft-status-dot-cut, var(--kraft-status-cut)); }
+.kraft-status-dot-tick {
+  fill: none;
+  stroke: var(--kraft-status-dot-cut, var(--kraft-status-cut));
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The sticker: small capitals on a tone face, plain paper, or a dashed ghost.
+   Every length is in em, so the sticker keeps its shape from 8px to 12px text. */
+.kraft-status-sticker {
+  --kraft-status-sticker-face: var(--kraft-status-color);
+  --kraft-status-sticker-ink: var(--kraft-status-on);
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: .45em;
+  inline-size: max-content;
+  max-inline-size: 100%;
+  min-block-size: 2em;
+  padding: 0 .7em;
+  vertical-align: middle;
+  color: var(--kraft-status-sticker-ink);
+  background: linear-gradient(135deg, var(--kraft-mark-gloss), transparent 55%), var(--kraft-status-sticker-face);
+  border: 1px solid var(--kraft-status-color);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-sticker-s);
+  font: 800 11px/1 var(--kraft-font-sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.kraft-status-sticker[data-size="sm"] { font-size: 10px; }
+.kraft-status-sticker[data-variant="paper"] {
+  --kraft-status-sticker-ink: var(--kraft-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  box-shadow: 0 1px 0 var(--kraft-edge-2);
+}
+.kraft-status-sticker[data-variant="ghost"] {
+  --kraft-status-sticker-ink: var(--kraft-content-ink, var(--kraft-ink));
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+}
+.kraft-status-sticker-label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; }
+.kraft-status-sticker-indicator { display: inline-flex; flex: none; }
+.kraft-status-sticker .kraft-status-dot-mark { --kraft-status-dot-size: .8em; }
+.kraft-status-sticker[data-variant="solid"] .kraft-status-dot-mark {
+  --kraft-status-dot-cut: var(--kraft-status-sticker-face);
+  color: var(--kraft-status-sticker-ink);
+}
+.kraft-status-sticker .kraft-pinwheel > svg { inline-size: 1.1em; block-size: 1.1em; }
+
+@media (forced-colors: active) {
+  .kraft-status-dot-mark, .kraft-status-sticker[data-variant] .kraft-status-dot-mark { --kraft-status-dot-cut: Canvas; color: CanvasText; }
+  .kraft-status-sticker { color: CanvasText; background: Canvas; border-color: CanvasText; box-shadow: none; }
+}
