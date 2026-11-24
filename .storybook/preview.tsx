@@ -7,8 +7,12 @@ import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
 import '../src/styles.css';
 import './preview.css';
+// Fontsource faces use font-display: swap and download on first use, so a story can
+// lay out with a fallback font and reflow mid-play. Load them before any story renders.
+const storyFonts = ['16px "Nunito Variable"', '16px "Fraunces Variable"', 'italic 16px "Fraunces Variable"', '500 16px Caveat', '600 16px Caveat'];
 const preview: Preview = {
  tags: ['autodocs'],
+ loaders: [async () => { await Promise.all(storyFonts.map(font => document.fonts.load(font))); return {}; }],
  initialGlobals: { theme: import.meta.env.VITE_KRAFT_THEME ?? 'paper', texture: 'on', motion: 'on', tilt: 'on' },
  globalTypes: {
   theme: { description: 'Material theme', toolbar: { icon: 'paintbrush', items: ['paper', 'night'], dynamicTitle: true } },
