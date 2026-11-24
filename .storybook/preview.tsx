@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/react-vite';
 import { ThemeProvider } from '../src';
 import '@fontsource-variable/fraunces';
+import '@fontsource-variable/fraunces/wght-italic.css';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';

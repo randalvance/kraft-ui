@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cdp, page, userEvent } from 'vitest/browser';
 import { cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Button, Card, CardAddTile, Icon, IconButton, Inline, Pinwheel, Sticker, ThemeProvider, type Theme } from '../src';
+import { Button, Card, CardAddTile, Heading, Link, Icon, IconButton, Inline, Pinwheel, Sticker, ThemeProvider, type Theme } from '../src';
 import '../src/styles.css';
 
 afterEach(cleanup);
@@ -196,6 +196,24 @@ describe.each<Theme>(['paper', 'night'])('%s button resilience', theme => {
     expect(pointerDownTransform).toBe('matrix(1, 0, 0, 1, 2, 3)');
     expect(getComputedStyle(normal).transform).toBe('matrix(1, 0, 0, 1, -1, -1)');
     expect(getComputedStyle(pinned).transform).toBe('none');
+  });
+  it('underlines a quiet heading link on real hover and keyboard focus', async () => {
+    const view = render(<ThemeProvider theme={theme} style={{ padding: 24 }}>
+      <Heading as="h2" size="title-sm"><Link href="#proofs" tone="inherit" underline="hover">Proofs</Link></Heading>
+      <Button>After</Button>
+    </ThemeProvider>);
+    const link = view.getByRole('link', { name: 'Proofs' });
+    expect(getComputedStyle(link).textDecorationLine).toBe('none');
+    expect(getComputedStyle(link).color).toBe(getComputedStyle(link.parentElement!).color);
+    await page.getByRole('link', { name: 'Proofs' }).hover();
+    expect(link.matches(':hover')).toBe(true);
+    expect(getComputedStyle(link).textDecorationLine).toBe('underline');
+    await page.getByRole('button', { name: 'After' }).hover();
+    expect(getComputedStyle(link).textDecorationLine).toBe('none');
+    await userEvent.tab();
+    expect(link).toBe(document.activeElement);
+    expect(getComputedStyle(link).textDecorationLine).toBe('underline');
+    expect(getComputedStyle(link).outlineStyle).toBe('solid');
   });
 });
 

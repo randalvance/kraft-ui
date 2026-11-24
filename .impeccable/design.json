@@ -1152,7 +1152,16 @@
           "ink-kraft": "#fffbf2",
           "link-kraft": "#ffffff",
           "text-muted-kraft": "#fffbf2",
-          "link-board": "#d5e4ff"
+          "link-board": "#d5e4ff",
+          "text-faint-paper": "#bfb5a3",
+          "text-danger-paper": "#f4a593",
+          "text-attention-paper": "#e3b53a",
+          "text-faint-kraft": "#f8f6f1",
+          "text-danger-kraft": "#fff4f1",
+          "text-attention-kraft": "#fff7d6",
+          "text-faint-board": "#dfd9ce",
+          "text-danger-board": "#ffcfc2",
+          "text-attention-board": "#f9da7c"
         },
         "purpose": "The same desk after dark; preserve material roles and geometry."
       }
@@ -1354,6 +1363,9 @@
         "foregroundRoles": {
           "ink": "ink",
           "muted": "text-muted-paper",
+          "faint": "text-faint-paper",
+          "danger": "text-danger-paper",
+          "attention": "text-attention-paper",
           "link": "link-paper"
         }
       },
@@ -1364,6 +1376,9 @@
         "foregroundRoles": {
           "ink": "ink",
           "muted": "ink",
+          "faint": "text-faint-board",
+          "danger": "text-danger-board",
+          "attention": "text-attention-board",
           "link": "link-board"
         }
       },
@@ -1374,6 +1389,9 @@
         "foregroundRoles": {
           "ink": "ink-kraft",
           "muted": "text-muted-kraft",
+          "faint": "text-faint-kraft",
+          "danger": "text-danger-kraft",
+          "attention": "text-attention-kraft",
           "link": "link-kraft"
         }
       },

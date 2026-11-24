@@ -28,13 +28,33 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(func
   return <div {...props} ref={ref} className={cx('kraft-root', className)} data-kraft-theme={theme} data-kraft-texture={texture ? 'on' : 'off'} data-kraft-motion={motion ? 'on' : 'off'} data-kraft-tilt={tilt ? 'on' : 'off'} />;
 });
 
-export type TextProps = { variant?: 'body' | 'label' | 'label-sm' | 'hand' | 'code'; tone?: 'default' | 'muted'; children?: ReactNode };
-export const Text = forwardRef(function Text({ as: Tag = 'p', variant = 'body', tone = 'default', className, ...props }: PolymorphicProps<ElementType, TextProps>, ref: ForwardedRef<HTMLElement>) {
-  return <Tag {...props} ref={ref} className={cx('kraft-text', `kraft-type-${variant}`, className)} data-tone={tone} />;
+export type TextVariant = 'body' | 'label' | 'label-sm' | 'hand' | 'serif' | 'lead' | 'code';
+export type TextTone = 'default' | 'muted' | 'faint' | 'danger' | 'attention';
+/** Handwriting sizes: 17, 22, 26, 38, and 52px. */
+export type HandSize = 'sm' | 'md' | 'lg' | 'xl' | 'display';
+export type TextProps = {
+  variant?: TextVariant;
+  tone?: TextTone;
+  /** Size of the `hand` variant. Other variants keep their own size. */
+  size?: HandSize;
+  /** Caps the line length at 72ch. Code text in a `pre` is never capped. */
+  measure?: boolean;
+  children?: ReactNode;
+};
+export const Text = forwardRef(function Text({ as: Tag = 'p', variant = 'body', tone = 'default', size = 'sm', measure = true, className, ...props }: PolymorphicProps<ElementType, TextProps>, ref: ForwardedRef<HTMLElement>) {
+  return <Tag {...props} ref={ref} className={cx('kraft-text', `kraft-type-${variant}`, className)} data-tone={tone}
+    data-size={variant === 'hand' ? size : undefined} data-measure={measure ? undefined : 'off'} />;
 }) as PolymorphicComponent<TextProps, 'p'>;
-export type HeadingProps = { size?: 'sm' | 'md' | 'lg' | 'title'; children?: ReactNode };
-export const Heading = forwardRef(function Heading({ as: Tag = 'h2', size = 'md', className, ...props }: PolymorphicProps<ElementType, HeadingProps>, ref: ForwardedRef<HTMLElement>) {
-  return <Tag {...props} ref={ref} className={cx('kraft-heading', className)} data-size={size} />;
+export type HeadingSize = 'sm' | 'md' | 'lg' | 'title-sm' | 'title' | 'display';
+export type HeadingProps = {
+  /** `sm`, `md`, and `lg` print in serif. `title-sm`, `title`, and `display` are handwritten at 26, 38, and 52px. */
+  size?: HeadingSize;
+  /** Balances line lengths when the heading wraps. */
+  balance?: boolean;
+  children?: ReactNode;
+};
+export const Heading = forwardRef(function Heading({ as: Tag = 'h2', size = 'md', balance = true, className, ...props }: PolymorphicProps<ElementType, HeadingProps>, ref: ForwardedRef<HTMLElement>) {
+  return <Tag {...props} ref={ref} className={cx('kraft-heading', className)} data-size={size} data-balance={balance ? undefined : 'off'} />;
 }) as PolymorphicComponent<HeadingProps, 'h2'>;
 
 export type SurfaceProps = Pick<LayoutProps, 'padding'> & { material?: 'paper' | 'cardboard' | 'kraft'; elevation?: 0 | 1 | 2 | 3; children?: ReactNode };
@@ -92,8 +112,14 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     {badge != null && typeof badge !== 'boolean' && <span className="kraft-icon-button-badge" aria-hidden="true">{badge}</span>}
   </ButtonBase>;
 });
-export const Link = forwardRef<HTMLAnchorElement, ComponentPropsWithoutRef<'a'>>(function Link({ className, ...props }, ref) {
-  return <a {...props} ref={ref} className={cx('kraft-link', className)} />;
+export type LinkProps = ComponentPropsWithoutRef<'a'> & {
+  /** `inherit` takes the surrounding ink, for a link that fills a heading. */
+  tone?: 'link' | 'inherit';
+  /** `hover` draws the underline only on hover and keyboard focus. */
+  underline?: 'always' | 'hover';
+};
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link({ tone = 'link', underline = 'always', className, ...props }, ref) {
+  return <a {...props} ref={ref} className={cx('kraft-link', className)} data-tone={tone === 'inherit' ? tone : undefined} data-underline={underline === 'hover' ? underline : undefined} />;
 });
 export type SeparatorProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & { orientation?: 'horizontal' | 'vertical'; decorative?: boolean };
 export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(function Separator({ orientation = 'horizontal', decorative = false, className, ...props }, ref) {
