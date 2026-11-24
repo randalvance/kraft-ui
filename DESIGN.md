@@ -74,6 +74,15 @@ colors:
   link-kraft: "#20324e"
   text-muted-kraft: "#3c2f1e"
   link-board: "#18283f"
+  text-faint-paper: "#585249"
+  text-danger-paper: "#8a3626"
+  text-attention-paper: "#704a14"
+  text-faint-kraft: "#3a342c"
+  text-danger-kraft: "#5e1a0c"
+  text-attention-kraft: "#4a2f06"
+  text-faint-board: "#30281d"
+  text-danger-board: "#4b1106"
+  text-attention-board: "#382200"
 typography:
   heading-lg:
     fontFamily: "\"Fraunces\", Georgia, serif"
@@ -317,6 +326,7 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 - **link-paper / text-muted-paper** supply link and secondary ink on the desk and paper surfaces.
 - **ink-kraft / link-kraft / text-muted-kraft** supply ink on kraft surfaces. Night kraft deliberately uses its readable primary ink for secondary copy rather than lowering its contrast.
 - **link-board** supplies labels rendered as links on cardboard; secondary labels use ink. Cardboard remains structural support rather than a body-copy ground.
+- **text-faint / text-danger / text-attention**, each with a `-paper`, `-kraft`, and `-board` value, supply the `Text` status tones. Every value clears 4.5:1 against the darkest and lightest texel of its ground, so faint ink sits just lighter than muted, and the night kraft values are near-white tints.
 - **mark-gloss** is the bounded highlight for badges and stickers. It preserves their printed finish without washing out small labels. The original gloss palette token remains available for illustration.
 
 Surface establishes `--kraft-content-ink`, `--kraft-content-link`, and `--kraft-content-muted` for its own material. Each nested Surface and ThemeProvider resets these roles, so outer material ink cannot leak into an inner piece.
@@ -339,9 +349,10 @@ Printed serif headings establish hierarchy, rounded sans text keeps controls leg
 ### Hierarchy
 
 - **Heading** uses the heading-sm, heading, and heading-lg roles through `Heading` sizes sm, md, and lg. `Heading` defaults to an h2; choose semantic level independently with `as`.
-- **Title** is the handwritten `Heading` size title.
-- **Body, label, label-sm, hand, and code** are the implemented `Text` variants. Body text has a maximum measure of 72ch; code uses tabular numerals.
-- **Said, cover, badge, greeting, title-compact, and chip** are foundation typography tokens, not additional `Text` variants. Said's italic style and cover's optical-size setting are recorded in the sidecar because frontmatter does not support them.
+- **Title** is the handwritten `Heading` size title. `title-sm` uses the title-compact role and `display` is a 52px greeting. Balanced wrapping can be turned off.
+- **Body, label, label-sm, hand, serif, lead, and code** are the implemented `Text` variants. Hand runs from 17px through 22, 26, and 38px to a 52px display size. Serif is 15px running copy and lead uses the italic said role. Text has a maximum measure of 72ch that can be turned off and never applies to code in a `pre`; code uses tabular numerals.
+- **Link** can inherit the surrounding ink and hold its underline for hover and focus when it fills a heading.
+- **Cover, badge, greeting, and chip** are foundation typography tokens, not additional `Text` variants. Said's italic style and cover's optical-size setting are recorded in the sidecar because frontmatter does not support them.
 - Buttons use label typography; badges and stickers have their own observed compact sans treatment, recorded with their geometry in the sidecar.
 
 ## Layout

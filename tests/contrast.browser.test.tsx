@@ -18,6 +18,7 @@ import { FormField, InlineEdit, Select, Textarea, TextField } from '../src';
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
 const materials = ['paper', 'kraft', 'cardboard'] as const;
+const statusTones = ['faint', 'danger', 'attention'] as const;
 const font = { '--kraft-font-sans': '"Nunito Variable", system-ui, sans-serif' } as CSSProperties;
 
 async function imagePixels(source: string) {
@@ -898,7 +899,7 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     }
   });
   it('keeps material ink readable across every texture texel and light-gradient endpoint', async () => {
-    const view = render(<ThemeProvider theme={theme}>{materials.map(material => <Surface key={material} material={material} data-testid={`bounds-${material}`}><Text>Primary ink</Text><Text tone="muted">Secondary ink</Text><Link href="#notes">Link ink</Link></Surface>)}</ThemeProvider>);
+    const view = render(<ThemeProvider theme={theme}>{materials.map(material => <Surface key={material} material={material} data-testid={`bounds-${material}`}><Text>Primary ink</Text><Text tone="muted">Secondary ink</Text>{statusTones.map(tone => <Text key={tone} tone={tone}>{tone} ink</Text>)}<Link href="#notes">Link ink</Link></Surface>)}</ThemeProvider>);
     for (const material of materials) {
       const surface = view.getByTestId(`bounds-${material}`);
       const css = getComputedStyle(surface);
@@ -932,8 +933,11 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>{materials.map(material => <Surface key={material} material={material} padding={16}><Stack gap={12}>
           <Text data-contrast={`${material}-body`}>A clear note.</Text>
           <Text tone="muted" data-contrast={`${material}-muted`}>A secondary note.</Text>
+          {statusTones.map(tone => <Text key={tone} as="span" tone={tone} data-contrast={`${material}-${tone}`}>A {tone} note.</Text>)}
+          <Text variant="hand" size="md" tone="danger" data-contrast={`${material}-hand-danger`}>Overdue since Friday</Text>
           <Link href="#notes" data-contrast={`${material}-link`}>Read the notes</Link>
         </Stack></Surface>)}</div>
+        <Inline gap={16}>{statusTones.map(tone => <Text key={tone} as="span" tone={tone} data-contrast={`desk-${tone}`}>A {tone} note.</Text>)}</Inline>
         <Surface material="kraft" padding={12}><Surface material="paper" padding={12}><Text tone="muted" data-contrast="nested-paper-muted">A nested paper note.</Text><Link href="#nested" data-contrast="nested-paper-link">Read a nested note</Link></Surface></Surface>
         <Surface material="kraft" padding={12}><ThemeProvider theme={theme === 'paper' ? 'night' : 'paper'} style={{padding:12}}><Text tone="muted" data-contrast="nested-theme-muted">The inner theme owns its ink.</Text><Link href="#inner" data-contrast="nested-theme-link">Read an inner note</Link></ThemeProvider></Surface>
       </Stack>

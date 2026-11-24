@@ -35,7 +35,7 @@ export function Note() {
 | --- | --- |
 | Theme | `ThemeProvider` |
 | Layout | `Box`, `Stack`, `Inline` |
-| Typography | `Text`, `Heading` |
+| Typography | `Text`, `TextProps`, `TextVariant`, `TextTone`, `HandSize`, `Heading`, `HeadingProps`, `HeadingSize` |
 | Icons | `Icon`, `createIcon`, `iconNames`, individual glyph definitions (such as `searchIcon`) |
 | Material | `Surface`, `Mat`, `Tape` |
 | Loading | `Pinwheel` |
@@ -44,7 +44,7 @@ export function Note() {
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
-| Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link` |
+| Controls | `Button`, `ButtonProps`, `ButtonVariant`, `IconButton`, `IconButtonProps`, `IconButtonVariant`, `Link`, `LinkProps` |
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
@@ -59,6 +59,34 @@ export function Note() {
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors.
 
 Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+
+### Typography
+
+`Text` renders a paragraph by default. Its `variant` is `body` (default), `label`, `label-sm`, `hand`, `serif`, `lead`, or `code`. `serif` prints running copy in the heading face and `lead` sets an italic serif opening line. The `hand` variant takes `size="sm" | "md" | "lg" | "xl" | "display"` for 17, 22, 26, 38, and 52px handwriting. `sm` is the default, and other variants ignore `size`.
+
+`tone` is `default`, `muted`, `faint`, `danger`, or `attention`. Each tone picks an ink that stays readable on the desk and on paper, kraft, and cardboard surfaces in both themes. Faint ink stays only a little lighter than muted to keep that contrast. Say the status in the words as well, since colour alone does not carry it.
+
+Text is capped at 72ch. Set `measure={false}` to let it fill its container. Code text in a `pre` is never capped.
+
+`Heading` renders an `h2` by default. Sizes `sm`, `md` (default), and `lg` print in serif. `title-sm`, `title`, and `display` are handwritten at 26, 38, and 52px. Wrapped headings balance their lines. Set `balance={false}` for ordinary wrapping.
+
+`Link` takes `tone="inherit"` to use the surrounding ink and `underline="hover"` to show its underline only on hover and keyboard focus. Use both when a link fills a heading. Keep the default underline for links inside running text.
+
+```tsx
+import { Heading, Link, Stack, Text } from '@randalvance/kraft-ui';
+
+<Stack gap={8}>
+  <Heading as="h1" size="display">Good morning, Mina</Heading>
+  <Text variant="lead">Three proofs are waiting on your desk.</Text>
+  <Heading as="h2" size="title-sm">
+    <Link href="/proofs/spring" tone="inherit" underline="hover">Spring catalogue</Link>
+  </Heading>
+  <Text as="span" tone="danger">Overdue by two days</Text>
+  <Text as="pre" variant="code">npm run check</Text>
+</Stack>
+```
+
+The italic lead needs an italic Fraunces face. Load one with your other fonts, or the browser slants the upright face.
 
 ### Buttons
 

@@ -110,3 +110,86 @@ describe('composition and server rendering', () => {
   expect(blank).toContain('kraft-paper-panel-body');
  });
 });
+describe('type range', () => {
+ it('sizes handwriting on any element and keeps other variants at their own size', () => {
+  const ref = createRef<HTMLHeadingElement>();
+  render(<>
+    <Text as="h1" ref={ref} variant="hand" size="display">Good morning</Text>
+    <Text variant="hand">A margin note</Text>
+    <Text size="xl">Body copy</Text>
+  </>);
+  const greeting = screen.getByRole('heading', { level: 1, name: 'Good morning' });
+  expect(ref.current).toBe(greeting);
+  expect(greeting).toHaveClass('kraft-text', 'kraft-type-hand');
+  expect(greeting).toHaveAttribute('data-size', 'display');
+  expect(screen.getByText('A margin note')).toHaveAttribute('data-size', 'sm');
+  expect(screen.getByText('Body copy')).not.toHaveAttribute('data-size');
+ });
+ it('offers serif and lead variants as paragraphs by default', () => {
+  render(<><Text variant="serif">Printed copy</Text><Text variant="lead">An opening line</Text></>);
+  expect(screen.getByText('Printed copy')).toHaveClass('kraft-type-serif');
+  expect(screen.getByText('An opening line')).toHaveClass('kraft-type-lead');
+  expect(screen.getByText('An opening line').tagName).toBe('P');
+ });
+ it.each(['faint', 'danger', 'attention'] as const)('marks %s ink on inline status text without changing its role', tone => {
+  render(<Text as="span" role="status" tone={tone}>Proof overdue</Text>);
+  const status = screen.getByRole('status');
+  expect(status.tagName).toBe('SPAN');
+  expect(status).toHaveAttribute('data-tone', tone);
+  expect(status).toHaveTextContent('Proof overdue');
+ });
+ it('caps the measure and balances headings unless turned off', () => {
+  const ref = createRef<HTMLPreElement>();
+  render(<>
+    <Text>Capped</Text>
+    <Text measure={false}>Full width</Text>
+    <Text as="pre" ref={ref} variant="code">npm run check</Text>
+    <Heading>Balanced</Heading>
+    <Heading balance={false}>Unbalanced</Heading>
+  </>);
+  expect(screen.getByText('Capped')).not.toHaveAttribute('data-measure');
+  expect(screen.getByText('Full width')).toHaveAttribute('data-measure', 'off');
+  expect(ref.current?.tagName).toBe('PRE');
+  expect(ref.current).toHaveClass('kraft-type-code');
+  expect(screen.getByRole('heading', { name: 'Balanced' })).not.toHaveAttribute('data-balance');
+  expect(screen.getByRole('heading', { name: 'Unbalanced' })).toHaveAttribute('data-balance', 'off');
+ });
+ it('keeps a heading link a focusable native anchor named by its text', async () => {
+  const ref = createRef<HTMLAnchorElement>();
+  render(<>
+    <Heading as="h3" size="title-sm"><Link ref={ref} href="/proofs" tone="inherit" underline="hover">Proofs</Link></Heading>
+    <Link href="/notes">Notes</Link>
+  </>);
+  const link = screen.getByRole('link', { name: 'Proofs' });
+  expect(ref.current).toBe(link);
+  expect(link).toHaveAttribute('href', '/proofs');
+  expect(link).toHaveAttribute('data-tone', 'inherit');
+  expect(link).toHaveAttribute('data-underline', 'hover');
+  expect(screen.getByRole('heading', { level: 3, name: 'Proofs' })).toHaveAttribute('data-size', 'title-sm');
+  const plain = screen.getByRole('link', { name: 'Notes' });
+  expect(plain).not.toHaveAttribute('data-tone');
+  expect(plain).not.toHaveAttribute('data-underline');
+  await userEvent.tab();
+  expect(link).toHaveFocus();
+ });
+ it('renders the type range on the server', () => {
+  const html = renderToString(<>
+    <Text variant="hand" size="lg" tone="attention" measure={false}>Due Friday</Text>
+    <Text variant="lead" tone="faint">An opening line</Text>
+    <Heading as="h1" size="display" balance={false}><Link href="/home" tone="inherit" underline="hover">Welcome back</Link></Heading>
+  </>);
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  const [note, lead] = container.querySelectorAll('p');
+  expect(note).toHaveClass('kraft-type-hand');
+  expect(note).toHaveAttribute('data-size', 'lg');
+  expect(note).toHaveAttribute('data-tone', 'attention');
+  expect(note).toHaveAttribute('data-measure', 'off');
+  expect(lead).toHaveClass('kraft-type-lead');
+  expect(lead).toHaveAttribute('data-tone', 'faint');
+  const heading = container.querySelector('h1')!;
+  expect(heading).toHaveAttribute('data-size', 'display');
+  expect(heading).toHaveAttribute('data-balance', 'off');
+  expect(heading.querySelector('a')).toHaveAttribute('data-underline', 'hover');
+ });
+});
