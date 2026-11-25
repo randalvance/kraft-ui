@@ -117,7 +117,7 @@ import { Button, Icon, IconButton, Sticker } from '@randalvance/kraft-ui';
 
 The header sticks at the top of its nearest scroll container. For edit forms, put the header and the independently scrolling body in separate rows of a bounded layout so focused fields stay visible. A submit `Button` in `actions` can use the native `form` attribute to submit the form below it.
 
-Keep a `role="status"` element mounted in the status slot so changes are announced. Use “All saved” at rest, “Unsaved changes” after edits, and “Saved” briefly after a successful save before returning to “All saved”. A setting row can pair the visible name and note with a `Toggle` through `aria-labelledby` and `aria-describedby`. Put optional metadata next to the switch.
+Keep a `role="status"` element mounted in the status slot so changes are announced. Use “All saved” at rest, “Unsaved changes” after edits, and “Saved” briefly after a successful save before returning to “All saved”. A setting row with only a name, a note, and a switch is a `Toggle` with `labelSide="start"`. To put other content between them, pair the visible name and note with the `Toggle` through `aria-labelledby` and `aria-describedby`, and put the optional metadata next to the switch.
 
 ```tsx
 import { useId, type FormEvent } from 'react';
@@ -378,6 +378,19 @@ function Choices() {
     <Checkbox name="archive" description="Archived notes stay searchable.">Archive finished notes</Checkbox>
     <Toggle checked={autosave} onChange={event => setAutosave(event.target.checked)}>Autosave</Toggle>
   </>;
+}
+```
+
+`Toggle` is drawn as a pull-tab: a thick card tab slides in a slot cut into the paper, and the open half of the slot shows a handwritten “on” or “off” and turns blue when on. The written state is decorative and hidden from assistive technology, because the switch already announces it. `ToggleProps` adds `labelSide` (`ToggleLabelSide`: `"end"` by default, or `"start"`). `labelSide="start"` puts the label and its `description` before the switch and stretches the label across its container, so a settings row reads name first and switch last. The whole row is still the label, so clicking the name or the note toggles the switch. The slide follows the theme motion setting and the system preference for reduced motion, the written word tilts with the theme tilt setting, and the tab travels the other way in right-to-left text.
+
+```tsx
+import { Stack, Toggle } from '@randalvance/kraft-ui';
+
+function DeskSettings() {
+  return <Stack gap={16}>
+    <Toggle labelSide="start" name="autosave" defaultChecked description="Saves after each edit.">Autosave</Toggle>
+    <Toggle labelSide="start" name="tilt" description="Rotates paper decorations slightly.">Tilt</Toggle>
+  </Stack>;
 }
 ```
 

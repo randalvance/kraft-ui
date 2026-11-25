@@ -113,17 +113,31 @@ export const CheckboxStatus = forwardRef<HTMLSpanElement, CheckboxStatusProps>(f
   </span>;
 });
 
-export type ToggleProps = ChoiceProps;
+export type ToggleLabelSide = 'start' | 'end';
 
-/** An on/off switch: a native checkbox with `role="switch"`, drawn as a knob in a recessed rail. Changes apply immediately. `className` and `style` apply to the label; other props and the ref reach the input. */
-export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle({ children, description, className, style, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, 'aria-describedby': ariaDescribedBy, ...props }, forwarded) {
+export type ToggleProps = ChoiceProps & {
+  /** Where the label sits. `"start"` puts it before the switch and stretches the row, so the name reads at one edge and the switch at the other. */
+  labelSide?: ToggleLabelSide;
+};
+
+/** An on/off switch: a native checkbox with `role="switch"`, drawn as a card pull-tab in a slot with the state written beside it. Changes apply immediately. `className` and `style` apply to the label; other props and the ref reach the input. */
+export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle({ children, description, labelSide = 'end', className, style, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, 'aria-describedby': ariaDescribedBy, ...props }, forwarded) {
   const id = useId();
   const aria = relations(id, { children, description, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, 'aria-describedby': ariaDescribedBy });
-  return <label className={className ? `kraft-choice kraft-toggle ${className}` : 'kraft-choice kraft-toggle'} style={style}>
+  const text = <ChoiceText description={description} id={id}>{children}</ChoiceText>;
+  return <label className={className ? `kraft-choice kraft-toggle ${className}` : 'kraft-choice kraft-toggle'} style={style} data-label-side={labelSide}>
+    {labelSide === 'start' && text}
     <span className="kraft-choice-control">
       <input {...props} ref={forwarded} type="checkbox" role="switch" className="kraft-choice-input" {...aria} />
-      <span className="kraft-toggle-track" aria-hidden="true"><span className="kraft-toggle-knob" /></span>
+      {/* Both words are printed and CSS shows the one matching `:checked`, so an uncontrolled or server-rendered switch needs no state. The input already announces on/off. */}
+      <span className="kraft-toggle-track" aria-hidden="true">
+        <span className="kraft-toggle-slot">
+          <span className="kraft-toggle-word" data-state="on">on</span>
+          <span className="kraft-toggle-word" data-state="off">off</span>
+        </span>
+        <span className="kraft-toggle-tab" />
+      </span>
     </span>
-    <ChoiceText description={description} id={id}>{children}</ChoiceText>
+    {labelSide === 'end' && text}
   </label>;
 });

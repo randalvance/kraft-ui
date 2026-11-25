@@ -263,8 +263,8 @@ components:
     backgroundColor: "{colors.rail}"
     checkedColor: "{colors.blue}"
     knobColor: "{colors.knob}"
-    rounded: "{rounded.radius-pill}"
-    width: "44px"
+    rounded: "{rounded.radius-4}"
+    width: "56px"
     height: "26px"
   link:
     textColor: "{colors.link-paper}"
@@ -399,11 +399,11 @@ Surface outlines lightly mix the material edge with transparency. Raised buttons
 
 ### Checkboxes and toggles
 
-Small, printed, and native. `Checkbox` is a 20px paper box with a recessed face and a muted ink edge; checking fills it with blue and a hand-weight check, and `indeterminate` shows a dash. Checked boxes gain a crisp cut edge down and right. `Toggle` is a native checkbox with `role="switch"`: a 44×26px recessed rail carrying a round paper knob that slides toward the end when on. The rail turns blue when on; Night uses the deeper blue-deep so the knob keeps contrast against it, and the knob travels toward the start in right-to-left text.
+Small, printed, and native. `Checkbox` is a 20px paper box with a recessed face and a muted ink edge; checking fills it with blue and a hand-weight check, and `indeterminate` shows a dash. Checked boxes gain a crisp cut edge down and right. `Toggle` is a native checkbox with `role="switch"`, drawn as a pull-tab: a 56×26px target holding a 20px slot cut into the paper and a thick card tab that stands taller than the slot and slides toward the end when on. The open half of the slot carries a handwritten “off” or “on”, tilted with the theme, and the slot turns blue when on. Night fills it with the deeper blue-deep so the pale tab keeps contrast against it, and writes “on” in the theme ink. The tab travels toward the start in right-to-left text. The written word is decorative; the switch announces its own state. `labelSide="start"` makes the label a full-width row with the name first and the switch last.
 
-Both wrap the input in a label so the box and its text form one target. Focus draws the ink outline around the box or rail. Hover darkens the unchecked edge; press nudges the box down and right. Faces and edges change color instantly; only the tick, the knob, and the press move, so switching themes never shows a box in the previous theme's color. Disabled uses the quiet paper face with a softened but visible edge, and the check or knob position still shows the state. An optional description sits under the label in secondary ink and is announced as the input's description rather than being part of its name. Use `Toggle` for settings that apply immediately and `Checkbox` for choices submitted later; pressed actions remain `Button` with `aria-pressed`.
+Both wrap the input in a label so the box and its text form one target. Focus draws the ink outline around the box or the pull-tab. Hover darkens the unchecked edge; press nudges the box down and right and flattens the tab. Faces and edges change color instantly; only the tick, the tab, and the press move, so switching themes never shows a box in the previous theme's color. Disabled uses the quiet paper face with a softened but visible edge, and the check, or the tab position and its written word, still shows the state. An optional description sits under the label in secondary ink and is announced as the input's description rather than being part of its name. Use `Toggle` for settings that apply immediately and `Checkbox` for choices submitted later; pressed actions remain `Button` with `aria-pressed`.
 
-**The Visible State Rule.** Checked, mixed, and on states change shape as well as color: a check, a dash, or a knob position.
+**The Visible State Rule.** Checked, mixed, and on states change shape as well as color: a check, a dash, or a tab position with its written word.
 
 ### Form fields
 
