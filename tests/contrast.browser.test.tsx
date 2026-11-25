@@ -649,6 +649,51 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     expect(countRulePixels(Math.round(items[0].getBoundingClientRect().top - groupTop))).toBe(0);
   });
 
+  it.each([true, false])('keeps pull-tab words, slot, tab, and focus readable with decoration=%s', async decoration => {
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 380, padding: 24 }}>
+      <Surface padding={16}>
+        <Stack gap={12}>
+          <Toggle labelSide="start" description="Saves after each edit.">Autosave</Toggle>
+          <Toggle labelSide="start" defaultChecked>Motion</Toggle>
+          <Toggle>Tilt</Toggle>
+          <Toggle defaultChecked description="Shows the paper grain.">Texture</Toggle>
+        </Stack>
+      </Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await document.fonts.load('600 17px Caveat');
+    // Assistive technology skips the written state, but sighted users read it, so it meets the text ratio.
+    const words = [...matrix.querySelectorAll<HTMLElement>('.kraft-toggle-word')]
+      .filter(word => word.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }));
+    expect(words.map(word => word.textContent)).toEqual(['off', 'on', 'off', 'on']);
+    const text = [...words, ...matrix.querySelectorAll<HTMLElement>('.kraft-choice-label, .kraft-choice-description')];
+    text.forEach((sample, index) => { sample.dataset.contrast = `toggle-text-${index}`; });
+    await verifyPaintedContrast(matrix);
+    expect(getComputedStyle(words[0]).rotate).toBe(decoration ? '-4deg' : '0deg');
+
+    const paper = channels(getComputedStyle(matrix.querySelector('.kraft-surface')!).backgroundColor);
+    for (const input of view.getAllByRole('switch')) {
+      const track = input.nextElementSibling!;
+      const slot = getComputedStyle(track.querySelector('.kraft-toggle-slot')!);
+      const tab = getComputedStyle(track.querySelector('.kraft-toggle-tab')!);
+      const [slotFace, slotEdge, tabFace, tabEdge] = [slot.backgroundColor, slot.borderTopColor, tab.backgroundColor, tab.borderTopColor].map(channels);
+      const name = input.closest('label')!.textContent;
+      expect(contrast(slotEdge, paper), `${name}: the slot is cut visibly into the paper`).toBeGreaterThanOrEqual(3);
+      // The tab reads either as a light card on the slot or by its own printed edge.
+      expect(Math.max(contrast(tabFace, slotFace), contrast(tabEdge, tabFace)), `${name}: the tab stands out in the slot`).toBeGreaterThanOrEqual(3);
+      expect(Math.max(contrast(tabFace, paper), contrast(tabEdge, tabFace)), `${name}: the tab stands out on the paper`).toBeGreaterThanOrEqual(3);
+      act(() => input.focus());
+      const focus = getComputedStyle(track);
+      expect(track.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+      expect(track.getBoundingClientRect().width).toBeGreaterThanOrEqual(24);
+      expect(focus.outlineStyle).toBe('solid');
+      expect(contrast(channels(focus.outlineColor), paper)).toBeGreaterThanOrEqual(3);
+    }
+    const [off, on] = view.getAllByRole('switch').map(input => getComputedStyle(input.nextElementSibling!.querySelector('.kraft-toggle-slot')!).backgroundColor);
+    expect(on, 'the slot is coloured when on').not.toBe(off);
+  });
+
   it.each([true, false])('keeps segment labels, counts, selection marks, and focus readable with decoration=%s', async decoration => {
     const options: SegmentOption[] = [
       { value: 'all', label: 'All', description: 'Every item', count: 12 },
@@ -1220,16 +1265,69 @@ it('animates the ink only with motion enabled and no system reduction', async ()
   }
 });
 
+it('slides the pull-tab only with motion enabled and no system reduction', async () => {
+  const session = cdp();
+  const emulateMotion = (value: string) => session.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value }],
+  });
+  try {
+    await emulateMotion('no-preference');
+    const view = render(<>
+      <ThemeProvider motion><Toggle>Moving</Toggle><Toggle>Reduced</Toggle></ThemeProvider>
+      <ThemeProvider motion={false}><Toggle>Still</Toggle></ThemeProvider>
+    </>);
+    const pull = async (name: string) => {
+      const input = view.getByRole('switch', { name });
+      const track = input.nextElementSibling!, tab = track.querySelector<HTMLElement>('.kraft-toggle-tab')!;
+      expect(tab.getBoundingClientRect().left, `${name}: the tab rests at the start when off`).toBeCloseTo(track.getBoundingClientRect().left, 0);
+      await userEvent.click(input);
+      const sliding = tab.getAnimations().length > 0;
+      await Promise.all(tab.getAnimations().map(animation => animation.finished));
+      expect(tab.getBoundingClientRect().right, `${name}: the tab reaches the end when on`).toBeCloseTo(track.getBoundingClientRect().right, 0);
+      return sliding;
+    };
+    expect(await pull('Moving')).toBe(true);
+    expect(await pull('Still')).toBe(false);
+    await emulateMotion('reduce');
+    expect(await pull('Reduced')).toBe(false);
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
+it('keeps the written pull-tab state legible in forced colours', async () => {
+  const session = cdp();
+  try {
+    await session.send('Emulation.setEmulatedMedia', { features: [{ name: 'forced-colors', value: 'active' }] });
+    const view = render(<ThemeProvider data-testid="contrast-matrix" style={{ ...font, width: 240, padding: 24 }}>
+      <Stack gap={12}><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle><Toggle disabled defaultChecked>Archive</Toggle></Stack>
+    </ThemeProvider>);
+    await document.fonts.load('600 17px Caveat');
+    const matrix = view.getByTestId('contrast-matrix');
+    const slotFace = (name: string) => getComputedStyle(view.getByRole('switch', { name }).nextElementSibling!.querySelector('.kraft-toggle-slot')!).backgroundColor;
+    expect(slotFace('Proof'), 'the on slot takes the system highlight').not.toBe(slotFace('Sync'));
+    // GrayText is only promised to be legible on Canvas, so a disabled switch gives up the highlight.
+    expect(slotFace('Archive')).toBe(slotFace('Sync'));
+    const words = [...matrix.querySelectorAll<HTMLElement>('.kraft-choice-input:enabled + .kraft-toggle-track .kraft-toggle-word')]
+      .filter(word => word.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }));
+    expect(words.map(word => word.textContent)).toEqual(['off', 'on']);
+    words.forEach(word => { word.dataset.contrast = `forced ${word.textContent}`; });
+    await verifyPaintedContrast(matrix);
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
 it.each([true, false])('switches checkbox and toggle faces with the theme instead of fading them with motion=%s', async motion => {
   const view = render(<ThemeProvider theme="night" motion={motion} data-testid="themed">
     <Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle>
   </ThemeProvider>);
-  const faces = () => [...view.getByTestId('themed').querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-track')];
+  const faces = () => [...view.getByTestId('themed').querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-slot, .kraft-toggle-tab')];
   const settled = (theme: Theme) => {
     const probe = render(<ThemeProvider theme={theme} motion={false}>
       <Checkbox>Labels</Checkbox><Checkbox defaultChecked>Covers</Checkbox><Toggle>Sync</Toggle><Toggle defaultChecked>Proof</Toggle>
     </ThemeProvider>);
-    const colors = [...probe.container.querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-track')]
+    const colors = [...probe.container.querySelectorAll<HTMLElement>('.kraft-checkbox-box, .kraft-toggle-slot, .kraft-toggle-tab')]
       .map(face => [getComputedStyle(face).backgroundColor, getComputedStyle(face).borderTopColor]);
     probe.unmount();
     return colors;

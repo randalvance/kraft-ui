@@ -163,4 +163,38 @@ describe('Toggle', () => {
   expect(new FormData(form).has('other')).toBe(false);
   expect(form.checkValidity()).toBe(true);
  });
+ it.each([
+  ['the wrapping label', <Toggle defaultChecked>Autosave</Toggle>, ''],
+  ['aria-labelledby', <Toggle defaultChecked description="Saves after each edit">Autosave</Toggle>, 'Saves after each edit'],
+ ])('writes on and off in the slot but takes its name only from %s', (_, toggle, description) => {
+  render(toggle);
+  const input = screen.getByRole('switch');
+  expect(input).toHaveAttribute('type', 'checkbox');
+  expect(input).toHaveAccessibleName('Autosave');
+  expect(input).toHaveAccessibleDescription(description);
+  for (const word of ['on', 'off']) expect(screen.getByText(word).closest('[aria-hidden="true"]')).not.toBeNull();
+ });
+ it('puts the label before the switch with labelSide="start" and still toggles from it', async () => {
+  const ref = createRef<HTMLInputElement>();
+  render(<><Toggle ref={ref} labelSide="start" description="Saves after each edit">Autosave</Toggle><Toggle>Tilt</Toggle></>);
+  const [before, after] = screen.getAllByRole('switch');
+  const precedes = (text: string, input: HTMLElement) => Boolean(screen.getByText(text).compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING);
+  expect(precedes('Autosave', before)).toBe(true);
+  expect(precedes('Tilt', after)).toBe(false);
+  expect(before.closest('label')).toHaveAttribute('data-label-side', 'start');
+  expect(after.closest('label')).toHaveAttribute('data-label-side', 'end');
+  expect(ref.current).toBe(before);
+  expect(before).toHaveAccessibleName('Autosave');
+  await userEvent.click(screen.getByText('Autosave')); expect(before).toBeChecked();
+  await userEvent.click(screen.getByText('Saves after each edit')); expect(before).not.toBeChecked();
+ });
+ it('server-renders the switch, both written states and the label side', () => {
+  const html = renderToString(<Toggle labelSide="start" defaultChecked description="Saves after each edit">Autosave</Toggle>);
+  expect(html).toContain('role="switch"');
+  expect(html).toMatch(/<input[^>]*checked=""/);
+  expect(html).toContain('data-label-side="start"');
+  expect(html.indexOf('Autosave')).toBeLessThan(html.indexOf('<input'));
+  // Both words ship in the markup so CSS shows the right one before hydration.
+  expect(html).toMatch(/aria-hidden="true".*>on<.*>off</);
+ });
 });
