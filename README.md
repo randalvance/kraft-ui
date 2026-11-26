@@ -48,6 +48,7 @@ export function Note() {
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
 | Key hints | `Kbd`, `KbdProps`, `KbdSize` |
+| Prompt box | `Composer`, `ComposerProps`, `ComposerSubmitKey` |
 | Status marks | `StatusDot`, `StatusDotProps`, `StatusDotVariant`, `StatusDotShape`, `StatusDotSize`, `StatusSticker`, `StatusStickerProps`, `StatusStickerVariant`, `StatusStickerIndicator`, `StatusStickerSize`, `StatusTone` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
@@ -572,6 +573,40 @@ import { Inline, Kbd, SearchField } from '@randalvance/kraft-ui';
 </Inline>;
 
 <p>Press <Kbd keys={['Ctrl', 'K']} /> to open the command list.</p>;
+```
+
+`Composer` is the prompt box: a red cardboard frame around ruled paper, with key hints and disc actions under the text and a bar for your own controls. It wraps one native `<textarea>` that starts at `rows` (2 by default), grows with its text up to `--kraft-composer-max-height` (248px), and then scrolls. The placeholder is set in the handwritten face. Native textarea props and the ref reach the textarea, so `name`, `value` or `defaultValue`, `onChange`, `required`, and `maxLength` work as usual. `className` and `style` apply to the frame; use `textareaClassName` and `textareaStyle` to reach the textarea. Name it with `aria-label` or `aria-labelledby`, or put it inside a `FormField`.
+
+- `submitKey` (`ComposerSubmitKey`) chooses the key that sends. `"enter"`, the default, sends on Enter and starts a new line on Shift+Enter. `"mod-enter"` sends on Ctrl+Enter or Command+Enter and leaves Enter for new lines. `"none"` sends only from the send disc. Enter that confirms an input-method composition never sends, and a `keydown` handler that calls `preventDefault()` keeps the key for itself.
+- Sending calls `onSend` with the text and then submits the surrounding form, if there is one, with native validation. Blank text is not sent. The composer does not clear itself: set `value` to an empty string, or reset the form.
+- The key hints are `Kbd` keycaps that follow `submitKey`, and they are the textarea's accessible description. `hints` replaces them, for example to show `⌘` on a Mac, and `hints={null}` removes them.
+- `mic` places an action before the send disc, and `send` replaces the built-in send disc, for example with a stop button; `send={null}` removes it. An `IconButton` in either slot is drawn as a disc. `sendLabel` names the built-in disc and defaults to “Send”. The disc is disabled while the text is blank, and focus returns to the text after it sends.
+- `bar` holds your own controls, such as a model `Select`, a `Gauge`, a `Stamp`, and folder and branch buttons, on a paper strip inside the frame. `barLabel` names the strip as a group.
+- `disabled` turns off the textarea and the built-in send disc; disable your own `mic` and `bar` controls yourself. `busy` is for a message on its way: the text stays editable, sending waits, and the send disc shows the busy mark and `aria-busy`.
+
+Pressing the paper or a hint puts the caret in the text. Focus draws one outline around the frame. Set `--kraft-composer-frame` and `--kraft-composer-frame-edge` for another frame colour.
+
+```tsx
+import { useState } from 'react';
+import { Button, Composer, Icon, IconButton, Select } from '@randalvance/kraft-ui';
+
+function Prompt({ busy, onSend }: { busy: boolean; onSend: (text: string) => void }) {
+  const [text, setText] = useState('');
+  return <Composer aria-label="Message" placeholder="Ask for a draft…" busy={busy}
+    value={text} onChange={event => setText(event.currentTarget.value)}
+    onSend={value => { onSend(value); setText(''); }}
+    mic={<IconButton aria-label="Dictate"><Icon name="microphone" /></IconButton>}
+    barLabel="Message options"
+    bar={<>
+      <Select label="Model" hideLabel variant="compact" defaultValue="fable" options={[{ value: 'fable', label: 'Fable' }]} />
+      <Button variant="ghost" size="sm" leading={<Icon name="branch" />}>main</Button>
+    </>} />;
+}
+
+// In a form, Enter and the send disc submit it.
+<form action="/messages" method="post">
+  <Composer aria-label="Message" name="prompt" required />
+</form>;
 ```
 
 `RadioGroup` renders native radio inputs on paper rows. Supply a group `label`, a shared form `name`, and options with unique `value` strings. Optional descriptions are announced separately from option names. Use `defaultValue` or controlled `value` with `onValueChange`. Native arrow keys, form submission, `required`, and disabled choices work without extra application code.

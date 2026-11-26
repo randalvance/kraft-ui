@@ -14,6 +14,7 @@ export * from './dialog.js';
 export * from './tabs.js';
 export * from './form-fields.js';
 export * from './kbd.js';
+export * from './composer.js';
 export * from './status.js';
 export * from './meter.js';
 export * from './feedback.js';

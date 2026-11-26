@@ -1,0 +1,96 @@
+/* Composer: a red cardboard frame around a ruled sheet, with a paper bar for the application's controls. */
+.kraft-composer {
+  --kraft-composer-frame: var(--kraft-mat-red);
+  --kraft-composer-frame-edge: var(--kraft-mat-red-2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kraft-space-8);
+  min-inline-size: 0;
+  padding: var(--kraft-space-8);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-composer-frame);
+  border: 1px solid var(--kraft-composer-frame-edge);
+  border-radius: var(--kraft-radius-10);
+  box-shadow: 1.5px 3px 0 var(--kraft-composer-frame-edge), 5px 9px 10px var(--kraft-amb), 12px 22px 30px -6px var(--kraft-amb-2);
+}
+/* The frame casts a longer shadow than a paper field, so a validation message sits clear of it. */
+.kraft-form-field > .kraft-composer { margin-block-end: var(--kraft-space-12); }
+.kraft-composer:has(.kraft-composer-input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+.kraft-composer[data-disabled] {
+  --kraft-composer-frame: color-mix(in srgb, var(--kraft-mat-red) 45%, var(--kraft-paper-2));
+  --kraft-composer-frame-edge: color-mix(in srgb, var(--kraft-mat-red-2) 45%, var(--kraft-edge));
+  box-shadow: 0 1px 0 var(--kraft-composer-frame-edge);
+}
+
+/* Both paper pieces name their own ink roles, so the frame's surroundings cannot leak into them. */
+.kraft-composer-sheet, .kraft-composer-bar {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  --kraft-content-faint: var(--kraft-text-faint-paper);
+  --kraft-content-danger: var(--kraft-text-danger-paper);
+  --kraft-content-attention: var(--kraft-text-attention-paper);
+  --kraft-content-sage: color-mix(in srgb, var(--kraft-status-done) 80%, var(--kraft-ink));
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--kraft-content-ink);
+  border-radius: var(--kraft-radius-4);
+  font: 400 14px/1.5 var(--kraft-font-sans);
+}
+.kraft-composer-sheet {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border: 1px solid var(--kraft-mute);
+  cursor: text;
+}
+/* An invalid text marks the sheet's own lower edge, as other fields do. */
+.kraft-composer-sheet:has(.kraft-composer-input[aria-invalid="true"]) { border-block-end: 2px dashed var(--kraft-content-danger); }
+[data-kraft-theme="night"] .kraft-composer-sheet:has(.kraft-composer-input[aria-invalid="true"]) { border-block-end-color: var(--kraft-red); }
+.kraft-composer[data-disabled] .kraft-composer-sheet { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); cursor: not-allowed; }
+
+/* The sheet carries the paper and the frame shows focus, so the textarea keeps only its ruled lines. */
+.kraft-composer-sheet > .kraft-composer-input.kraft-textarea {
+  min-height: 0;
+  max-height: var(--kraft-composer-max-height, 248px);
+  padding: 8px 12px;
+  color: inherit;
+  background: var(--kraft-textarea-rules);
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
+}
+.kraft-composer-sheet > .kraft-composer-input.kraft-textarea::placeholder { color: var(--kraft-faint); font: 500 20px/24px var(--kraft-font-hand); opacity: 1; }
+
+.kraft-composer-footer { display: flex; align-items: flex-end; gap: var(--kraft-space-8); min-inline-size: 0; padding: var(--kraft-space-4) var(--kraft-space-10) var(--kraft-space-10) var(--kraft-space-12); }
+.kraft-composer-hints { display: flex; flex: 1 1 0; flex-wrap: wrap; align-items: center; gap: var(--kraft-space-4) var(--kraft-space-12); min-inline-size: 0; color: var(--kraft-content-muted); font: 700 12px/1.3 var(--kraft-font-sans); cursor: default; }
+.kraft-composer-hint { display: inline-flex; align-items: center; gap: var(--kraft-space-4); white-space: nowrap; }
+.kraft-composer[data-disabled] .kraft-composer-hints { color: var(--kraft-faint); }
+.kraft-composer-actions { display: inline-flex; flex: none; align-items: center; gap: var(--kraft-space-8); margin-inline-start: auto; cursor: default; }
+/* Actions in the frame are discs. */
+.kraft-composer-actions .kraft-icon-button { border-radius: 50%; }
+.kraft-composer-actions .kraft-icon-button:where(:not([data-size="sm"], [data-size="lg"])) { width: 36px; height: 36px; min-height: 36px; padding: 8px; }
+.kraft-composer-actions .kraft-button:focus-visible, .kraft-composer-bar .kraft-button:focus-visible { outline-offset: 2px; }
+
+.kraft-composer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kraft-space-6) var(--kraft-space-8);
+  min-block-size: 36px;
+  padding: var(--kraft-space-4) var(--kraft-space-8);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-paper-2);
+  border: 1px solid var(--kraft-edge);
+}
+
+@media (forced-colors: active) {
+  .kraft-composer { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-composer:has(.kraft-composer-input:focus-visible) { outline-color: Highlight; }
+  .kraft-composer-sheet { color: FieldText; background: Field; border-color: FieldText; }
+  .kraft-composer-sheet > .kraft-composer-input.kraft-textarea { background: transparent; }
+  .kraft-composer-sheet:has(.kraft-composer-input[aria-invalid="true"]) { border-block-end-color: Highlight; }
+  .kraft-composer-bar { color: CanvasText; background: Canvas; border-color: CanvasText; }
+  .kraft-composer-hints { color: FieldText; }
+  .kraft-composer[data-disabled] :is(.kraft-composer-sheet, .kraft-composer-hints) { color: GrayText; border-color: GrayText; }
+}

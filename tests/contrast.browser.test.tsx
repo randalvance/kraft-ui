@@ -14,7 +14,7 @@ import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
 import { StatusDot, StatusSticker, type StatusTone } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
-import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
+import { Composer, FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 import { RadioGroup } from '../src';
 import { Gauge, Meter, SlotMeter, Sparkline } from '../src';
 import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat, Stepper, Timeline, Toast, Toolbar, ToolbarGroup } from '../src';
@@ -192,6 +192,58 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     for (const key of matrix.querySelectorAll('kbd.kraft-kbd')) {
       expect(getComputedStyle(key).rotate, 'keycaps stay upright').toBe('none');
     }
+  });
+
+  it.each([true, false])('keeps composer text, hints, discs, bar, and focus readable on every material with decoration=%s', async decoration => {
+    const grounds = ['desk', 'paper', 'kraft', 'cardboard'] as const;
+    const composer = (ground: string) => <Composer aria-label={`${ground} message`} defaultValue="Sort the letters by sender." data-contrast={`${ground} text`}
+      mic={<IconButton aria-label={`${ground} dictate`}><Icon name="microphone" /></IconButton>}
+      bar={<><Text tone="muted" data-contrast={`${ground} bar note`}>Replies go to the desk.</Text>
+        <Button variant="ghost" size="sm"><span data-contrast={`${ground} bar button`}>main</span></Button>
+        <Text tone="danger" data-contrast={`${ground} bar danger`}>Offline</Text></>} />;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 1040, padding: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
+        {grounds.map(ground => ground === 'desk'
+          ? <div key={ground}>{composer(ground)}</div>
+          : <Surface key={ground} material={ground} padding={12}>{composer(ground)}</Surface>)}
+        <Composer aria-label="Empty message" placeholder="Ask for a draft…" submitKey="mod-enter" />
+        <FormField label="Reply" error="Write a reply before sending"><Composer defaultValue="Dear printer," data-contrast="invalid text" /></FormField>
+        <Composer aria-label="Closed message" disabled defaultValue="The desk is closed." data-contrast="disabled text" />
+      </div>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    // Hints beside disabled text are faint on purpose, like the text itself.
+    matrix.querySelectorAll<HTMLElement>(':is(.kraft-composer-hint, .kraft-composer-hints kbd.kraft-kbd, .kraft-composer-hints .kraft-kbd-join):not([data-disabled] *), .kraft-form-field-error')
+      .forEach((sample, index) => { sample.dataset.contrast = `hint ${index} ${sample.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    const color = (element: Element, property: 'backgroundColor' | 'color' | 'borderTopColor' | 'borderBottomColor' | 'outlineColor') =>
+      channels(getComputedStyle(element)[property]);
+    for (const frame of matrix.querySelectorAll<HTMLElement>('.kraft-composer')) {
+      const text = frame.querySelector('textarea')!;
+      const name = text.getAttribute('aria-label') ?? 'Reply';
+      const sheet = frame.querySelector('.kraft-composer-sheet')!;
+      const face = color(sheet, 'backgroundColor');
+      // The sheet's cut edge marks where the text goes; the frame around it is decoration.
+      expect(contrast(color(sheet, 'borderTopColor'), face), `${name}: sheet edge`).toBeGreaterThanOrEqual(text.disabled ? 1 : 3);
+      expect(contrast(channels(getComputedStyle(text, '::placeholder').color), face), `${name}: placeholder`).toBeGreaterThanOrEqual(4.5);
+      expect(getComputedStyle(frame).rotate, `${name}: frame stays upright`).toBe('none');
+      for (const disc of frame.querySelectorAll<HTMLElement>('.kraft-composer-actions .kraft-icon-button:enabled')) {
+        expect(contrast(color(disc, 'color'), color(disc, 'backgroundColor')), `${name}: ${disc.getAttribute('aria-label')} glyph`).toBeGreaterThanOrEqual(3);
+        expect(getComputedStyle(disc).rotate, 'discs stay upright').toBe('none');
+      }
+      if (text.disabled) continue;
+      act(() => text.focus());
+      const ground = frame.closest('.kraft-surface') ?? matrix;
+      expect(getComputedStyle(frame).outlineStyle, `${name}: focus`).toBe('solid');
+      expect(contrast(color(frame, 'outlineColor'), color(ground, 'backgroundColor')), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+      expect(getComputedStyle(text).outlineStyle, `${name}: one focus outline`).toBe('none');
+    }
+    expect(getComputedStyle(view.getByRole('textbox', { name: 'Empty message' }), '::placeholder').fontFamily, 'placeholder face').toContain('Caveat');
+    const invalid = view.getByRole('textbox', { name: 'Reply' }).closest('.kraft-composer-sheet')!;
+    expect(getComputedStyle(invalid).borderBottomStyle).toBe('dashed');
+    expect(contrast(color(invalid, 'borderBottomColor'), color(invalid, 'backgroundColor')), 'invalid edge').toBeGreaterThanOrEqual(3);
   });
 
   it.each([true, false])('keeps rail tiles, counts, and focus readable with decoration=%s', async decoration => {
