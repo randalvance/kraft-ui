@@ -1,0 +1,152 @@
+/* Stat, Timeline, and Stepper have no face of their own: they print in the ink of the material that holds them. */
+.kraft-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kraft-space-2);
+  min-inline-size: 0;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+}
+.kraft-stat[data-align="center"] { align-items: center; text-align: center; }
+.kraft-stat[data-align="end"] { align-items: flex-end; text-align: end; }
+.kraft-stat-value { color: var(--kraft-stat-ink, inherit); font: 600 38px/1 var(--kraft-font-hand); overflow-wrap: anywhere; }
+.kraft-stat[data-size="sm"] .kraft-stat-value { font-size: 26px; }
+.kraft-stat[data-size="lg"] .kraft-stat-value { font-size: 52px; }
+.kraft-stat-label { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font: 700 12px/1.3 var(--kraft-font-sans); overflow-wrap: anywhere; }
+/* Tone inks are each material's readable roles, so a figure keeps its contrast on paper, kraft, and cardboard. */
+.kraft-stat[data-tone="blue"] { --kraft-stat-ink: var(--kraft-content-link, var(--kraft-link-paper)); }
+.kraft-stat[data-tone="sage"] { --kraft-stat-ink: var(--kraft-content-sage, var(--kraft-status-done)); }
+.kraft-stat[data-tone="danger"] { --kraft-stat-ink: var(--kraft-content-danger, var(--kraft-text-danger-paper)); }
+.kraft-stat[data-tone="attention"] { --kraft-stat-ink: var(--kraft-content-attention, var(--kraft-text-attention-paper)); }
+
+.kraft-timeline, .kraft-stepper {
+  --kraft-thread: color-mix(in srgb, var(--kraft-content-ink, var(--kraft-ink)) 45%, transparent);
+  --kraft-thread-rule: color-mix(in srgb, var(--kraft-content-ink, var(--kraft-ink)) 22%, transparent);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  font: 400 14px/1.45 var(--kraft-font-sans);
+}
+
+/* History rows: a time column, a marker on a thread, the event, and a dashed rule under each row. */
+.kraft-timeline { --kraft-timeline-time-width: 72px; --kraft-timeline-pad: var(--kraft-space-10); }
+.kraft-timeline-item {
+  display: grid;
+  grid-template-columns: [marker] 14px [content] minmax(0, 1fr) [trailing] auto;
+  column-gap: var(--kraft-space-10);
+  align-items: start;
+  padding-block: var(--kraft-timeline-pad);
+  border-block-end: 1px dashed var(--kraft-thread-rule);
+}
+.kraft-timeline[data-has-time] .kraft-timeline-item { grid-template-columns: [time] var(--kraft-timeline-time-width) [marker] 14px [content] minmax(0, 1fr) [trailing] auto; }
+.kraft-timeline-time { grid-column: time; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font: 400 12px/1.7 var(--kraft-font-mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.kraft-timeline-marker { position: relative; grid-column: marker; align-self: stretch; min-block-size: 20px; }
+.kraft-timeline-marker::before {
+  content: "";
+  position: absolute;
+  inset-block: calc(-1 * var(--kraft-timeline-pad)) calc(-1 * var(--kraft-timeline-pad) - 1px);
+  inset-inline-start: 6px;
+  border-inline-start: 1.5px solid var(--kraft-thread);
+}
+.kraft-timeline-item:first-child .kraft-timeline-marker::before { inset-block-start: 10px; }
+.kraft-timeline-item:last-child .kraft-timeline-marker::before { inset-block-end: calc(100% - 10px); }
+.kraft-timeline-marker::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 5px;
+  inset-inline-start: 2px;
+  box-sizing: border-box;
+  inline-size: 10px;
+  block-size: 10px;
+  background: var(--kraft-timeline-tone, var(--kraft-status-cut));
+  border: 1.5px solid var(--kraft-timeline-tone, var(--kraft-mute));
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--kraft-status-cut);
+}
+.kraft-timeline-item[data-tone="working"] { --kraft-timeline-tone: var(--kraft-status-working); }
+.kraft-timeline-item[data-tone="waiting"] { --kraft-timeline-tone: var(--kraft-status-waiting); }
+.kraft-timeline-item[data-tone="blocked"] { --kraft-timeline-tone: var(--kraft-status-blocked); }
+.kraft-timeline-item[data-tone="done"] { --kraft-timeline-tone: var(--kraft-status-done); }
+.kraft-timeline-item[data-tone="idle"] { --kraft-timeline-tone: var(--kraft-status-idle); }
+.kraft-timeline-content { grid-column: content; min-inline-size: 0; overflow-wrap: anywhere; }
+.kraft-timeline-title { font-weight: 700; }
+.kraft-timeline-description { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; }
+.kraft-timeline-trailing { grid-column: trailing; display: flex; align-items: center; gap: var(--kraft-space-6); color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 12px; }
+/* Now is marked three ways: aria-current, heavier marker-pen title, and an ink ring on the marker. */
+.kraft-timeline-item[aria-current] .kraft-timeline-title { display: inline; padding-inline: var(--kraft-space-3); color: var(--kraft-ink); background: var(--kraft-marker); font-weight: 800; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.kraft-timeline-item[aria-current] .kraft-timeline-marker::after { box-shadow: 0 0 0 2px var(--kraft-status-cut), 0 0 0 3.5px var(--kraft-content-ink, var(--kraft-ink)); }
+
+/* The schedule lane: slots along one thread, scrolling sideways when they do not fit. */
+.kraft-timeline-lane { min-inline-size: 0; overflow-x: auto; padding-block: var(--kraft-space-4); }
+.kraft-timeline-lane:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
+.kraft-timeline[data-orientation="horizontal"] { display: flex; inline-size: max-content; min-inline-size: 100%; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-item {
+  display: flex;
+  flex: 1 0 var(--kraft-timeline-slot, 132px);
+  flex-direction: column;
+  gap: var(--kraft-space-4);
+  inline-size: var(--kraft-timeline-slot, 132px);
+  padding: 0;
+  padding-inline-end: var(--kraft-space-12);
+  border: 0;
+}
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-time { line-height: 1.3; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-marker { min-block-size: 14px; block-size: 14px; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-marker::before {
+  inset: 6px calc(-1 * var(--kraft-space-12)) auto 0;
+  border: 0;
+  border-block-start: 1.5px solid var(--kraft-thread);
+}
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-item:first-child .kraft-timeline-marker::before { inset-inline-start: 6px; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-item:last-child .kraft-timeline-marker::before { inset-block-end: auto; inset-inline-end: 0; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-marker::after { inset-block-start: 2px; }
+.kraft-timeline[data-orientation="horizontal"] .kraft-timeline-trailing { margin-block-start: var(--kraft-space-2); }
+
+/* The stepper. Marks differ in form as well as colour, and each label is followed by its state in words. */
+.kraft-stepper-step { position: relative; display: flex; align-items: flex-start; gap: var(--kraft-space-10); min-inline-size: 0; }
+.kraft-stepper-mark { display: block; flex: none; inline-size: 22px; block-size: 22px; overflow: visible; }
+.kraft-stepper-mark-face { fill: var(--kraft-status-cut); stroke: var(--kraft-mute); stroke-width: 1.5; stroke-dasharray: 2.5 2; }
+.kraft-stepper-mark-glyph { fill: none; stroke: var(--kraft-status-on); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.kraft-stepper-step[data-status="done"] .kraft-stepper-mark-face { fill: var(--kraft-status-done); stroke: var(--kraft-status-done); stroke-dasharray: none; }
+.kraft-stepper-step[data-status="blocked"] .kraft-stepper-mark-face { fill: var(--kraft-status-blocked); stroke: var(--kraft-status-blocked); stroke-dasharray: none; }
+.kraft-stepper-step[data-status="current"] .kraft-stepper-mark-face { stroke: var(--kraft-status-working); stroke-width: 2; stroke-dasharray: none; }
+.kraft-stepper-mark-dot { fill: var(--kraft-status-working); }
+.kraft-stepper-text { flex: 1 1 auto; min-inline-size: 0; padding-block-start: 1px; overflow-wrap: anywhere; }
+.kraft-stepper-label { font-weight: 700; }
+.kraft-stepper-step[data-status="current"] .kraft-stepper-label { font-weight: 800; }
+.kraft-stepper-step[data-status="upcoming"] .kraft-stepper-label { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-weight: 600; }
+.kraft-stepper-description { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 13px; }
+.kraft-stepper-trailing { flex: none; margin-inline-start: auto; padding-block-start: 2px; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-size: 12px; }
+
+.kraft-stepper[data-variant="pipeline"] .kraft-stepper-step:not(:last-child) { padding-block-end: var(--kraft-space-16); }
+.kraft-stepper[data-variant="pipeline"] .kraft-stepper-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  inset-block: 23px 1px;
+  inset-inline-start: 10px;
+  border-inline-start: 1.5px dashed var(--kraft-thread);
+}
+.kraft-stepper[data-variant="pipeline"] .kraft-stepper-step[data-status="done"]:not(:last-child)::before { border-inline-start-style: solid; }
+
+.kraft-stepper[data-variant="track"] { display: flex; align-items: center; font-size: 12px; line-height: 1.3; }
+.kraft-stepper[data-variant="track"] .kraft-stepper-step { flex: none; align-items: center; gap: var(--kraft-space-4); }
+.kraft-stepper[data-variant="track"] .kraft-stepper-step[aria-current] { flex: 0 1 auto; }
+.kraft-stepper[data-variant="track"] .kraft-stepper-step:not(:first-child)::before { content: ""; flex: none; inline-size: 14px; border-block-start: 1.5px dashed var(--kraft-thread); }
+.kraft-stepper[data-variant="track"] .kraft-stepper-step:is([data-status="done"], [data-status="current"]):not(:first-child)::before { border-block-start-style: solid; }
+.kraft-stepper[data-variant="track"] .kraft-stepper-mark { inline-size: 16px; block-size: 16px; }
+.kraft-stepper[data-variant="track"] .kraft-stepper-text:not(.kraft-visually-hidden) { padding: 0; padding-inline-end: var(--kraft-space-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (forced-colors: active) {
+  .kraft-timeline, .kraft-stepper { --kraft-thread: CanvasText; --kraft-thread-rule: CanvasText; }
+  .kraft-timeline-marker::after { forced-color-adjust: none; background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-timeline-item[data-tone] .kraft-timeline-marker::after { background: CanvasText; }
+  .kraft-timeline-item[aria-current] .kraft-timeline-marker::after { box-shadow: 0 0 0 2px Canvas, 0 0 0 4px Highlight; }
+  .kraft-timeline-item[aria-current] .kraft-timeline-title { color: CanvasText; background: none; text-decoration: underline; }
+  .kraft-stepper-mark-face { fill: Canvas; stroke: CanvasText; }
+  .kraft-stepper-step:is([data-status="done"], [data-status="blocked"]) .kraft-stepper-mark-face { fill: CanvasText; stroke: CanvasText; }
+  .kraft-stepper-mark-glyph { stroke: Canvas; }
+  .kraft-stepper-step[data-status="current"] .kraft-stepper-mark-face { stroke: Highlight; }
+  .kraft-stepper-mark-dot { fill: Highlight; }
+  .kraft-timeline-lane:focus-visible { outline-color: Highlight; }
+}

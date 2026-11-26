@@ -16,6 +16,7 @@ import { StatusDot, StatusSticker, type StatusTone } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
 import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 import { RadioGroup } from '../src';
+import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat, Stepper, Timeline, Toast, Toolbar, ToolbarGroup } from '../src';
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
@@ -220,6 +221,120 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       act(() => tile.focus());
       expect(style.outlineStyle, `${name}: focus`).toBe('solid');
       expect(contrast(channels(style.outlineColor), rail), `${name}: focus outline`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it.each([true, false])('keeps banners, callouts, toasts, and group headers readable on their own paper with decoration=%s', async decoration => {
+    const groupTones: CardTone[] = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy'];
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 760, padding: 24 }}>
+      <Surface material="cardboard" padding={12}><Stack gap={8}>
+        {tones.map(tone => <Banner key={tone} tone={tone} title={`${tone} strip.`} control={<Button size="sm" variant="ghost">Review</Button>}>
+          The line of consequence <Link href="#more">with a link</Link> <Text as="span" tone="muted">and muted ink</Text>
+        </Banner>)}
+        {tones.map(tone => <Callout key={tone} tone={tone} title={`${tone} note`} leading={<Icon name="pin" />}
+          action={tone === 'danger' ? <Button size="sm" variant="text" tone="danger">Delete</Button> : undefined}>
+          Body text <Link href="#more">with a link</Link> <Text as="span" tone="muted">and muted ink</Text> <Text as="span" tone="danger">and danger ink</Text>
+        </Callout>)}
+        <Inline gap={12}>
+          <Toast leading={<Icon name="check" />} onUndo={() => {}} onDismiss={() => {}}>Card archived</Toast>
+          <Toolbar label="Actions" style={{ flex: 1 }}>
+            <ToolbarGroup><Button size="sm" variant="ghost">Rename</Button><Button size="sm" variant="text">Move</Button></ToolbarGroup>
+            <ToolbarGroup align="end"><Button size="sm" variant="text" tone="danger">Delete</Button></ToolbarGroup>
+          </Toolbar>
+        </Inline>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 8 }}>
+          {groupTones.map((tone, index) => <CollapsibleGroup key={tone} tone={tone} title={`${tone} group`} count={index} defaultOpen={index === 0}>
+            <Text tone="muted">Muted body</Text>
+          </CollapsibleGroup>)}
+        </div>
+      </Stack></Surface>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    for (const animation of document.getAnimations()) animation.finish();
+    matrix.querySelectorAll<HTMLElement>([
+      '.kraft-banner-title', '.kraft-banner-line > .kraft-link', '.kraft-banner-line > .kraft-text', '.kraft-banner .kraft-button',
+      '.kraft-callout-title', '.kraft-callout-body > .kraft-link', '.kraft-callout-body > .kraft-text', '.kraft-callout .kraft-button', '.kraft-callout-leading',
+      '.kraft-toast-message', '.kraft-toast-undo', '.kraft-toolbar .kraft-button', '.kraft-collapsible-title', '.kraft-collapsible[open] .kraft-collapsible-body .kraft-text',
+    ].join(', ')).forEach((sample, index) => { sample.dataset.contrast = `own paper ${index} ${sample.className} ${sample.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    // Plain line and body copy sits beside inline inks, so it is compared against the tinted paper directly.
+    const paint = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!;
+    const resolved = (color: string) => {
+      paint.fillStyle = color; paint.fillRect(0, 0, 1, 1);
+      return [...paint.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+    };
+    for (const strip of matrix.querySelectorAll<HTMLElement>('.kraft-banner, .kraft-callout')) {
+      const style = getComputedStyle(strip);
+      expect(contrast(resolved(style.color), resolved(style.backgroundColor)), `${strip.className} ${strip.dataset.tone}: copy`).toBeGreaterThanOrEqual(7);
+    }
+    for (const summary of matrix.querySelectorAll<HTMLElement>('.kraft-collapsible-summary')) {
+      const face = resolved(getComputedStyle(summary).backgroundColor);
+      expect(contrast(resolved(getComputedStyle(summary).color), face), `${summary.textContent}: header`).toBeGreaterThanOrEqual(7);
+      expect(contrast(resolved(getComputedStyle(summary.querySelector('svg')!).color), face), `${summary.textContent}: chevron`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it.each([true, false])('keeps empty states, stats, timelines, steppers, pagers, and breadcrumbs readable on every material with decoration=%s', async decoration => {
+    const grounds = ['desk', 'paper', 'kraft', 'cardboard'] as const;
+    const row = (ground: string) => <Stack gap={8}>
+      <Inline gap={16} align="start">
+        {tones.map(tone => <Stat key={tone} tone={tone} size="sm" value="128" label={tone} />)}
+        <Pager pageCount={4} defaultPage={2} dots range="21–40 of 87" label={`${ground} pages`} />
+        <Breadcrumb label={`${ground} trail`} items={[{ label: 'Workspaces', href: '#w' }, { label: 'Boards', href: '#b' }, { label: 'Catalogue' }]} />
+      </Inline>
+      <Inline gap={16} align="start">
+        <Timeline style={{ flex: 1 }} items={[
+          { id: 'a', time: '09:14', title: 'Opened', description: 'By Pip', tone: 'done', trailing: 'log' },
+          { id: 'b', time: '10:02', title: 'Checks running', description: 'Now', tone: 'working', current: true },
+        ]} />
+        <Stepper style={{ flex: 1 }} steps={[
+          { id: 'a', label: 'Plan', description: 'Agreed', status: 'done', trailing: '2m' },
+          { id: 'b', label: 'Build', status: 'current' },
+          { id: 'c', label: 'Test', status: 'blocked' },
+          { id: 'd', label: 'Ship' },
+        ]} />
+        <Stack gap={8} style={{ flex: 1 }}>
+          <Stepper variant="track" steps={[{ id: 'a', label: 'Plan', status: 'done' }, { id: 'b', label: 'Build', status: 'current' }, { id: 'c', label: 'Ship' }]} />
+          <EmptyState size="sm" title="No cards" leading={<Icon name="inbox" />}>Nothing is waiting.</EmptyState>
+        </Stack>
+      </Inline>
+    </Stack>;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 900, padding: 24 }}>
+      <Stack gap={12}>{grounds.map(ground => ground === 'desk'
+        ? <div key={ground}>{row(ground)}</div>
+        : <Surface key={ground} material={ground} padding={12}>{row(ground)}</Surface>)}</Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await document.fonts.load('600 26px Caveat');
+    matrix.querySelectorAll<HTMLElement>([
+      '.kraft-stat-value', '.kraft-stat-label', '.kraft-pager-range', '.kraft-breadcrumb-link', '.kraft-breadcrumb-page',
+      '.kraft-timeline-time', '.kraft-timeline-title', '.kraft-timeline-description', '.kraft-timeline-trailing',
+      '.kraft-stepper-text:not(.kraft-visually-hidden) > .kraft-stepper-label', '.kraft-stepper-description', '.kraft-stepper-trailing',
+      '.kraft-empty-state-title', '.kraft-empty-state-note',
+    ].join(', ')).forEach((sample, index) => { sample.dataset.contrast = `ground ink ${index} ${sample.className} ${sample.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    // Marks, dots, and the dashed outline are graphics: 3:1 against what is painted behind them.
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll<HTMLElement>('.kraft-breadcrumb-separator, .kraft-empty-state-leading, .kraft-pager-dot')
+      .forEach((sample, index) => { sample.dataset.contrast = `ground mark ${index} ${sample.className}`; });
+    await verifyPaintedContrast(matrix, 3);
+    for (const empty of matrix.querySelectorAll<HTMLElement>('.kraft-empty-state')) {
+      const ground = empty.closest<HTMLElement>('.kraft-surface') ?? matrix;
+      const face = getComputedStyle(ground).backgroundColor;
+      expect(contrast(channels(getComputedStyle(empty).borderTopColor), channels(face)), 'empty state outline').toBeGreaterThanOrEqual(3);
+    }
+    for (const step of matrix.querySelectorAll<SVGElement>('.kraft-stepper-step:is([data-status="done"], [data-status="blocked"]) .kraft-stepper-mark')) {
+      const face = channels(getComputedStyle(step.querySelector('.kraft-stepper-mark-face')!).fill);
+      const glyph = channels(getComputedStyle(step.querySelector('.kraft-stepper-mark-glyph')!).stroke);
+      expect(contrast(glyph, face), 'step glyph on its face').toBeGreaterThanOrEqual(3);
+    }
+    for (const mark of matrix.querySelectorAll<SVGElement>('.kraft-stepper-step[data-status="current"] .kraft-stepper-mark')) {
+      const face = channels(getComputedStyle(mark.querySelector('.kraft-stepper-mark-face')!).fill);
+      expect(contrast(channels(getComputedStyle(mark.querySelector('.kraft-stepper-mark-dot')!).fill), face), 'current step dot on its cut').toBeGreaterThanOrEqual(3);
     }
   });
 
@@ -1260,6 +1375,39 @@ it('animates the ink only with motion enabled and no system reduction', async ()
     expect(css(stamp).animationName).toBe('none');
     expect(css(on).animationName).toBe('none');
     expect(css(stamp).rotate).toBe('-4deg');
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
+it('moves toasts, page dots, and disclosure chevrons only with motion enabled and no system reduction', async () => {
+  const session = cdp();
+  const emulateMotion = (value: string) => session.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value }],
+  });
+  const sample = (motion: boolean) => <ThemeProvider motion={motion} data-testid={motion ? 'moving' : 'still'}>
+    <Toast>Saved</Toast>
+    <div className="kraft-toast-region" data-placement="top" style={{ position: 'static' }}><Toast>Saved above</Toast></div>
+    <Pager pageCount={3} dots />
+    <CollapsibleGroup title="Group" />
+  </ThemeProvider>;
+  try {
+    await emulateMotion('no-preference');
+    const view = render(<>{sample(true)}{sample(false)}</>);
+    const read = (id: string) => {
+      const root = view.getByTestId(id);
+      const [toast, top] = [...root.querySelectorAll('.kraft-toast')].map(node => getComputedStyle(node).animationName);
+      return {
+        toast, top,
+        dot: getComputedStyle(root.querySelector('.kraft-pager-dot')!, '::before').transitionDuration,
+        chevron: getComputedStyle(root.querySelector('.kraft-collapsible-chevron')!).transitionDuration,
+      };
+    };
+    expect(read('moving')).toEqual({ toast: 'kraft-toast-in', top: 'kraft-toast-in-top', dot: '0.15s', chevron: '0.15s' });
+    expect(read('still')).toEqual({ toast: 'none', top: 'none', dot: '0s', chevron: '0s' });
+
+    await emulateMotion('reduce');
+    expect(read('moving')).toEqual({ toast: 'none', top: 'none', dot: '0s', chevron: '0s' });
   } finally {
     await session.send('Emulation.setEmulatedMedia', { features: [] });
   }

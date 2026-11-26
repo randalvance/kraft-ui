@@ -364,6 +364,93 @@ import { Link } from '@tanstack/react-router';
 </AppShell>;
 ```
 
+### Banner, Callout, EmptyState, and Toast
+
+`Banner` is a full-width paper strip that pairs one control with a line of consequence. Pass the control, such as a `Toggle` or `Button`, in `control`, a short bold lead in `title`, and the line itself as `children`. `controlSide="start"` (default) or `"end"` places the control, and the reading order follows it. `tone` takes the five shared tones and washes the paper lightly; the strip is its own paper, so its ink reads on any material. It has no role: add `role="status"` or `role="alert"` when the line should be announced as it changes.
+
+`Callout` is a bordered note with a thick tone edge at the start. It takes `children`, an optional `title`, a decorative `leading` icon, an `action` slot, and a `tone`. `tone="danger"` with an `action` is the danger form: the consequence in words beside the button that carries it out. The note has `role="note"`; pass `role="alert"` for one that appears after an error. Inside a Banner or Callout the muted, link, danger, and attention inks lean toward the plain ink to keep 4.5:1 on the tinted paper.
+
+`EmptyState` is a dashed placeholder for a list or page with nothing in it. `title` says what is missing, `children` explain why, `action` offers the next step, and `leading` holds a decorative mark. `size` is `"md"` (default) or `"sm"`. It has no face and prints in the ink of the material that holds it. The title is a paragraph by default; set `titleAs` to the heading level that fits the page.
+
+`Toast` is a brief kraft slip confirming an action. `onUndo` adds an Undo button and `onDismiss` adds a close button; rename them with `undoLabel` and `dismissLabel`. The application owns the list of toasts and removes one when `onDismiss` reports a `ToastDismissReason` of `"undo"`, `"close"`, or `"timeout"`. `duration` in milliseconds starts a countdown that restarts after the pointer or keyboard focus leaves the toast; leave it out to keep the toast until it is dismissed, which is the safer choice when Undo is the only way back. Escape dismisses a focused toast, and focus then returns to whatever had it when the toast appeared, if that element is still there. Each toast is a polite, atomic live status. Render toasts inside one mounted `ToastRegion`, a landmark named by `label` (default “Notifications”) and fixed to the viewport at `placement="bottom" | "bottom-end" | "top" | "top-end"`. The slip fades in only when theme motion is on and the system does not ask for reduced motion. All five components forward native props and the ref to their outer `div`.
+
+```tsx
+import { Banner, Button, Callout, EmptyState, Toast, ToastRegion, Toggle } from '@randalvance/kraft-ui';
+
+<Banner tone="attention" title="Autopilot is on." role="status"
+  control={<Toggle checked={autopilot} onChange={setAutopilot}>Autopilot</Toggle>}>
+  Agents merge approved work without asking you first.
+</Banner>;
+
+<Callout tone="danger" title="Delete this workspace"
+  action={<Button variant="danger" onClick={deleteWorkspace}>Delete workspace</Button>}>
+  All boards, cards, and history are removed for everyone. This cannot be undone.
+</Callout>;
+
+<EmptyState title="No cards yet" action={<Button variant="dashed">Add a card</Button>}>
+  Cards appear here when an agent picks up a task.
+</EmptyState>;
+
+<ToastRegion>
+  {toasts.map(toast => <Toast key={toast.id} onUndo={() => restore(toast.card)}
+    onDismiss={() => removeToast(toast.id)}>{toast.card.title} archived</Toast>)}
+</ToastRegion>;
+```
+
+### Stat, Timeline, and Stepper
+
+`Stat` prints a large handwritten `value` over a small `label`. `tone` inks the figure in one of the five shared tones, using an ink that keeps 4.5:1 on paper, kraft, and cardboard in both themes; the caption says what the figure means, so the tone is never the only signal. `size` sets the figure at 26 (`"sm"`), 38 (`"md"`, default), or 52px (`"lg"`), and `align` is `"start"`, `"center"`, or `"end"`.
+
+`Timeline` is an ordered list of dated events from `items`. Each `TimelineItem` has an `id` and `title`, with optional `time`, machine-readable `dateTime` (which renders a native `<time>`), `description`, `trailing`, a marker `tone` from `StatusTone`, and `current`. The default `orientation="vertical"` draws ruled history rows: a time column, a marker on a thread, the event, and a dashed rule under each row. `orientation="horizontal"` draws a schedule lane of equal slots along one thread; when the lane is wider than its container it becomes a focusable scroll region named by `scrollLabel`. Set `--kraft-timeline-time-width` or `--kraft-timeline-slot` to resize the time column or the slots. The current item has `aria-current="time"`, a heavier marker-pen title, and a ringed marker. A tone only colours the marker, so say the state in the title. Native props and the ref reach the `ol`.
+
+`Stepper` shows progress through `steps`. Each `StepperStep` has an `id`, a `label`, an optional `description` and `trailing` note, and a `status` (`StepStatus`): `done`, `current`, `upcoming` (default), or `blocked`. `variant="pipeline"` (default) stacks the steps on a vertical thread. `variant="track"` is one compact row of marks that prints only the current step's label. The marks differ in form as well as colour: a ticked disc, a ring with a dot, a dashed ring, and a crossed square. Every label is followed by its state in words for assistive technology; rename the words with `statusLabels`. The current step has `aria-current="step"`. The stepper is a static `ol` and is not interactive.
+
+```tsx
+import { Stat, Stepper, Timeline } from '@randalvance/kraft-ui';
+
+<Stat value={12} label="Blocked cards" tone="danger" />;
+
+<Timeline aria-label="Pull request history" items={[
+  { id: 'opened', time: '09:14', dateTime: '2026-11-24T09:14', title: 'Pip opened the pull request', tone: 'done' },
+  { id: 'checks', time: '10:02', title: 'Checks are running', tone: 'working', current: true },
+]} />;
+
+<Stepper variant="track" steps={[
+  { id: 'plan', label: 'Plan', status: 'done' },
+  { id: 'build', label: 'Build', status: 'current' },
+  { id: 'ship', label: 'Ship' },
+]} />;
+```
+
+### TagInput, Pager, Breadcrumb, Toolbar, and CollapsibleGroup
+
+`TagInput` is a field of removable slips with an inline add field. Pass `value` and `onValueChange`, or `defaultValue`, as arrays of strings. Enter or a comma adds what was typed, a pasted comma-separated list adds each part, and a slip already present is not added twice. Enter in an empty field still submits the form. Backspace in the empty field moves focus to the last slip's remove button rather than deleting it, and removing a slip moves focus to the one that took its place or back to the field. Place it inside a `FormField` for the label, description, and error. The ref and native input props reach the add field; `className` and `style` size the whole field, and `inputClassName` and `inputStyle` reach the input. `name` submits each slip under one form name, `variant` picks the `paper` (default) or `kraft` Tag, `removeLabel` names each remove button (default “Remove {tag}”), and `tagsLabel` names the list. A disabled field shows its slips without remove buttons.
+
+`Pager` puts previous and next buttons around an optional `range`, such as “21–40 of 87”, and optional page `dots`. Pages run from 1 to `pageCount`; control `page` with `onPageChange`, or set `defaultPage`. The buttons disable at the first and last page. The range is announced politely when it changes. Each dot is a 24px button named by `pageLabel` (default “Page 3”), and the current one has `aria-current="page"` and a larger filled mark. `label`, `previousLabel`, and `nextLabel` rename the landmark and buttons. Native props and the ref reach the `nav`.
+
+`Breadcrumb` renders `items` as an ordered list in a `nav` named by `label`. A `BreadcrumbItem` has a `label`, an optional `href`, and optional `id` and `current`. Items with an `href` are links; the last item is the current page unless another sets `current`, and it has `aria-current="page"`. Separators are decorative and reverse in right-to-left text. `linkAs` renders links with a router component that accepts `href`.
+
+`Toolbar` is a paper strip of actions with `role="toolbar"` and a required `label`. Wrap related controls in `ToolbarGroup`, which takes an optional `label` and `align`. Neighbouring groups are separated by a dashed rule, and `align="end"` pushes a group and those after it to the far end. The toolbar is one tab stop: the arrow keys, Home, and End move between its enabled controls, the arrows reverse in right-to-left text, and Tab returns to the control used last. Arrow keys inside a text field or select keep their native behaviour.
+
+`CollapsibleGroup` is a native `details` disclosure with a tinted header and a paper body. `title` names it, `count` prints a count sticker, and `countLabel` says what the count is for assistive technology, such as “3 cards”. `tone` takes any `CardTone`. Use `defaultOpen`, or control `open` with `onOpenChange`; a controlled group keeps showing the application's state when a change is declined. Groups that share a `name` open one at a time. Enter and Space toggle the summary, and closed content stays findable with the browser's find-in-page. Native props and the ref reach the `details` element.
+
+```tsx
+import { Breadcrumb, Button, CollapsibleGroup, FormField, Pager, TagInput, Toolbar, ToolbarGroup } from '@randalvance/kraft-ui';
+
+<FormField label="Labels"><TagInput value={labels} onValueChange={setLabels} name="label" /></FormField>;
+
+<Pager pageCount={5} page={page} onPageChange={setPage} dots range={`${first}–${last} of ${total}`} />;
+
+<Breadcrumb items={[{ label: 'Workspaces', href: '/workspaces' }, { label: 'Print Studio' }]} />;
+
+<Toolbar label="Card actions">
+  <ToolbarGroup label="Edit"><Button size="sm" variant="ghost">Rename</Button></ToolbarGroup>
+  <ToolbarGroup align="end"><Button size="sm" variant="text" tone="danger">Delete</Button></ToolbarGroup>
+</Toolbar>;
+
+<CollapsibleGroup name="columns" title="Waiting on review" count={3} tone="attention" defaultOpen>…</CollapsibleGroup>;
+```
+
 ### Interactive components and compositions
 
 `Checkbox` and `Toggle` are native `<input type="checkbox">` elements, so `name`, `value`, `checked`/`defaultChecked`, `onChange`, `required`, and form submission work as usual. The ref reaches the input; `className` and `style` apply to the surrounding label, which is the whole hit target. Pass the label as `children` (or `aria-label` without visible text) and optional supporting text as `description`, which becomes the input's accessible description. `Checkbox` accepts `indeterminate` for a mixed state; update it when the selection changes. `Toggle` has `role="switch"`: use it for settings that apply immediately, and `Checkbox` for choices submitted with a form.

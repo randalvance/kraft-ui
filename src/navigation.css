@@ -1,0 +1,94 @@
+.kraft-nav-chevron { display: block; inline-size: 16px; block-size: 16px; }
+.kraft-nav-chevron:dir(rtl) { rotate: 180deg; }
+
+/* Pager: previous and next around the range and page dots. */
+.kraft-pager {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8);
+  max-inline-size: 100%;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  font: 700 12px/1.3 var(--kraft-font-sans);
+}
+.kraft-pager-previous .kraft-nav-chevron { rotate: 180deg; }
+.kraft-pager-previous .kraft-nav-chevron:dir(rtl) { rotate: none; }
+.kraft-pager-range { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kraft-pager-dots { display: flex; align-items: center; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.kraft-pager-dots > li { display: flex; }
+/* Each dot is a 24px target around an 8px mark. The current page is a larger ink disc, so it differs in size as well as fill. */
+.kraft-pager-dot {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.kraft-pager-dot::before {
+  content: "";
+  box-sizing: border-box;
+  inline-size: 8px;
+  block-size: 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  transition: scale var(--kraft-motion-duration, 150ms) var(--kraft-ease);
+}
+.kraft-pager-dot:hover::before { background: color-mix(in srgb, currentColor 35%, transparent); }
+.kraft-pager-dot[aria-current]::before { background: currentColor; scale: 1.5; }
+.kraft-pager-dot:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 1px; }
+
+/* Breadcrumb */
+.kraft-breadcrumb { min-inline-size: 0; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font: 700 13px/1.4 var(--kraft-font-sans); }
+.kraft-breadcrumb-list { display: flex; align-items: center; flex-wrap: wrap; gap: var(--kraft-space-2) 0; margin: 0; padding: 0; list-style: none; }
+.kraft-breadcrumb-item { display: inline-flex; align-items: center; min-inline-size: 0; }
+.kraft-breadcrumb-separator { display: inline-flex; flex: none; margin-inline: var(--kraft-space-4); }
+.kraft-breadcrumb-separator .kraft-nav-chevron { inline-size: 12px; block-size: 12px; }
+.kraft-breadcrumb-link, .kraft-breadcrumb-page { min-inline-size: 0; padding-block: var(--kraft-space-2); overflow-wrap: anywhere; }
+.kraft-breadcrumb-link { border-radius: var(--kraft-radius-2); }
+.kraft-breadcrumb-link:focus-visible { outline-offset: 2px; }
+.kraft-breadcrumb [aria-current="page"] { color: var(--kraft-content-ink, var(--kraft-ink)); font-weight: 800; }
+
+/* Toolbar: a paper strip of grouped controls. */
+.kraft-toolbar {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  --kraft-content-faint: var(--kraft-text-faint-paper);
+  --kraft-content-danger: var(--kraft-text-danger-paper);
+  --kraft-content-attention: var(--kraft-text-attention-paper);
+  --kraft-content-sage: color-mix(in srgb, var(--kraft-status-done) 80%, var(--kraft-ink));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-6) 0;
+  min-inline-size: 0;
+  padding: var(--kraft-space-6) var(--kraft-space-8);
+  color: var(--kraft-content-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-paper-2);
+  border: 1px solid var(--kraft-edge);
+  border-radius: var(--kraft-radius-4);
+  font: 400 14px/1.4 var(--kraft-font-sans);
+}
+.kraft-toolbar-group { display: flex; align-items: center; flex-wrap: wrap; gap: var(--kraft-space-6); min-inline-size: 0; }
+.kraft-toolbar-group + .kraft-toolbar-group { margin-inline-start: var(--kraft-space-8); padding-inline-start: var(--kraft-space-8); border-inline-start: 1px dashed var(--kraft-mute); }
+.kraft-toolbar-group[data-align="end"] { margin-inline-start: auto; }
+/* The first end group is set apart by the gap, so it needs no rule. */
+.kraft-toolbar-group:not([data-align="end"]) + .kraft-toolbar-group[data-align="end"], .kraft-toolbar-group[data-align="end"]:first-child { padding-inline-start: 0; border-inline-start: 0; }
+.kraft-toolbar .kraft-button:focus-visible { outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) { .kraft-pager-dot::before { transition: none; } }
+@media (forced-colors: active) {
+  .kraft-pager-dot { color: ButtonText; }
+  .kraft-pager-dot[aria-current]::before { forced-color-adjust: none; background: Highlight; border-color: Highlight; }
+  .kraft-pager-dot:focus-visible { outline-color: Highlight; }
+  .kraft-toolbar { background: Canvas; border-color: CanvasText; }
+  .kraft-toolbar-group + .kraft-toolbar-group { border-color: CanvasText; }
+}

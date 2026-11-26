@@ -1,0 +1,64 @@
+/* A paper sheet whose header takes a light wash of the tone, so the paper ink stays readable on it. */
+.kraft-collapsible {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  --kraft-content-faint: var(--kraft-text-faint-paper);
+  --kraft-content-danger: var(--kraft-text-danger-paper);
+  --kraft-content-attention: var(--kraft-text-attention-paper);
+  --kraft-content-sage: color-mix(in srgb, var(--kraft-status-done) 80%, var(--kraft-ink));
+  --kraft-collapsible-tone: var(--kraft-board);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--kraft-content-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border: 1px solid var(--kraft-edge);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-lift-paper-1);
+  font: 400 14px/1.5 var(--kraft-font-sans);
+}
+.kraft-collapsible[data-tone="blue"] { --kraft-collapsible-tone: var(--kraft-blue); }
+.kraft-collapsible[data-tone="sage"] { --kraft-collapsible-tone: var(--kraft-mat-green); }
+.kraft-collapsible[data-tone="danger"] { --kraft-collapsible-tone: var(--kraft-mat-red); }
+.kraft-collapsible[data-tone="attention"] { --kraft-collapsible-tone: var(--kraft-attention); }
+.kraft-collapsible[data-tone="ochre"] { --kraft-collapsible-tone: var(--kraft-ochre); }
+.kraft-collapsible[data-tone="teal"] { --kraft-collapsible-tone: var(--kraft-teal); }
+.kraft-collapsible[data-tone="violet"] { --kraft-collapsible-tone: var(--kraft-violet); }
+.kraft-collapsible[data-tone="plum"] { --kraft-collapsible-tone: var(--kraft-plum); }
+.kraft-collapsible[data-tone="blush"] { --kraft-collapsible-tone: var(--kraft-blush); }
+.kraft-collapsible[data-tone="navy"] { --kraft-collapsible-tone: var(--kraft-blue-deep); }
+
+.kraft-collapsible-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--kraft-space-8);
+  min-block-size: 40px;
+  padding: var(--kraft-space-6) var(--kraft-space-12);
+  background: color-mix(in srgb, var(--kraft-collapsible-tone) 24%, var(--kraft-sheet));
+  border-radius: calc(var(--kraft-radius-4) - 1px);
+  font-weight: 800;
+  line-height: 1.3;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.kraft-collapsible-summary::-webkit-details-marker { display: none; }
+.kraft-collapsible-summary::marker { content: ""; }
+.kraft-collapsible[open] > .kraft-collapsible-summary { border-block-end: 1px dashed var(--kraft-edge-2); border-end-start-radius: 0; border-end-end-radius: 0; }
+.kraft-collapsible-summary:hover { background: color-mix(in srgb, var(--kraft-collapsible-tone) 34%, var(--kraft-sheet)); }
+.kraft-collapsible-summary:focus-visible { outline: 2px solid var(--kraft-ink); outline-offset: 2px; }
+.kraft-collapsible-chevron { flex: none; inline-size: 16px; block-size: 16px; transition: rotate var(--kraft-motion-duration, 150ms) var(--kraft-ease); }
+.kraft-collapsible-chevron:dir(rtl) { rotate: 180deg; }
+.kraft-collapsible[open] > .kraft-collapsible-summary .kraft-collapsible-chevron { rotate: 90deg; }
+.kraft-collapsible-title { flex: 1 1 auto; min-inline-size: 0; overflow-wrap: anywhere; }
+.kraft-collapsible-body { padding: var(--kraft-space-12); }
+.kraft-collapsible-body:empty { display: none; }
+/* Groups stacked in one column share their edges like a pad of sheets. */
+.kraft-collapsible + .kraft-collapsible { margin-block-start: var(--kraft-space-8); }
+
+@media (prefers-reduced-motion: reduce) { .kraft-collapsible-chevron { transition: none; } }
+@media (forced-colors: active) {
+  .kraft-collapsible { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-collapsible-summary, .kraft-collapsible-summary:hover { background: Canvas; }
+  .kraft-collapsible-summary:focus-visible { outline-color: Highlight; }
+}

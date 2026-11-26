@@ -1,0 +1,50 @@
+/* The frame draws the paper, like SearchField, so slips and the add field wrap together inside it. */
+.kraft-tag-input {
+  --kraft-form-error-ink: var(--kraft-content-danger, var(--kraft-red-2));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-6);
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 40px;
+  padding: 5px var(--kraft-space-8);
+  color: var(--kraft-ink);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-sheet);
+  border: 1px solid var(--kraft-edge);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-lift-paper-1);
+  cursor: text;
+}
+[data-kraft-theme="night"] .kraft-tag-input { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-tag-input:hover:where(:not(:focus-within):not([data-disabled])) { border-color: var(--kraft-mute); }
+.kraft-tag-input:has(.kraft-tag-input-field:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+.kraft-tag-input:has(.kraft-tag-input-field[aria-invalid="true"]) { border-block-end: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
+.kraft-tag-input[data-disabled] { color: var(--kraft-faint); background: var(--kraft-paper-2); border-color: var(--kraft-line); box-shadow: none; cursor: not-allowed; }
+/* The list keeps its semantics while its items flow with the field. */
+.kraft-tag-input-list { display: contents; margin: 0; padding: 0; list-style: none; }
+.kraft-tag-input-item { display: inline-flex; min-inline-size: 0; max-inline-size: 100%; }
+.kraft-tag-input-field {
+  box-sizing: border-box;
+  flex: 1 1 8ch;
+  inline-size: 8ch;
+  min-inline-size: 0;
+  min-block-size: 28px;
+  margin: 0;
+  padding: 0 var(--kraft-space-4);
+  color: inherit;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font: 400 14px/1.5 var(--kraft-font-sans);
+  caret-color: currentColor;
+  cursor: inherit;
+}
+.kraft-tag-input-field::placeholder { color: var(--kraft-faint); opacity: 1; }
+
+@media (forced-colors: active) {
+  .kraft-tag-input { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-tag-input:has(.kraft-tag-input-field:focus-visible) { outline-color: Highlight; }
+  .kraft-tag-input[data-disabled] { color: GrayText; border-color: GrayText; }
+}

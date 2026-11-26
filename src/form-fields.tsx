@@ -1,4 +1,5 @@
-import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, useState, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode } from 'react';
+import { Tag, type TagVariant } from './tag.js';
 
 type FieldContextValue = {
   id: string;
@@ -10,7 +11,7 @@ type FieldContextValue = {
 const FieldContext = createContext<FieldContextValue | null>(null);
 
 export type FormFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & {
-  /** One TextField, Textarea, or SearchField belongs inside each FormField. */
+  /** One TextField, Textarea, SearchField, or TagInput belongs inside each FormField. */
   children: ReactNode;
   label: ReactNode;
   labelStyle?: 'default' | 'uppercase';
@@ -187,5 +188,100 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
     <input {...props} {...relations} ref={ref} type="search" style={inputStyle}
       className={inputClassName ? `kraft-search-input ${inputClassName}` : 'kraft-search-input'} />
     {hasTrailing && <span className="kraft-search-trailing">{trailing}</span>}
+  </span>;
+});
+
+export type TagInputProps = Omit<FieldInputProps, 'value' | 'defaultValue' | 'name'> & {
+  /** The slips, in order. */
+  value?: string[];
+  defaultValue?: string[];
+  onValueChange?: (value: string[]) => void;
+  /** Submits each slip under this form name. */
+  name?: string;
+  variant?: TagVariant;
+  /** Names each slip's remove button. Defaults to "Remove {tag}". */
+  removeLabel?: (tag: string) => string;
+  /** Names the list of slips. */
+  tagsLabel?: string;
+  /** Applies to the native input. `className` and `style` size and place the whole field. */
+  inputClassName?: string;
+  inputStyle?: CSSProperties;
+};
+
+/**
+ * A field of removable slips with an inline add field. Enter or a comma adds what was typed; a slip already
+ * present is not added twice. Backspace in the empty field moves to the last slip's remove button.
+ */
+export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function TagInput({
+  value, defaultValue, onValueChange, name, variant = 'paper', removeLabel = tag => `Remove ${tag}`, tagsLabel = 'Tags',
+  className, style, inputClassName, inputStyle, id, disabled, onChange, onKeyDown,
+  'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
+}, ref) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  useImperativeHandle(ref, () => inputRef.current!, []);
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const relations = useFieldRelations(id, describedBy, invalid);
+  const [localTags, setLocalTags] = useState(defaultValue ?? []);
+  const tags = value ?? localTags;
+  const [draft, setDraft] = useState('');
+  // After a slip is removed, focus moves to the slip that took its place, or to the field.
+  const focusAfterRemoval = useRef<number | null>(null);
+  useEffect(() => {
+    const index = focusAfterRemoval.current;
+    if (index === null) return;
+    focusAfterRemoval.current = null;
+    const buttons = rootRef.current!.querySelectorAll<HTMLButtonElement>('.kraft-tag-remove');
+    (buttons[Math.min(index, buttons.length - 1)] ?? inputRef.current)?.focus();
+  });
+
+  const change = (next: string[]) => {
+    if (value === undefined) setLocalTags(next);
+    onValueChange?.(next);
+  };
+  const add = (text: string) => {
+    const added = text.split(/[,\n]/).map(part => part.trim()).filter(Boolean)
+      .filter((part, index, parts) => !tags.includes(part) && parts.indexOf(part) === index);
+    setDraft('');
+    if (added.length) change([...tags, ...added]);
+  };
+
+  return <span ref={rootRef} className={className ? `kraft-tag-input ${className}` : 'kraft-tag-input'} style={style}
+    data-disabled={disabled || undefined}
+    onMouseDown={event => {
+      const input = inputRef.current;
+      if (!input || input.disabled || (event.target as Element).closest(interactive)) return;
+      event.preventDefault();
+      input.focus();
+    }}>
+    {tags.length > 0 && <ul className="kraft-tag-input-list" aria-label={tagsLabel}>
+      {tags.map((tag, index) => <li key={`${index}:${tag}`} className="kraft-tag-input-item">
+        {disabled
+          ? <Tag variant={variant}>{tag}</Tag>
+          : <Tag variant={variant} removeLabel={removeLabel(tag)} onRemove={() => {
+            focusAfterRemoval.current = index;
+            change(tags.filter((_, other) => other !== index));
+          }}>{tag}</Tag>}
+        {name !== undefined && <input type="hidden" name={name} value={tag} form={props.form} disabled={disabled} />}
+      </li>)}
+    </ul>}
+    <input {...props} {...relations} ref={inputRef} type="text" disabled={disabled} value={draft} style={inputStyle}
+      className={inputClassName ? `kraft-tag-input-field ${inputClassName}` : 'kraft-tag-input-field'}
+      onChange={event => {
+        onChange?.(event);
+        if (/[,\n]/.test(event.target.value)) add(event.target.value);
+        else setDraft(event.target.value);
+      }}
+      onKeyDown={event => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || event.nativeEvent.isComposing) return;
+        if (event.key === 'Enter' && draft.trim()) {
+          // Enter adds the slip instead of submitting the form; an empty field submits as usual.
+          event.preventDefault();
+          add(draft);
+        } else if (event.key === 'Backspace' && draft === '' && tags.length) {
+          event.preventDefault();
+          rootRef.current!.querySelector<HTMLButtonElement>('.kraft-tag-input-item:last-child .kraft-tag-remove')?.focus();
+        }
+      }} />
   </span>;
 });
