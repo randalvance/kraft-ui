@@ -1,0 +1,157 @@
+/* Banner and Callout are their own paper, so their ink does not depend on the material behind them.
+   The tone washes the sheet, which costs contrast, so each paper ink role leans toward plain ink to make it up. */
+.kraft-banner, .kraft-callout {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: color-mix(in srgb, var(--kraft-text-muted-paper) 65%, var(--kraft-ink));
+  --kraft-content-link: color-mix(in srgb, var(--kraft-link-paper) 65%, var(--kraft-ink));
+  --kraft-content-faint: color-mix(in srgb, var(--kraft-text-faint-paper) 65%, var(--kraft-ink));
+  --kraft-content-danger: color-mix(in srgb, var(--kraft-text-danger-paper) 65%, var(--kraft-ink));
+  --kraft-content-attention: color-mix(in srgb, var(--kraft-text-attention-paper) 65%, var(--kraft-ink));
+  --kraft-content-sage: color-mix(in srgb, var(--kraft-status-done) 50%, var(--kraft-ink));
+  --kraft-feedback-tone: var(--kraft-kraft-2);
+  --kraft-feedback-tint: 12%;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--kraft-content-ink);
+  background: var(--kraft-texture-paper, var(--kraft-pulp-paper)),
+    color-mix(in srgb, var(--kraft-feedback-tone) var(--kraft-feedback-tint), var(--kraft-sheet));
+  font: 400 14px/1.5 var(--kraft-font-sans);
+}
+:is(.kraft-banner, .kraft-callout)[data-tone="blue"] { --kraft-feedback-tone: var(--kraft-blue); }
+:is(.kraft-banner, .kraft-callout)[data-tone="sage"] { --kraft-feedback-tone: var(--kraft-green); }
+:is(.kraft-banner, .kraft-callout)[data-tone="danger"] { --kraft-feedback-tone: var(--kraft-red); }
+:is(.kraft-banner, .kraft-callout)[data-tone="attention"] { --kraft-feedback-tone: var(--kraft-attention); --kraft-feedback-tint: 20%; }
+
+.kraft-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8) var(--kraft-space-16);
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: var(--kraft-space-8) var(--kraft-space-16);
+  border-block: 1px solid color-mix(in srgb, var(--kraft-feedback-tone) 55%, var(--kraft-edge));
+  border-block-end-width: 2px;
+}
+.kraft-banner-control { display: flex; flex: none; align-items: center; max-inline-size: 100%; }
+.kraft-banner-line { flex: 1 1 16ch; min-inline-size: 0; overflow-wrap: anywhere; }
+.kraft-banner-title { font-weight: 800; }
+
+.kraft-callout {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8) var(--kraft-space-12);
+  padding: var(--kraft-space-12) var(--kraft-space-14);
+  border: 1px solid color-mix(in srgb, var(--kraft-feedback-tone) 60%, var(--kraft-edge));
+  border-inline-start-width: 4px;
+  border-radius: var(--kraft-radius-4);
+}
+.kraft-callout-leading { display: inline-flex; flex: none; align-items: center; min-block-size: 21px; }
+.kraft-callout-leading > svg { inline-size: 18px; block-size: 18px; }
+.kraft-callout-text { flex: 1 1 20ch; min-inline-size: 0; overflow-wrap: anywhere; }
+.kraft-callout-title { font-weight: 800; }
+.kraft-callout-body > :first-child { margin-block-start: 0; }
+.kraft-callout-body > :last-child { margin-block-end: 0; }
+.kraft-callout-action { display: flex; flex: none; align-items: center; flex-wrap: wrap; gap: var(--kraft-space-8); max-inline-size: 100%; margin-inline-start: auto; }
+.kraft-callout[data-tone="danger"] :is(.kraft-callout-title, .kraft-callout-leading) { color: var(--kraft-content-danger); }
+.kraft-callout[data-tone="attention"] :is(.kraft-callout-title, .kraft-callout-leading) { color: var(--kraft-content-attention); }
+
+/* The empty state has no face: it is a dashed outline on whatever material holds it, in that material's ink. */
+.kraft-empty-state {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--kraft-space-8);
+  min-inline-size: 0;
+  padding: var(--kraft-space-24);
+  color: var(--kraft-content-ink, var(--kraft-ink));
+  border: 1.5px dashed color-mix(in srgb, var(--kraft-content-ink, var(--kraft-ink)) 60%, var(--kraft-mute));
+  border-radius: var(--kraft-radius-10);
+  font: 400 14px/1.5 var(--kraft-font-sans);
+  text-align: center;
+}
+.kraft-empty-state[data-size="sm"] { gap: var(--kraft-space-4); padding: var(--kraft-space-14) var(--kraft-space-16); }
+.kraft-empty-state-leading { display: inline-flex; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); }
+.kraft-empty-state-leading > svg { inline-size: 28px; block-size: 28px; }
+.kraft-empty-state[data-size="sm"] .kraft-empty-state-leading > svg { inline-size: 20px; block-size: 20px; }
+.kraft-empty-state-title { margin: 0; font: 600 26px/1.1 var(--kraft-font-hand); overflow-wrap: anywhere; }
+.kraft-empty-state[data-size="sm"] .kraft-empty-state-title { font-size: 22px; }
+.kraft-empty-state-note { max-inline-size: 48ch; color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); overflow-wrap: anywhere; }
+.kraft-empty-state-note > :first-child { margin-block-start: 0; }
+.kraft-empty-state-note > :last-child { margin-block-end: 0; }
+.kraft-empty-state-action { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--kraft-space-8); margin-block-start: var(--kraft-space-8); }
+
+/* The toast is a kraft slip lifted off the page. */
+.kraft-toast {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kraft-space-4);
+  inline-size: max-content;
+  max-inline-size: min(100%, 420px);
+  min-block-size: 44px;
+  padding: var(--kraft-space-4) var(--kraft-space-4) var(--kraft-space-4) var(--kraft-space-14);
+  padding-inline: var(--kraft-space-14) var(--kraft-space-4);
+  color: var(--kraft-ink-kraft);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-kraft);
+  border: 1px solid var(--kraft-kraft-2);
+  border-radius: var(--kraft-radius-4);
+  box-shadow: 1px 2px 0 var(--kraft-kraft-2), 5px 8px 10px var(--kraft-amb), 10px 18px 26px -8px var(--kraft-amb-2);
+  font: 700 13px/1.35 var(--kraft-font-sans);
+}
+.kraft-toast-leading { display: inline-flex; flex: none; margin-inline-end: var(--kraft-space-4); }
+.kraft-toast-leading > svg { inline-size: 16px; block-size: 16px; }
+.kraft-toast-message { flex: 1 1 auto; min-inline-size: 0; padding-block: var(--kraft-space-6); padding-inline-end: var(--kraft-space-8); overflow-wrap: anywhere; }
+.kraft-toast-undo, .kraft-toast-close {
+  appearance: none;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  min-inline-size: 36px;
+  min-block-size: 36px;
+  margin: 0;
+  padding: 0 var(--kraft-space-8);
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--kraft-radius-4);
+  font: inherit;
+  cursor: pointer;
+}
+.kraft-toast-undo { font-weight: 800; text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+.kraft-toast-close { padding: 0; }
+:is(.kraft-toast-undo, .kraft-toast-close):hover { background: color-mix(in srgb, var(--kraft-ink-kraft) 14%, transparent); }
+.kraft-toast-undo:hover { text-decoration-thickness: 2px; }
+:is(.kraft-toast-undo, .kraft-toast-close):focus-visible { outline: 2px solid var(--kraft-ink-kraft); outline-offset: -2px; }
+
+.kraft-toast-region {
+  position: fixed;
+  z-index: 70;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--kraft-space-8);
+  padding: var(--kraft-space-16);
+  pointer-events: none;
+}
+.kraft-toast-region:empty { padding: 0; }
+.kraft-toast-region[data-placement^="top"] { inset-block: 0 auto; flex-direction: column-reverse; }
+.kraft-toast-region[data-placement$="-end"] { align-items: flex-end; }
+.kraft-toast-region > * { pointer-events: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-kraft-motion="on"] .kraft-toast { animation: kraft-toast-in var(--kraft-dur-enter) var(--kraft-ease-pop); }
+  [data-kraft-motion="on"] .kraft-toast-region[data-placement^="top"] .kraft-toast { animation-name: kraft-toast-in-top; }
+}
+@keyframes kraft-toast-in { from { opacity: 0; translate: 0 12px; } }
+@keyframes kraft-toast-in-top { from { opacity: 0; translate: 0 -12px; } }
+
+@media (forced-colors: active) {
+  .kraft-banner, .kraft-callout, .kraft-toast { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-empty-state { border-color: CanvasText; }
+  :is(.kraft-toast-undo, .kraft-toast-close):focus-visible { outline-color: Highlight; }
+}
