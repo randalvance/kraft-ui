@@ -422,6 +422,37 @@ import { Stat, Stepper, Timeline } from '@randalvance/kraft-ui';
 ]} />;
 ```
 
+### Meter, SlotMeter, Gauge, and Sparkline
+
+Four ways to show how much of something is used. None of them is interactive. `Meter`, `SlotMeter`, and `Gauge` are each one `role="meter"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and an `aria-valuetext` in words; each needs a name from `label` or from visible text through `aria-labelledby`. Their fills are status inks on the theme's light or dark backing, so they keep 3:1 on paper, kraft, and cardboard in both themes, and every state also differs in form.
+
+`Meter` is a ruler. Pass one `value` with an optional `tone` (`StatusTone`), or `segments` laid end to end from `min`. Each `MeterSegment` has an `id`, a `label`, a `value`, a `tone`, and a `fill` (`MeterFill`): `solid` and `hatched` count toward the value, and `free` is dashed-outline room that does not. `min` and `max` default to 0 and 100. `ticks` takes the distance between ticks or a list of values, and `tickLabels` prints them under the ruler. `limit` draws a limit mark; any amount past it is drawn as a cross-hatched spill and added to the text alternative. A legend of the segments prints under the ruler unless `legend={false}`. `variant="bar"` (`MeterVariant`) is an 8px strip that keeps the fills, limit mark, and spill and drops the ticks and legend. `formatValue` formats every printed and spoken number, and `valueText` replaces the default text alternative, which reads each segment and the maximum.
+
+`SlotMeter` draws one paper slot for each place under `cap`. `slots` lists the taken places in order, as a `StatusTone` or a `SlotMeterSlot` with an `id` and `tone`; the remaining places are empty dashed cuts, and slots past the cap are not drawn. Working is solid, waiting hatched, blocked crossed, done ticked, and idle hollow. `size` (`SlotMeterSize`) is `"sm"` or `"md"`, a long row wraps, `toneLabels` renames tones in the default text alternative (`4 of 6, 2 working, 1 waiting, 1 blocked`), and `valueText` replaces it.
+
+`Gauge` is a half dial with a needle. `value` sits between `min` and `max`, the arc fills in a `tone`, and the figure prints in handwriting under the needle unless `showValue={false}`. By default the figure and the text alternative are a whole percentage of the range; `formatValue` and `valueText` change them. `limit` marks the dial and draws the arc past it as a danger zone, and a value past it is said in the text alternative. `size` (`GaugeSize`) is `"sm"` (72px), `"md"` (120px), or `"lg"` (168px); set `--kraft-gauge-size` for another width. The needle swings only when theme motion is on and the system allows motion, and the figure tilts only when theme tilt is on.
+
+`Sparkline` draws a small bar for each `SparklinePoint` (`label` and `value`) in `data`, oldest first, in the ink of the surrounding material. A day with nothing keeps a 1px stub. `max` fixes the value of a full-height bar, and `limit` draws a dashed line and hatches the bars past it in danger ink. `size` (`SparklineSize`) is `"sm"` (16px tall) or `"md"` (24px). It is one named image: the text alternative is `label` followed by every point, or your own `summary` for a long series.
+
+Native props and the ref reach the outer `div` of the three meters and the outer `span` of the sparkline.
+
+```tsx
+import { Gauge, Meter, SlotMeter, Sparkline } from '@randalvance/kraft-ui';
+
+<Meter label="Seats" max={24} limit={20} ticks={4} tickLabels segments={[
+  { id: 'used', label: 'Used', value: 12 },
+  { id: 'held', label: 'Held', value: 4, fill: 'hatched', tone: 'waiting' },
+  { id: 'free', label: 'Free', value: 8, fill: 'free', tone: 'idle' },
+]} />;
+<Meter variant="bar" label="Storage" value={45} />;
+
+<SlotMeter label="Agents" cap={8} slots={['working', 'working', 'waiting', 'blocked']} />;
+<Gauge label="Disk used" value={62} limit={80} />;
+<Sparkline label="Messages per day" limit={8} data={[
+  { label: 'Mon', value: 3 }, { label: 'Tue', value: 9 }, { label: 'Wed', value: 5 },
+]} />;
+```
+
 ### TagInput, Pager, Breadcrumb, Toolbar, and CollapsibleGroup
 
 `TagInput` is a field of removable slips with an inline add field. Pass `value` and `onValueChange`, or `defaultValue`, as arrays of strings. Enter or a comma adds what was typed, a pasted comma-separated list adds each part, and a slip already present is not added twice. Enter in an empty field still submits the form. Backspace in the empty field moves focus to the last slip's remove button rather than deleting it, and removing a slip moves focus to the one that took its place or back to the field. Place it inside a `FormField` for the label, description, and error. The ref and native input props reach the add field; `className` and `style` size the whole field, and `inputClassName` and `inputStyle` reach the input. `name` submits each slip under one form name, `variant` picks the `paper` (default) or `kraft` Tag, `removeLabel` names each remove button (default “Remove {tag}”), and `tagsLabel` names the list. A disabled field shows its slips without remove buttons.

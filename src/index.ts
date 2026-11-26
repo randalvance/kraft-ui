@@ -15,6 +15,7 @@ export * from './tabs.js';
 export * from './form-fields.js';
 export * from './kbd.js';
 export * from './status.js';
+export * from './meter.js';
 export * from './feedback.js';
 export * from './timeline.js';
 export * from './navigation.js';

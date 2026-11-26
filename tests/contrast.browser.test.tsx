@@ -16,6 +16,7 @@ import { StatusDot, StatusSticker, type StatusTone } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
 import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 import { RadioGroup } from '../src';
+import { Gauge, Meter, SlotMeter, Sparkline } from '../src';
 import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat, Stepper, Timeline, Toast, Toolbar, ToolbarGroup } from '../src';
 
 afterEach(cleanup);
@@ -378,6 +379,104 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       const edge = channels(getComputedStyle(sticker).borderTopColor);
       expect(edge.length === 3 || edge[3] === 1, 'sticker edge is opaque').toBe(true);
     }
+  });
+
+  it.each([true, false])('keeps meters, slots, gauges, and sparklines readable on every material with decoration=%s', async decoration => {
+    const statusTones: StatusTone[] = ['working', 'waiting', 'blocked', 'done', 'idle'];
+    const grounds = ['desk', 'paper', 'kraft', 'cardboard'] as const;
+    const week = [3, 5, 9, 4, 12, 0, 6].map((value, index) => ({ label: `day ${index}`, value }));
+    const row = (ground: string) => <Stack gap={8}>
+      <Inline gap={16} align="start">
+        <Meter style={{ flex: 1 }} label={`${ground} seats`} max={30} limit={18} ticks={5} tickLabels segments={[
+          ...statusTones.map(tone => ({ id: tone, label: tone, value: 3, tone })),
+          { id: 'held', label: 'held', value: 6, fill: 'hatched' as const, tone: 'waiting' as const },
+          { id: 'spare', label: 'spare', value: 5, fill: 'free' as const, tone: 'idle' as const },
+        ]} />
+        <Stack gap={8} style={{ inlineSize: 150 }}>
+          <Meter variant="bar" label={`${ground} storage`} value={110} max={120} limit={100} tone="done" />
+          <SlotMeter label={`${ground} agents`} cap={7} slots={statusTones} />
+          <SlotMeter label={`${ground} small agents`} cap={7} size="sm" slots={statusTones} />
+          <Sparkline label={`${ground} usage`} data={week} limit={8} />
+        </Stack>
+      </Inline>
+      <Inline gap={12}>{statusTones.map((tone, index) => <Gauge key={tone} label={`${ground} ${tone}`} tone={tone} size={index ? 'sm' : 'md'}
+        value={[45, 30, 60, 95, 75][index]} limit={80} />)}</Inline>
+    </Stack>;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 700, padding: 24 }}>
+      <Stack gap={12}>{grounds.map(ground => ground === 'desk'
+        ? <div key={ground}>{row(ground)}</div>
+        : <Surface key={ground} material={ground} padding={12}>{row(ground)}</Surface>)}</Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await document.fonts.load('600 22px Caveat');
+    matrix.querySelectorAll<HTMLElement>('.kraft-meter-tick-label, .kraft-meter-legend-label, .kraft-meter-legend-value, .kraft-gauge-value')
+      .forEach((sample, index) => { sample.dataset.contrast = `meter text ${index} ${sample.className} ${sample.textContent}`; });
+    await verifyPaintedContrast(matrix);
+
+    // Outlines, ticks, empty slots, and bars are graphics in the ground's ink: 3:1 against what is painted behind them.
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll<HTMLElement>([
+      '.kraft-meter-track', '.kraft-meter-tick', '.kraft-slot[data-empty]', '.kraft-sparkline-bar', '.kraft-sparkline-limit',
+    ].join(', ')).forEach((sample, index) => { sample.dataset.contrast = `meter mark ${index} ${sample.getAttribute('class')}`; });
+    await verifyPaintedContrast(matrix, 3);
+
+    // Reads a colour token as the browser resolves it on an element.
+    const token = (host: Element, name: string) => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(${name})`;
+      host.append(probe);
+      const color = channels(getComputedStyle(probe).backgroundColor);
+      probe.remove();
+      return color;
+    };
+    // A limit mark crosses the fills, so it carries its own cut ring, like a status dot.
+    for (const limit of matrix.querySelectorAll('.kraft-meter-limit')) {
+      const ring = token(limit, '--kraft-status-cut');
+      expect(contrast(channels(getComputedStyle(limit).backgroundColor), ring), 'limit mark on its cut ring').toBeGreaterThanOrEqual(3);
+      expect(getComputedStyle(limit).boxShadow).not.toBe('none');
+    }
+    for (const limit of matrix.querySelectorAll('.kraft-gauge-limit')) {
+      const ring = channels(getComputedStyle(limit.previousElementSibling!).stroke);
+      expect(contrast(channels(getComputedStyle(limit).stroke), ring), 'dial limit on its cut ring').toBeGreaterThanOrEqual(3);
+    }
+
+    // Fills are status inks on the cut backing they are drawn on.
+    const fill = (sample: Element, property: 'backgroundColor' | 'fill' | 'stroke') => channels(getComputedStyle(sample)[property]);
+    for (const track of matrix.querySelectorAll('.kraft-meter-track')) {
+      const backing = fill(track, 'backgroundColor');
+      for (const segment of track.querySelectorAll('.kraft-meter-segment')) {
+        const ink = token(segment, '--kraft-status-color');
+        expect(contrast(ink, backing), `segment ${segment.getAttribute('data-tone')} ${segment.getAttribute('data-fill')}`).toBeGreaterThanOrEqual(3);
+      }
+      const spill = track.querySelector('.kraft-meter-spill')!;
+      expect(contrast(token(spill, '--kraft-status-blocked'), backing), 'spill').toBeGreaterThanOrEqual(3);
+    }
+    for (const slot of matrix.querySelectorAll('.kraft-slot:not([data-empty])')) {
+      const ink = token(slot, '--kraft-status-color');
+      expect(contrast(ink, fill(slot, 'backgroundColor')), `slot ${slot.getAttribute('data-tone')}`).toBeGreaterThanOrEqual(3);
+      const glyph = slot.querySelector('.kraft-slot-glyph');
+      if (glyph) expect(contrast(fill(glyph, 'stroke'), fill(slot.querySelector('.kraft-slot-fill')!, 'fill')), 'slot glyph on its face').toBeGreaterThanOrEqual(3);
+    }
+    for (const gauge of matrix.querySelectorAll('.kraft-gauge')) {
+      const backing = fill(gauge.querySelector('.kraft-gauge-track')!, 'stroke');
+      for (const arc of gauge.querySelectorAll('.kraft-gauge-fill, .kraft-gauge-zone, .kraft-gauge-spill')) {
+        expect(contrast(fill(arc, 'stroke'), backing), `${arc.getAttribute('class')} ${gauge.getAttribute('data-tone')}`).toBeGreaterThanOrEqual(3);
+      }
+      // The dial's outline, ticks, and needle are curved, so their antialiased edges cannot be probed by pixel.
+      // They print in the same ink as the figure, which was measured on the painted material above.
+      const figure = gauge.querySelector('.kraft-gauge-value')!;
+      for (const mark of gauge.querySelectorAll('.kraft-gauge-edge, .kraft-gauge-base, .kraft-gauge-tick, .kraft-gauge-limit')) {
+        expect(getComputedStyle(mark).stroke, `${mark.getAttribute('class')} ink`).toBe(getComputedStyle(figure).color);
+      }
+      for (const mark of gauge.querySelectorAll('.kraft-gauge-needle-ink, .kraft-gauge-hub')) {
+        expect(getComputedStyle(mark).fill, `${mark.getAttribute('class')} ink`).toBe(getComputedStyle(figure).color);
+      }
+      expect(getComputedStyle(figure).rotate).toBe(decoration ? '-3deg' : '0deg');
+      expect(getComputedStyle(gauge).rotate, 'dials stay upright').toBe('none');
+    }
+    expect(matrix.querySelectorAll('.kraft-gauge-spill')).toHaveLength(4);
+    expect(matrix.querySelectorAll('.kraft-sparkline-bar[data-over]')).toHaveLength(8);
   });
 
   it.each([true, false])('keeps tag labels, glyphs, and focus readable with decoration=%s', async decoration => {

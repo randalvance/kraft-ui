@@ -1,0 +1,251 @@
+/* Meters draw status inks on the theme's cut backing, the same pairing as StatusDot,
+   so every fill keeps 3:1 on paper, kraft, and cardboard. Outlines, ticks, the limit
+   mark, and needles use the ink of the surrounding material. */
+.kraft-meter, .kraft-slot-meter, .kraft-gauge, .kraft-sparkline { color: var(--kraft-content-ink, var(--kraft-ink)); }
+.kraft-meter-segment, .kraft-slot, .kraft-gauge { --kraft-status-color: var(--kraft-status-idle); }
+:is(.kraft-meter-segment, .kraft-slot, .kraft-gauge)[data-tone="working"] { --kraft-status-color: var(--kraft-status-working); }
+:is(.kraft-meter-segment, .kraft-slot, .kraft-gauge)[data-tone="waiting"] { --kraft-status-color: var(--kraft-status-waiting); }
+:is(.kraft-meter-segment, .kraft-slot, .kraft-gauge)[data-tone="blocked"] { --kraft-status-color: var(--kraft-status-blocked); }
+:is(.kraft-meter-segment, .kraft-slot, .kraft-gauge)[data-tone="done"] { --kraft-status-color: var(--kraft-status-done); }
+
+/* The ruler: ticks above a recessed track, tick values below, then a legend. */
+.kraft-meter {
+  --kraft-meter-dir: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kraft-space-6);
+  inline-size: 100%;
+  min-inline-size: 0;
+  font: 400 12px/1.3 var(--kraft-font-sans);
+}
+.kraft-meter:dir(rtl) { --kraft-meter-dir: -1; }
+.kraft-meter-ruler, .kraft-meter-rail, .kraft-meter-track, .kraft-meter-ticks, .kraft-meter-tick-labels { position: relative; display: block; }
+.kraft-meter-ticks { block-size: 6px; margin-block-end: 1px; }
+.kraft-meter-tick {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: var(--kraft-meter-at);
+  inline-size: 1px;
+  block-size: 4px;
+  background: currentColor;
+  translate: calc(-50% * var(--kraft-meter-dir));
+}
+.kraft-meter-tick:is(:first-child, :last-child) { block-size: 6px; }
+.kraft-meter-tick:first-child { translate: 0; }
+.kraft-meter-tick:last-child { translate: calc(-100% * var(--kraft-meter-dir)); }
+.kraft-meter-track {
+  box-sizing: border-box;
+  block-size: 16px;
+  overflow: hidden;
+  background: var(--kraft-status-cut);
+  border: 1px solid currentColor;
+  border-radius: var(--kraft-radius-3);
+}
+.kraft-meter-track::after { content: ""; position: absolute; inset: 0; box-shadow: var(--kraft-recess); pointer-events: none; }
+.kraft-meter-segment, .kraft-meter-spill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--kraft-meter-at);
+  box-sizing: border-box;
+  inline-size: var(--kraft-meter-size);
+}
+.kraft-meter-segment { background: var(--kraft-status-color); border-inline-end: 1px solid var(--kraft-status-cut); }
+.kraft-meter-segment[data-fill="hatched"] {
+  background: repeating-linear-gradient(135deg, var(--kraft-status-color) 0 2px, var(--kraft-status-cut) 2px 5px);
+  box-shadow: inset 0 0 0 1.5px var(--kraft-status-color);
+}
+.kraft-meter-segment[data-fill="free"] {
+  background: var(--kraft-status-cut);
+  outline: 1.5px dashed var(--kraft-status-color);
+  outline-offset: -3.5px;
+}
+/* The spill crosses the other way from a hatched fill, in the blocked ink. */
+.kraft-meter-spill {
+  background: repeating-linear-gradient(45deg, var(--kraft-status-blocked) 0 3px, var(--kraft-status-cut) 3px 5px);
+  box-shadow: inset 0 0 0 1.5px var(--kraft-status-blocked);
+}
+.kraft-meter-limit {
+  position: absolute;
+  inset-block: -3px;
+  inset-inline-start: var(--kraft-meter-at);
+  inline-size: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px var(--kraft-status-cut);
+  translate: calc(-50% * var(--kraft-meter-dir));
+}
+.kraft-meter-limit::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: -3px;
+  inline-size: 8px;
+  block-size: 3px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.kraft-meter-tick-labels { block-size: 14px; margin-block-start: var(--kraft-space-2); }
+.kraft-meter-tick-label {
+  position: absolute;
+  inset-inline-start: var(--kraft-meter-at);
+  color: var(--kraft-content-muted, var(--kraft-text-muted-paper));
+  font: 400 11px/14px var(--kraft-font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  translate: calc(-50% * var(--kraft-meter-dir));
+}
+.kraft-meter-tick-label[data-edge="start"] { translate: 0; }
+.kraft-meter-tick-label[data-edge="end"] { translate: calc(-100% * var(--kraft-meter-dir)); }
+
+.kraft-meter-legend { display: flex; flex-wrap: wrap; gap: var(--kraft-space-4) var(--kraft-space-12); }
+.kraft-meter-legend-item { display: inline-flex; align-items: center; gap: var(--kraft-space-6); min-inline-size: 0; }
+.kraft-meter-swatch {
+  position: static;
+  flex: none;
+  inline-size: 14px;
+  block-size: 10px;
+  border: 0;
+  border-radius: var(--kraft-radius-2);
+  box-shadow: 0 0 0 1.5px var(--kraft-status-cut);
+}
+.kraft-meter-swatch[data-fill="hatched"] { box-shadow: inset 0 0 0 1.5px var(--kraft-status-color), 0 0 0 1.5px var(--kraft-status-cut); }
+.kraft-meter-swatch[data-fill="free"] { outline-width: 1px; outline-offset: -2px; }
+.kraft-meter-legend-label { font-weight: 700; overflow-wrap: anywhere; }
+.kraft-meter-legend-value { color: var(--kraft-content-muted, var(--kraft-text-muted-paper)); font-variant-numeric: tabular-nums; }
+
+/* The compact bar: a thin strip that keeps its fills, limit mark, and spill. */
+.kraft-meter[data-variant="bar"] .kraft-meter-track { block-size: 8px; border-radius: var(--kraft-radius-2); }
+.kraft-meter[data-variant="bar"] .kraft-meter-track::after { content: none; }
+.kraft-meter[data-variant="bar"] .kraft-meter-segment[data-fill="free"] { outline-width: 1px; outline-offset: -2px; }
+.kraft-meter[data-variant="bar"] .kraft-meter-limit { inset-block: -2px; }
+.kraft-meter[data-variant="bar"] .kraft-meter-limit::before { content: none; }
+
+/* Slots: a slip with a cut ring for each taken place and a dashed cut for each free one. */
+.kraft-slot-meter {
+  --kraft-slot-width: 15px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-3);
+  max-inline-size: 100%;
+  vertical-align: middle;
+}
+.kraft-slot-meter[data-size="sm"] { --kraft-slot-width: 10px; gap: var(--kraft-space-2); }
+.kraft-slot {
+  box-sizing: border-box;
+  display: block;
+  flex: none;
+  inline-size: var(--kraft-slot-width);
+  aspect-ratio: 5 / 7;
+  background: var(--kraft-status-cut);
+  border-radius: var(--kraft-radius-3);
+}
+.kraft-slot[data-empty] {
+  background: transparent;
+  color: var(--kraft-content-muted, var(--kraft-text-muted-paper));
+  border: 1px dashed currentColor;
+  box-shadow: var(--kraft-recess);
+}
+.kraft-slot-face { display: block; inline-size: 100%; block-size: 100%; }
+.kraft-slot-fill { fill: var(--kraft-status-color); stroke: var(--kraft-status-color); stroke-width: 1; }
+.kraft-slot:is([data-tone="waiting"], [data-tone="idle"]) .kraft-slot-fill { fill: var(--kraft-status-cut); }
+.kraft-slot-glyph { fill: none; stroke: var(--kraft-status-cut); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.kraft-slot[data-tone="waiting"] .kraft-slot-glyph { stroke: var(--kraft-status-color); stroke-width: 1.1; stroke-linecap: butt; }
+
+/* The dial: a half protractor with a filled arc, a limit mark, and a needle. */
+.kraft-gauge {
+  --kraft-gauge-size: 120px;
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  inline-size: var(--kraft-gauge-size);
+  max-inline-size: 100%;
+  vertical-align: middle;
+}
+.kraft-gauge[data-size="sm"] { --kraft-gauge-size: 72px; }
+.kraft-gauge[data-size="lg"] { --kraft-gauge-size: 168px; }
+.kraft-gauge-dial { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
+.kraft-gauge-dial path, .kraft-gauge-dial line { fill: none; }
+.kraft-gauge-edge { stroke: currentColor; stroke-width: 12; }
+.kraft-gauge-track { stroke: var(--kraft-status-cut); stroke-width: 10; }
+.kraft-gauge-fill { stroke: var(--kraft-status-color); stroke-width: 10; }
+.kraft-gauge-spill { stroke: var(--kraft-status-blocked); stroke-width: 10; }
+.kraft-gauge-zone { stroke: var(--kraft-status-blocked); stroke-width: 3; }
+.kraft-gauge-base, .kraft-gauge-tick { stroke: currentColor; stroke-width: 1; }
+/* The small dial is 0.6px to the unit, so its outlines are widened to stay a full pixel. */
+.kraft-gauge[data-size="sm"] .kraft-gauge-edge { stroke-width: 13.4; }
+.kraft-gauge[data-size="sm"] :is(.kraft-gauge-base, .kraft-gauge-tick) { stroke-width: 1.7; }
+.kraft-gauge-limit-cut { stroke: var(--kraft-status-cut); stroke-width: 4; }
+.kraft-gauge-limit { stroke: currentColor; stroke-width: 2; }
+.kraft-gauge-needle { transform-origin: 60px 60px; rotate: calc(var(--kraft-gauge-turn, 0) * 180deg); }
+.kraft-gauge-dial .kraft-gauge-needle-cut, .kraft-gauge-pin { fill: var(--kraft-status-cut); }
+.kraft-gauge-dial .kraft-gauge-needle-ink, .kraft-gauge-hub { fill: currentColor; }
+.kraft-gauge-value {
+  margin-block-start: -2px;
+  font: 600 22px/1 var(--kraft-font-hand);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  rotate: calc(-3deg * var(--kraft-tilt-factor, 1));
+}
+.kraft-gauge[data-size="sm"] .kraft-gauge-value { font-size: 17px; }
+.kraft-gauge[data-size="lg"] .kraft-gauge-value { font-size: 30px; }
+
+/* The sparkline: one ink bar for each day, hatched in danger ink past the limit. */
+.kraft-sparkline {
+  --kraft-sparkline-bar: 4px;
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: flex-end;
+  gap: var(--kraft-space-2);
+  block-size: 24px;
+  vertical-align: middle;
+}
+.kraft-sparkline[data-size="sm"] { --kraft-sparkline-bar: 3px; block-size: 16px; gap: 1px; }
+.kraft-sparkline-bar {
+  box-sizing: border-box;
+  flex: none;
+  inline-size: var(--kraft-sparkline-bar);
+  block-size: max(1px, var(--kraft-sparkline-size));
+  background: currentColor;
+  border-radius: 1px 1px 0 0;
+}
+.kraft-sparkline-bar[data-over] {
+  color: var(--kraft-content-danger, var(--kraft-text-danger-paper));
+  background: repeating-linear-gradient(135deg, currentColor 0 1.5px, transparent 1.5px 3px);
+  border: 1px solid currentColor;
+  border-block-end: 0;
+}
+.kraft-sparkline-limit {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--kraft-sparkline-size);
+  border-block-start: 1px dashed currentColor;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kraft-meter-segment, .kraft-meter-spill {
+    transition: inline-size calc(var(--kraft-motion-duration, 150ms) * 2) var(--kraft-ease), inset-inline-start calc(var(--kraft-motion-duration, 150ms) * 2) var(--kraft-ease);
+  }
+  .kraft-gauge-needle { transition: rotate calc(var(--kraft-motion-duration, 150ms) * 3) var(--kraft-ease); }
+  .kraft-sparkline-bar { transition: block-size calc(var(--kraft-motion-duration, 150ms) * 2) var(--kraft-ease); }
+}
+
+@media (forced-colors: active) {
+  .kraft-meter, .kraft-slot-meter, .kraft-gauge, .kraft-sparkline {
+    --kraft-status-cut: Canvas;
+    --kraft-status-working: CanvasText;
+    --kraft-status-waiting: CanvasText;
+    --kraft-status-done: CanvasText;
+    --kraft-status-idle: CanvasText;
+    --kraft-status-blocked: Highlight;
+    forced-color-adjust: none;
+    color: CanvasText;
+  }
+  .kraft-meter-tick-label, .kraft-meter-legend-value { color: CanvasText; }
+  .kraft-meter-track::after, .kraft-slot[data-empty] { box-shadow: none; }
+  .kraft-slot[data-empty] { color: CanvasText; }
+  .kraft-sparkline-bar[data-over] { color: Highlight; }
+}
