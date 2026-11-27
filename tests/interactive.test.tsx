@@ -53,6 +53,19 @@ describe('RadioGroup', () => {
     }
   });
 
+  it('groups the mark, leading content, and copy apart from the trailing slot', () => {
+    const { container } = render(<RadioGroup label="Plan" name="plan" options={[
+      { value: 'a', label: 'A', description: 'First', leading: <i data-testid="lead" />, trailing: 'Recommended' }, { value: 'b', label: 'B' },
+    ]} />);
+    const [first, second] = container.querySelectorAll('.kraft-radio-main');
+    expect(first.parentElement).toHaveClass('kraft-radio-option');
+    expect([...first.children].map(child => child.className)).toEqual(['kraft-radio-mark', 'kraft-radio-leading', 'kraft-radio-copy']);
+    expect(first).toContainElement(screen.getByTestId('lead'));
+    expect(first.nextElementSibling).toBe(screen.getByText('Recommended'));
+    expect(screen.getByText('Recommended')).toHaveClass('kraft-radio-trailing');
+    expect(second.nextElementSibling).toBeNull();
+  });
+
   it('names swatches and pictures without drawing or clipping a label', async () => {
     const ref = createRef<HTMLFieldSetElement>();
     const onValueChange = vi.fn();

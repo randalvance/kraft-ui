@@ -68,10 +68,12 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
         </label>;
         return <label className="kraft-radio-option" key={option.value}>
           {input}
-          <span className="kraft-radio-mark" aria-hidden="true" />
-          {option.leading != null && <span className="kraft-radio-leading" aria-hidden="true">{option.leading}</span>}
-          <span className="kraft-radio-copy"><span className="kraft-radio-label" id={`${id}-option-${index}-label`}>{option.label}</span>
-            {descriptionId && <span className="kraft-radio-description" id={descriptionId}>{option.description}</span>}
+          <span className="kraft-radio-main">
+            <span className="kraft-radio-mark" aria-hidden="true" />
+            {option.leading != null && <span className="kraft-radio-leading" aria-hidden="true">{option.leading}</span>}
+            <span className="kraft-radio-copy"><span className="kraft-radio-label" id={`${id}-option-${index}-label`}>{option.label}</span>
+              {descriptionId && <span className="kraft-radio-description" id={descriptionId}>{option.description}</span>}
+            </span>
           </span>
           {option.trailing != null && <span className="kraft-radio-trailing">{option.trailing}</span>}
         </label>;
