@@ -4,8 +4,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, IconButton, Inline, Sticker } from '../src';
 
 const plus = <Icon name="plus" />;
-const variants = ['neutral', 'blue', 'sage', 'danger', 'attention', 'bare'] as const;
-const meta = { title: 'Primitives/IconButton', component: IconButton, args: { 'aria-label': 'Add note', children: plus }, parameters: { docs: { description: { component: 'A native icon button with a required aria-label. Use bare in dense rows and badge for a count sticker. The default target is 44px and the small target is 28px.' } } }, argTypes: { size: { control: 'select', options: ['sm','md','lg'] }, variant: { control: 'select', options: variants } } } satisfies Meta<typeof IconButton>;
+const variants = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy', 'bare'] as const;
+const meta = { title: 'Primitives/IconButton', component: IconButton, args: { 'aria-label': 'Add note', children: plus }, parameters: { docs: { description: { component: 'A native icon button with a required aria-label. It takes the five shared tones and six palette tones. Use bare in dense rows and badge for a count sticker. The default target is 44px and the small target is 28px.' } } }, argTypes: { size: { control: 'select', options: ['sm','md','lg'] }, variant: { control: 'select', options: variants } } } satisfies Meta<typeof IconButton>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};

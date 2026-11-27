@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { Button, Icon, Inline } from '../src';
 
-const variants = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ghost', 'text', 'dashed'] as const;
+const variants = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy', 'ghost', 'text', 'dashed'] as const;
 const meta = { title: 'Primitives/Button', component: Button,
- parameters: { docs: { description: { component: 'A native button with raised card, flat outlined, text, and dashed variants. A controlled aria-pressed state flattens the face in place. Use wrap for long labels in narrow layouts.' } } },
+ parameters: { docs: { description: { component: 'A native button with raised card, flat outlined, text, and dashed variants. Raised cards come in the five shared tones and six palette tones. A controlled aria-pressed state flattens the face in place. Use wrap for long labels in narrow layouts.' } } },
  argTypes: { variant: { control: 'select', options: variants }, size: { control: 'select', options: ['sm','md','lg'] } },
  args: { children: 'Keep this idea', onClick: fn() },
 } satisfies Meta<typeof Button>;
@@ -47,6 +47,21 @@ export const PressedVariants: Story = {
     {variants.map(variant => <Button key={variant} variant={variant} aria-pressed>{variant}</Button>)}
     <Button variant="text" tone="danger" aria-pressed>Show deleted</Button>
   </Inline>,
+};
+/** The palette tones give a piece its own colour, such as one per workspace. Each keeps its label readable in both themes, and the label says what the button does. */
+export const PaletteTones: Story = {
+  render: () => <Inline wrap gap={16}>
+    {(['ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] as const).map(tone =>
+      <Button key={tone} variant={tone} leading={<Icon name="folder" />}>Open {tone} workspace</Button>)}
+  </Inline>,
+  play: async ({ canvasElement }) => {
+    const buttons = within(canvasElement).getAllByRole('button');
+    await expect(buttons).toHaveLength(6);
+    await expect(new Set(buttons.map(button => getComputedStyle(button).backgroundColor)).size).toBe(6);
+    await userEvent.tab();
+    await expect(buttons[0]).toHaveFocus();
+    await expect(getComputedStyle(buttons[0]).outlineStyle).toBe('solid');
+  },
 };
 
 const longLabel = 'KeepThisVeryLongUnbrokenIdeaIdentifier'.repeat(3);

@@ -34,6 +34,7 @@ export function Note() {
 | Group | Exports |
 | --- | --- |
 | Theme | `ThemeProvider` |
+| Tones | `Tone`, `ExtendedTone` |
 | Layout | `Box`, `Stack`, `Inline` |
 | Typography | `Text`, `TextProps`, `TextVariant`, `TextTone`, `HandSize`, `Heading`, `HeadingProps`, `HeadingSize` |
 | Icons | `Icon`, `createIcon`, `iconNames`, individual glyph definitions (such as `searchIcon`) |
@@ -61,7 +62,7 @@ export function Note() {
 
 Layout, typography, and surfaces accept `as` to select the semantic HTML element. Native props and refs pass through. Buttons stay buttons and links stay anchors.
 
-Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. Mark tones are `neutral | blue | sage | danger | attention`. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
+Spacing props use `0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24`. `Tone` is the five shared tones, `neutral | blue | sage | danger | attention`. `ExtendedTone` adds the six palette tones, `ochre | teal | violet | plum | blush | navy`, for a piece that carries its own colour, such as a workspace, a rail tile, or a model chip. `Button`, `IconButton`, `Badge`, `Sticker`, `Card`, `RailTile`, and `CollapsibleGroup` take an `ExtendedTone`. `Stamp`, `Stat`, `Banner`, `Callout`, `Avatar`, and `Select` status dots take a `Tone`. On buttons, badges, and stickers every tone keeps its label at 4.5:1 in both themes. A colour is never the only signal, so say what it means in words. `BadgeProps` and `StickerProps` share `MarkSize` through `size="default" | "sm" | "count"`. Small round stickers measure 36px. Count marks fit one or two digits in an 18px height. Labels stay on one line and keep their width in flex rows. Stickers are upright and noninteractive. Use `decorative` for redundant marks. Round stickers default to 64px and accept `--kraft-sticker-size` to set their diameter. Use pills for longer labels. `Surface` materials are `paper | cardboard | kraft`. Paper and kraft support elevations 0–3; cardboard uses its structural elevation for 1–3 and no shadow for 0.
 
 ### Typography
 
@@ -93,9 +94,9 @@ The italic lead needs an italic Fraunces face. Load one with your other fonts, o
 
 ### Buttons
 
-`Button` has five raised variants (`neutral`, `blue`, `sage`, `danger`, `attention`) plus `ghost` for a flat outline, `text` for a bare action, and `dashed` for an add action. Set `tone="danger"` on the text variant for destructive actions. Use `leading` for a decorative icon before the label. Labels stay on one line by default. Add `wrap` to let long labels fit a narrow container.
+`Button` has eleven raised variants, one for each `ExtendedTone`: the shared `neutral`, `blue`, `sage`, `danger`, and `attention`, and the palette tones `ochre`, `teal`, `violet`, `plum`, `blush`, and `navy`. It also has `ghost` for a flat outline, `text` for a bare action, and `dashed` for an add action. Set `tone="danger"` on the text variant for destructive actions. Use `leading` for a decorative icon before the label. Labels stay on one line by default. Add `wrap` to let long labels fit a narrow container.
 
-`IconButton` supports the same five raised variants and `bare` for a glyph without a card face. It requires `aria-label`. The optional `badge` slot places a visual count at the top-end corner. Include a meaningful count in `aria-label` or an accessible description. Small icon buttons have a 28×28px target with a 16px glyph.
+`IconButton` supports the same eleven raised variants and `bare` for a glyph without a card face. It requires `aria-label`. The optional `badge` slot places a visual count at the top-end corner. Include a meaningful count in `aria-label` or an accessible description. Small icon buttons have a 28×28px target with a 16px glyph.
 
 Both render a native `type="button"` by default and forward native props and refs. Set `aria-pressed` from application state to flatten a toggle in place. `loading` disables activation, sets `aria-busy`, and shows a `Pinwheel` in place of the leading icon or action glyph. The label and any corner badge remain visible.
 
@@ -104,6 +105,7 @@ import { Button, Icon, IconButton, Sticker } from '@randalvance/kraft-ui';
 
 <Button variant="dashed" leading={<Icon name="plus" />}>Add note</Button>
 <Button variant="text" tone="danger">Remove draft</Button>
+<Button variant="teal" leading={<Icon name="folder" />}>Open the print workspace</Button>
 <IconButton variant="bare" aria-label="Inbox, 12 unread"
   badge={<Sticker size="count" tone="attention">12</Sticker>}>
   <Icon name="inbox" />
@@ -213,7 +215,7 @@ function Proof({ saving }: { saving: boolean }) {
 
 ### Card and CardAddTile
 
-`Card` renders a paper article with `header`, `media`, `children` (body), `footer`, and `corner` slots. The corner sits beside the heading at the inline end. `tone` adds a spine in any `CardTone` (`neutral`, `blue`, `sage`, `danger`, `attention`, `ochre`, `teal`, `violet`, `plum`, `blush`, or `navy`). `off` dims the paper while keeping actions available. Supply a visible status such as “Paused” if the off state carries meaning. `selected` marks the edge and adds a check. `tilt` sets an optional rotation in degrees and follows `ThemeProvider`.
+`Card` renders a paper article with `header`, `media`, `children` (body), `footer`, and `corner` slots. The corner sits beside the heading at the inline end. `tone` adds a spine in any `CardTone`, which is the same set as `ExtendedTone` (`neutral`, `blue`, `sage`, `danger`, `attention`, `ochre`, `teal`, `violet`, `plum`, `blush`, or `navy`). `off` dims the paper while keeping actions available. Supply a visible status such as “Paused” if the off state carries meaning. `selected` marks the edge and adds a check. `tilt` sets an optional rotation in degrees and follows `ThemeProvider`.
 
 Use `as="a"` with `href` for navigation or `as="button"` for an action. Give the primary target a name with `aria-labelledby` or `aria-label`. The whole paper surface activates that target, and controls inside slots have their own pointer and keyboard behavior. Custom interactive regions can opt into their own pointer hit area with `data-card-interactive`. With `selected`, the button reports `aria-pressed`, and the link defaults to `aria-current="true"`. The ref and native props reach the primary action (or the article in the static variant). `className` and `style` apply to the outer article.
 
@@ -925,7 +927,7 @@ const AppIcon = createIcon({ search: searchIcon, close: closeIcon });
 
 Use `<ThemeProvider theme="night" texture={false} motion={false} tilt={false}>` for a quieter Night interface. The tilt setting controls paper decoration and opt-in Avatar rotation; Sticker marks stay upright. Providers are scoped, can nest, and do not mutate the document. Reduced-motion preferences always disable transitions. Theme selection is explicit: applications choose persistence and system-preference behavior.
 
-CSS variables use the `--kraft-` prefix. Override them on an application scope, for example `style={{ '--kraft-font-sans': 'Your font, sans-serif' } as React.CSSProperties}`. Surfaces provide material-aware ink roles: `--kraft-content-ink`, `--kraft-content-muted`, `--kraft-content-link`, `--kraft-content-faint`, `--kraft-content-danger`, and `--kraft-content-attention`. Use `--kraft-content-danger` for danger text instead of a raw red: it stays readable on paper, kraft, and cardboard in both themes. Nested surfaces and providers reset those roles for their own material/theme. `--kraft-red-2` and `--kraft-blue-2` are readable text inks on paper in both themes; in Night they are light tints. Use `--kraft-blue-deep` for a deep blue edge or face. Icons inside a Badge or Sticker print in the mark's ink. Night kraft uses its readable primary ink for secondary copy. Raw foundation tokens are available from `@randalvance/kraft-ui/tokens.json`. The stylesheet has root token defaults; visual resets and typography are scoped to Kraft components and providers.
+CSS variables use the `--kraft-` prefix. Override them on an application scope, for example `style={{ '--kraft-font-sans': 'Your font, sans-serif' } as React.CSSProperties}`. Surfaces provide material-aware ink roles: `--kraft-content-ink`, `--kraft-content-muted`, `--kraft-content-link`, `--kraft-content-faint`, `--kraft-content-danger`, and `--kraft-content-attention`. Use `--kraft-content-danger` for danger text instead of a raw red: it stays readable on paper, kraft, and cardboard in both themes. Nested surfaces and providers reset those roles for their own material/theme. `--kraft-red-2` and `--kraft-blue-2` are readable text inks on paper in both themes; in Night they are light tints. Use `--kraft-blue-deep` for a deep blue edge or face. Each palette tone has three tokens with Paper and Night values: a face, a deeper cut edge, and an on-colour ink that keeps 4.5:1 on the face. They are named `--kraft-teal-face`, `--kraft-teal-edge`, and `--kraft-on-teal`, and likewise for `ochre`, `violet`, `plum`, `blush`, and `navy`. Use them to paint your own toned pieces. The faces of teal, violet, and plum are deeper than `--kraft-teal`, `--kraft-violet`, and `--kraft-plum` in Paper, because those colours cannot hold a label at 4.5:1 in either ink. Icons inside a Badge or Sticker print in the mark's ink. Night kraft uses its readable primary ink for secondary copy. Raw foundation tokens are available from `@randalvance/kraft-ui/tokens.json`. The stylesheet has root token defaults; visual resets and typography are scoped to Kraft components and providers.
 
 Fonts are application-owned. The default stacks are Fraunces/Georgia, Nunito/system sans, Caveat/cursive, and Courier New/monospace. No remote font requests are made by the library. Storybook demonstrates locally bundled fonts.
 

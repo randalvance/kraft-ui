@@ -4,6 +4,8 @@ import { Pinwheel } from './material-marks.js';
 export type Space = 0 | 2 | 3 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 24;
 export type Theme = 'paper' | 'night';
 export type Tone = 'neutral' | 'blue' | 'sage' | 'danger' | 'attention';
+/** The five shared tones and the wider palette, for pieces that carry an identity colour such as a workspace or a model. */
+export type ExtendedTone = Tone | 'ochre' | 'teal' | 'violet' | 'plum' | 'blush' | 'navy';
 type LayoutProps = { padding?: Space; gap?: Space; align?: 'start' | 'center' | 'end' | 'stretch'; justify?: 'start' | 'center' | 'end' | 'between'; wrap?: boolean };
 export type PolymorphicProps<E extends ElementType, P> = P & { as?: E } & Omit<ComponentPropsWithoutRef<E>, keyof P | 'as'>;
 export type PolymorphicComponent<P, D extends ElementType = 'div'> = <E extends ElementType = D>(props: PolymorphicProps<E, P> & { ref?: ComponentPropsWithRef<E>['ref'] }) => ReactElement | null;
@@ -71,8 +73,8 @@ export const Mat = forwardRef(function Mat({
   </Tag>;
 }) as PolymorphicComponent<MatProps>;
 
-export type ButtonVariant = Tone | 'ghost' | 'text' | 'dashed';
-export type IconButtonVariant = Tone | 'bare';
+export type ButtonVariant = ExtendedTone | 'ghost' | 'text' | 'dashed';
+export type IconButtonVariant = ExtendedTone | 'bare';
 
 type NativeButtonProps = ComponentPropsWithoutRef<'button'> & { size?: 'sm' | 'md' | 'lg'; loading?: boolean };
 type ButtonBaseProps = NativeButtonProps & { variant?: ButtonVariant | IconButtonVariant };
@@ -126,11 +128,11 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(function Sep
   return <div {...props} ref={ref} className={cx('kraft-separator', className)} role={decorative ? 'none' : 'separator'} aria-orientation={decorative ? undefined : orientation} data-orientation={orientation} />;
 });
 export type MarkSize = 'default' | 'sm' | 'count';
-export type BadgeProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone; size?: MarkSize };
+export type BadgeProps = ComponentPropsWithoutRef<'span'> & { tone?: ExtendedTone; size?: MarkSize };
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge({ tone = 'neutral', size = 'default', className, ...props }, ref) {
   return <span {...props} ref={ref} className={cx('kraft-badge', className)} data-tone={tone} data-size={size} />;
 });
-export type StickerProps = ComponentPropsWithoutRef<'span'> & { tone?: Tone; size?: MarkSize; shape?: 'round' | 'pill' | 'square'; decorative?: boolean };
+export type StickerProps = ComponentPropsWithoutRef<'span'> & { tone?: ExtendedTone; size?: MarkSize; shape?: 'round' | 'pill' | 'square'; decorative?: boolean };
 export const Sticker = forwardRef<HTMLSpanElement, StickerProps>(function Sticker({ tone = 'blue', shape = 'round', size = 'default', decorative = false, className, ...props }, ref) {
   return <span {...props} ref={ref} className={cx('kraft-sticker', className)} data-tone={tone} data-shape={shape} data-size={size} aria-hidden={decorative || props['aria-hidden'] || undefined} />;
 });

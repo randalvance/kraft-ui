@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect } from 'storybook/test';
-import { ActionableList, ActionableListItem, Box, Stack, Inline, Text, Heading, Surface, ThemeProvider, Button, Badge, Sticker, Link } from '../src';
+import { expect, within } from 'storybook/test';
+import { ActionableList, ActionableListItem, Box, Stack, Inline, Text, Heading, Surface, ThemeProvider, Button, Badge, Sticker, Link, Icon, IconButton, type ExtendedTone } from '../src';
 import tokens from '../src/tokens.json';
 const meta = { title: 'Foundations/Materials', component: Surface } satisfies Meta<typeof Surface>;
 export default meta;
@@ -31,5 +31,51 @@ export const AccentInk: Story = {
   play: async ({ canvasElement }) => {
     const danger = (theme: string) => getComputedStyle(canvasElement.querySelector(`[data-testid="${theme}"] span`)!).color;
     await expect(danger('paper')).not.toBe(danger('night'));
+  },
+};
+
+const sharedTones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const satisfies readonly ExtendedTone[];
+const paletteTones = ['ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] as const satisfies readonly ExtendedTone[];
+const tonePieces = (tone: ExtendedTone) => <Inline wrap gap={16}>
+  <Button variant={tone}>{tone}</Button>
+  <IconButton variant={tone} aria-label={`Pin ${tone}`}><Icon name="pin" /></IconButton>
+  <Badge tone={tone}>Badge</Badge>
+  <Sticker tone={tone} shape="pill">Sticker</Sticker>
+</Inline>;
+const toneGrid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(340px, 100%), 1fr))', gap: 24, margin: 0, padding: 0, listStyle: 'none' } as const;
+/** The full tone set on the four pieces that take it: `Button`, `IconButton`, `Badge`, and `Sticker`. The five shared tones carry meaning across the library. The six palette tones give a piece its own colour, such as one per workspace, rail tile, or model. Each palette tone has a face, a cut edge, and an on-colour ink in both themes, named like `--kraft-teal-face`, `--kraft-teal-edge`, and `--kraft-on-teal`. Say what a colour means in words as well. */
+export const Tones: Story = {
+  render: () => <Stack gap={24}>
+    <Heading size="title">Eleven tones</Heading>
+    <Text>Buttons, icon buttons, badges, and stickers take every tone. Each keeps its ink readable in Paper and Night.</Text>
+    <Heading as="h3">Shared tones</Heading>
+    <ul aria-label="Shared tones" style={toneGrid}>
+      {sharedTones.map(tone => <li key={tone}>{tonePieces(tone)}</li>)}
+    </ul>
+    <Heading as="h3">Palette tones</Heading>
+    <ul aria-label="Palette tones" style={toneGrid}>
+      {paletteTones.map(tone => <li key={tone}><Stack gap={12}>
+        {tonePieces(tone)}
+        <Inline wrap gap={12}>
+          {[`${tone}-face`, `${tone}-edge`, `on-${tone}`].map(token => <Inline key={token} gap={6}>
+            <span aria-hidden="true" style={{ inlineSize: 16, blockSize: 16, flex: 'none', background: `var(--kraft-${token})`, border: '1px solid var(--kraft-mute)', borderRadius: 3 }} />
+            <Text as="span" variant="code">{token}</Text>
+          </Inline>)}
+        </Inline>
+      </Stack></li>)}
+    </ul>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const tones = [...sharedTones, ...paletteTones];
+    const faces = tones.map(tone => getComputedStyle(canvas.getByRole('button', { name: tone })).backgroundColor);
+    await expect(new Set(faces).size).toBe(11);
+    for (const tone of paletteTones) {
+      const row = canvas.getByRole('button', { name: tone }).closest('li')!;
+      const face = getComputedStyle(within(row).getByRole('button', { name: tone })).backgroundColor;
+      await expect(getComputedStyle(within(row).getByRole('button', { name: `Pin ${tone}` })).backgroundColor).toBe(face);
+      await expect(getComputedStyle(within(row).getByText('Badge')).backgroundColor).toBe(face);
+      await expect(getComputedStyle(within(row).getByText('Sticker')).backgroundColor).toBe(face);
+    }
   },
 };

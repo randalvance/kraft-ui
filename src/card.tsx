@@ -1,11 +1,11 @@
 import { forwardRef, type ComponentPropsWithoutRef, type CSSProperties, type ForwardedRef, type ForwardRefExoticComponent, type ReactElement, type ReactNode, type RefAttributes } from 'react';
 import { createIcon } from './create-icon.js';
 import { checkIcon, plusIcon } from './icon-glyphs.js';
-import type { Tone } from './primitives.js';
+import type { ExtendedTone } from './primitives.js';
 
 const CardGlyph = /* @__PURE__ */ createIcon({ check: checkIcon, plus: plusIcon });
 
-export type CardTone = Tone | 'ochre' | 'teal' | 'violet' | 'plum' | 'blush' | 'navy';
+export type CardTone = ExtendedTone;
 export type CardSize = 'default' | 'compact';
 
 type CardSlots = {
