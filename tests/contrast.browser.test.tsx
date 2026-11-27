@@ -14,7 +14,7 @@ import { ActionableList, ActionableListItem, TreeView } from '../src';
 import { Tag } from '../src';
 import { StatusDot, StatusSticker, type StatusTone } from '../src';
 import { RailTile, type CardTone as RailTone } from '../src';
-import { FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
+import { Composer, FormField, InlineEdit, Kbd, SearchField, Select, Textarea, TextField } from '../src';
 import { RadioGroup } from '../src';
 import { Gauge, Meter, SlotMeter, Sparkline } from '../src';
 import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat, Stepper, Timeline, Toast, Toolbar, ToolbarGroup } from '../src';
@@ -61,15 +61,21 @@ async function verifyPaintedContrast(matrix: HTMLElement, requiredContrast = 4.5
   const samples = [...matrix.querySelectorAll<HTMLElement>('[data-contrast]')].map(el => ({
     el, name: el.dataset.contrast!, style: el.getAttribute('style'),
     rect: el.getBoundingClientRect(),
-    foreground: channels(getComputedStyle(el).color).slice(0, 3),
+    foreground: channels(getComputedStyle(el, el.dataset.contrastPseudo).color).slice(0, 3),
   }));
   const original = await pixels((await page.getByTestId('contrast-matrix').screenshot({ base64: true })).base64);
   expect(original.width, 'Pixel probes require an unscaled browser viewport').toBe(Math.ceil(container.width));
   let background: ImageData;
+  // A placeholder is painted by a pseudo-element, which an inline colour does not reach.
+  // Mark its field with data-contrast-pseudo="::placeholder" to measure it.
+  const hidePlaceholders = document.createElement('style');
+  hidePlaceholders.textContent = '[data-contrast-pseudo="::placeholder"]::placeholder { color: transparent !important; }';
   try {
+    document.head.append(hidePlaceholders);
     for (const { el } of samples) el.style.setProperty('color', 'transparent', 'important');
     background = await pixels((await page.getByTestId('contrast-matrix').screenshot({ base64: true })).base64);
   } finally {
+    hidePlaceholders.remove();
     for (const { el, style } of samples) style === null ? el.removeAttribute('style') : el.setAttribute('style', style);
   }
   expect(background.width).toBe(original.width);
@@ -192,6 +198,66 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     for (const key of matrix.querySelectorAll('kbd.kraft-kbd')) {
       expect(getComputedStyle(key).rotate, 'keycaps stay upright').toBe('none');
     }
+  });
+
+  it.each([true, false])('keeps composer ink, placeholder, hints, card edge, discs, and focus readable with decoration=%s', async decoration => {
+    const grounds = ['desk', 'paper', 'kraft', 'cardboard'] as const;
+    const composer = (ground: string, index: number) => <Composer aria-label={`Message on ${ground}`}
+      placeholder={index % 2 ? 'Write to the agent…' : undefined} defaultValue={index % 2 ? undefined : 'Check the page numbers.\nRead the margins.'}
+      busy={index === 2} sendKey={index === 3 ? 'mod-enter' : 'enter'} busyLabel="The agent is working" hints={index === 2 ? <span><Kbd size="sm">Esc</Kbd> stop</span> : undefined}
+      bar={<><Text tone="muted" variant="label-sm" data-contrast={`${ground} bar note`}>lighthouse</Text><Stamp as="button" size="sm" tone="danger" pressed>Yolo</Stamp></>}
+      mic={<IconButton size="sm" aria-label={`Dictate on ${ground}`}><Icon name="microphone" /></IconButton>}
+      send={<IconButton variant={index % 2 ? 'neutral' : 'blue'} aria-label={`Send on ${ground}`}><Icon name="send" /></IconButton>} />;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 620, padding: 24 }}>
+      <Stack gap={24}>{grounds.map((ground, index) => ground === 'desk'
+        ? <div key={ground}>{composer(ground, index)}</div>
+        : <Surface key={ground} material={ground} padding={16}>{composer(ground, index)}</Surface>)}</Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await document.fonts.load('500 20px Caveat');
+    const boxes = grounds.map(ground => view.getByRole('textbox', { name: `Message on ${ground}` }) as HTMLTextAreaElement);
+    boxes.forEach((box, index) => {
+      box.dataset.contrast = `${grounds[index]} ${box.value ? 'typed ink' : 'placeholder'}`;
+      if (!box.value) box.dataset.contrastPseudo = '::placeholder';
+    });
+    matrix.querySelectorAll<HTMLElement>('.kraft-composer-hint, .kraft-composer-hints > span, .kraft-composer-status > span:last-child, .kraft-composer kbd.kraft-kbd, .kraft-composer .kraft-kbd-join')
+      .forEach((sample, index) => { sample.dataset.contrast = `composer note ${index} ${sample.textContent}`; });
+    expect(matrix.querySelectorAll('[data-contrast-pseudo]')).toHaveLength(2);
+    expect(getComputedStyle(boxes[1], '::placeholder').fontFamily).toContain('Caveat');
+    await verifyPaintedContrast(matrix);
+
+    for (const [index, box] of boxes.entries()) {
+      const ground = grounds[index];
+      const frame = box.closest<HTMLElement>('.kraft-composer')!;
+      const card = getComputedStyle(frame.querySelector('.kraft-composer-card')!);
+      // The card's edge keeps the writing paper distinct inside the frame, whatever the frame is laid on.
+      expect(contrast(channels(card.borderTopColor), channels(card.backgroundColor)), `${ground}: card edge`).toBeGreaterThanOrEqual(3);
+      // Every card is the same paper, so its ink does not follow the material under the frame.
+      expect(card.backgroundColor, `${ground}: card paper`).toBe(getComputedStyle(boxes[0].parentElement!).backgroundColor);
+      expect(getComputedStyle(frame.querySelector('.kraft-composer-bar .kraft-text')!).color, `${ground}: bar ink`)
+        .toBe(getComputedStyle(boxes[0].closest('.kraft-composer')!.querySelector('.kraft-composer-bar .kraft-text')!).color);
+
+      const under = ground === 'desk' ? matrix : frame.closest<HTMLElement>('.kraft-surface')!;
+      act(() => box.focus());
+      const focus = getComputedStyle(frame);
+      expect(focus.outlineStyle, `${ground}: focus`).toBe('solid');
+      expect(contrast(channels(focus.outlineColor), channels(getComputedStyle(under).backgroundColor)), `${ground}: focus outline`).toBeGreaterThanOrEqual(3);
+      expect(focus.rotate, 'the frame stays upright').toBe('none');
+
+      for (const disc of frame.querySelectorAll<HTMLElement>('.kraft-composer-mic button, .kraft-composer-send button')) {
+        // Layout sizes, because the frame may still be rising under the discs.
+        expect(disc.offsetWidth, `${ground}: ${disc.getAttribute('aria-label')} is a disc`).toBe(disc.offsetHeight);
+        expect(getComputedStyle(disc).borderTopLeftRadius).toBe('50%');
+        expect(disc.offsetWidth).toBeGreaterThanOrEqual(24);
+        // A disc's focus ring may cross onto the frame.
+        act(() => disc.focus());
+        expect(contrast(channels(getComputedStyle(disc).outlineColor), channels(getComputedStyle(frame).backgroundColor)), `${ground}: disc focus on the frame`).toBeGreaterThanOrEqual(3);
+      }
+    }
+    // A stamp in the bar follows the theme tilt; the frame, card, and discs never do.
+    const stampTilt = getComputedStyle(matrix.querySelector('.kraft-stamp-impression')!).rotate;
+    expect(stampTilt === 'none' || stampTilt === '0deg').toBe(!decoration);
   });
 
   it.each([true, false])('keeps rail tiles, counts, and focus readable with decoration=%s', async decoration => {
@@ -1537,6 +1603,67 @@ it('slides the pull-tab only with motion enabled and no system reduction', async
     expect(await pull('Still')).toBe(false);
     await emulateMotion('reduce');
     expect(await pull('Reduced')).toBe(false);
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
+it('lifts the composer frame only with motion enabled and no system reduction', async () => {
+  const session = cdp();
+  const emulateMotion = (value: string) => session.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value }],
+  });
+  try {
+    await emulateMotion('no-preference');
+    const view = render(<>
+      <ThemeProvider motion style={{ padding: 24 }}><Composer aria-label="Moving" /><Composer aria-label="Reduced" /></ThemeProvider>
+      <ThemeProvider motion={false} style={{ padding: 24 }}><Composer aria-label="Still" /></ThemeProvider>
+    </>);
+    const write = async (name: string) => {
+      const box = view.getByRole('textbox', { name });
+      const frame = box.closest<HTMLElement>('.kraft-composer')!;
+      const rest = frame.getBoundingClientRect().top;
+      act(() => box.focus());
+      const lifting = frame.getAnimations().length > 0;
+      await Promise.all(frame.getAnimations().map(animation => animation.finished));
+      expect(frame.getBoundingClientRect().top, `${name}: the frame rises while focus is inside it`).toBeCloseTo(rest - 1, 1);
+      act(() => box.blur());
+      await Promise.all(frame.getAnimations().map(animation => animation.finished));
+      expect(frame.getBoundingClientRect().top, `${name}: the frame settles afterwards`).toBeCloseTo(rest, 1);
+      return lifting;
+    };
+    expect(await write('Moving')).toBe(true);
+    expect(await write('Still')).toBe(false);
+    await emulateMotion('reduce');
+    expect(await write('Reduced')).toBe(false);
+  } finally {
+    await session.send('Emulation.setEmulatedMedia', { features: [] });
+  }
+});
+
+it('drops the composer rules and keeps its edges and focus in forced colours', async () => {
+  const session = cdp();
+  try {
+    const view = render(<ThemeProvider style={{ ...font, width: 420, padding: 24 }}>
+      <Composer aria-label="Draft" defaultValue="Check the page numbers." />
+    </ThemeProvider>);
+    const box = view.getByRole('textbox', { name: 'Draft' });
+    const frame = box.closest<HTMLElement>('.kraft-composer')!, card = frame.querySelector<HTMLElement>('.kraft-composer-card')!;
+    expect(getComputedStyle(box).backgroundImage, 'the rules are printed').toContain('repeating-linear-gradient');
+    await session.send('Emulation.setEmulatedMedia', { features: [{ name: 'forced-colors', value: 'active' }] });
+    // Printed rules would sit behind system-coloured text.
+    expect(getComputedStyle(box).backgroundImage).toBe('none');
+    for (const [name, piece] of [['frame', frame], ['card', card]] as const) {
+      const style = getComputedStyle(piece);
+      expect(style.boxShadow, `${name}: no shadow`).toBe('none');
+      expect(style.backgroundImage, `${name}: no texture`).toBe('none');
+      expect(contrast(channels(style.borderTopColor), channels(style.backgroundColor)), `${name}: edge`).toBeGreaterThanOrEqual(3);
+    }
+    expect(contrast(channels(getComputedStyle(box).color), channels(getComputedStyle(card).backgroundColor)), 'ink').toBeGreaterThanOrEqual(4.5);
+    act(() => box.focus());
+    expect(getComputedStyle(frame).outlineStyle).toBe('solid');
+    // The emulated Highlight is translucent; its pigment is what has to stand out.
+    expect(contrast(channels(getComputedStyle(frame).outlineColor).slice(0, 3), channels(getComputedStyle(frame).backgroundColor)), 'focus outline').toBeGreaterThanOrEqual(3);
   } finally {
     await session.send('Emulation.setEmulatedMedia', { features: [] });
   }
