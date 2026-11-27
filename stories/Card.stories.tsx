@@ -143,6 +143,32 @@ export const DecorationOff: Story = {
   },
 };
 
+const threads = [
+  { id: 'csv-export', title: 'Add CSV export', line: 'Waiting on your review', tone: 'attention' },
+  { id: 'proof-colours', title: 'Fix proof colours', line: 'Scout is checking the red ink', tone: 'blue' },
+  { id: 'archive-move', title: 'Move the archive', line: 'Done yesterday', tone: 'sage' },
+] satisfies { id: string; title: string; line: string; tone: CardTone }[];
+
+export const Compact: Story = {
+  render: () => <div style={{ display: 'grid', gap: 12, maxWidth: '20rem' }}>
+    {threads.map((thread, index) => <Card key={thread.id} size="compact" as="a" href={`#${thread.id}`}
+      aria-labelledby={thread.id} tone={thread.tone} selected={index === 0}
+      header={<Heading as="h2" size="sm" id={thread.id}>{thread.title}</Heading>}>
+      <Text tone="muted">{thread.line}</Text>
+    </Card>)}
+    <Card size="compact">A compact card is as tall as its content.</Card>
+    <CardAddTile size="compact" label="Start a thread" />
+  </div>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const baseHeight = 10 * parseFloat(getComputedStyle(canvasElement.ownerDocument.documentElement).fontSize);
+    const cards = canvas.getAllByRole('article');
+    await expect(cards).toHaveLength(4);
+    for (const card of cards) await expect(card.offsetHeight).toBeLessThan(baseHeight);
+    await expect(canvas.getByRole('button', { name: 'Start a thread' }).offsetHeight).toBeLessThan(baseHeight);
+  },
+};
+
 export const AddTile: Story = {
   render: () => <CardGrid><CardAddTile label="Add a workspace" /><CardAddTile label="Add a factory" disabled /></CardGrid>,
 };

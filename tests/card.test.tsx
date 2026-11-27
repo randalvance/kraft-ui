@@ -87,6 +87,24 @@ describe('Card', () => {
     expect(link).not.toContainElement(screen.getByRole('img', { name: 'Curator' }));
   });
 
+  it('marks a compact card on its frame, whichever element carries the action', () => {
+    render(<>
+      <Card header="Workspace" />
+      <Card size="compact" header="Thread" />
+      <Card as="a" href="#factory" aria-label="Open factory" size="compact" header="Factory" />
+      <Card as="button" aria-label="Open artifact" size="compact" header="Artifact" />
+    </>);
+    const [base, ...compact] = screen.getAllByRole('article');
+    expect(base).not.toHaveAttribute('data-size');
+    expect(compact).toHaveLength(3);
+    for (const frame of compact) {
+      expect(frame).toHaveAttribute('data-size', 'compact');
+      expect(frame).not.toHaveAttribute('size');
+    }
+    expect(screen.getByRole('link', { name: 'Open factory' })).not.toHaveAttribute('size');
+    expect(screen.getByRole('button', { name: 'Open artifact' })).not.toHaveAttribute('size');
+  });
+
   it('server-renders every variant and its associated action name', () => {
     const html = renderToString(<>
       <Card header="Studio" />
@@ -116,5 +134,13 @@ describe('CardAddTile', () => {
     expect(tile.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
     fireEvent.click(tile);
     expect(add).toHaveBeenCalledOnce();
+  });
+
+  it('marks a compact tile and leaves the base tile unmarked', () => {
+    render(<><CardAddTile label="Add workspace" /><CardAddTile size="compact" label="Add thread" /></>);
+    expect(screen.getByRole('button', { name: 'Add workspace' })).not.toHaveAttribute('data-size');
+    const tile = screen.getByRole('button', { name: 'Add thread' });
+    expect(tile).toHaveAttribute('data-size', 'compact');
+    expect(tile).not.toHaveAttribute('size');
   });
 });

@@ -40,7 +40,7 @@ export function Note() {
 | Material | `Surface`, `Mat`, `Tape` |
 | Loading | `Pinwheel` |
 | Structured sheet | `PaperPanel` |
-| Cards | `Card`, `CardProps`, `CardTone`, `CardAddTile`, `CardAddTileProps` |
+| Cards | `Card`, `CardProps`, `CardTone`, `CardSize`, `CardAddTile`, `CardAddTileProps` |
 | Board notes | `StickyNote`, `StickyNoteProps`, `StickyNoteTone`, `StickyNoteStatus` |
 | Cork boards | `CorkBoard`, `CorkBoardItem`, `CorkBoardColumn`, `Pin` |
 | Portraits | `Avatar`, `AvatarGroup`, `AvatarPicker` |
@@ -217,7 +217,9 @@ function Proof({ saving }: { saving: boolean }) {
 
 Use `as="a"` with `href` for navigation or `as="button"` for an action. Give the primary target a name with `aria-labelledby` or `aria-label`. The whole paper surface activates that target, and controls inside slots have their own pointer and keyboard behavior. Custom interactive regions can opt into their own pointer hit area with `data-card-interactive`. With `selected`, the button reports `aria-pressed`, and the link defaults to `aria-current="true"`. The ref and native props reach the primary action (or the article in the static variant). `className` and `style` apply to the outer article.
 
-`CardAddTile` is a dashed button with a decorative plus and required handwritten `label`. It accepts native button props and a button ref. Both button components default to `type="button"`. Place the tile in the same grid as the cards to match its row height. The base height for both components can be set with `--kraft-card-min-height` (default `10rem`).
+`CardAddTile` is a dashed button with a decorative plus and required handwritten `label`. It accepts native button props and a button ref. Both button components default to `type="button"`. Place the tile in the same grid as the cards to match its row height.
+
+Both components have a base height of `10rem`, which suits a grid of tiles. For a card that holds a line or two, such as one on a board, in a list, or in a thread, pass `size="compact"` (`CardSize`: `"default"` or `"compact"`). A compact card or tile is as tall as its content. To change the base height instead, set `--kraft-card-min-height` on the card or an ancestor; a compact card ignores it.
 
 ```tsx
 import { Card, CardAddTile, Heading, Icon, IconButton } from '@randalvance/kraft-ui';
@@ -229,6 +231,10 @@ import { Card, CardAddTile, Heading, Icon, IconButton } from '@randalvance/kraft
   Track packaging proofs and studio runs.
 </Card>;
 <CardAddTile label="Add workspace" onClick={addWorkspace} />;
+
+<Card size="compact" as="a" href="/threads/csv-export" aria-label="Add CSV export" header="Add CSV export">
+  Waiting on your review
+</Card>;
 ```
 
 ### StickyNote

@@ -6,6 +6,9 @@
   overflow-wrap: anywhere;
 }
 
+/* A compact card or tile is as tall as its content. `auto` keeps that floor when it is a flex item; `0` would let it shrink below its content. */
+:is(.kraft-card, .kraft-card-add-tile)[data-size="compact"] { min-block-size: auto; }
+
 .kraft-card {
   --kraft-content-ink: var(--kraft-ink);
   --kraft-content-muted: var(--kraft-text-muted-paper);
