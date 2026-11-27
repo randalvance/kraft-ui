@@ -2,7 +2,7 @@ import { createRef } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { Card, CardAddTile } from '../src';
+import { Avatar, Card, CardAddTile } from '../src';
 
 describe('Card', () => {
   it('renders the paper slots in a native article and forwards its ref and native props', () => {
@@ -73,6 +73,18 @@ describe('Card', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Pin proof' }));
     expect(open).toHaveBeenCalledTimes(1);
     expect(pin).toHaveBeenCalledTimes(2);
+  });
+
+  it('takes any node in the media slot, whichever element carries the action', () => {
+    render(<>
+      <Card media={<Avatar initial="A" alt="Archivist" />} header="Archivist" />
+      <Card as="a" href="#curator" aria-label="Edit Curator" media={<Avatar initial="C" alt="Curator" />} header="Curator" />
+      <Card as="button" aria-label="Select Printer" media={<Avatar initial="P" alt="Printer" />} header="Printer" />
+    </>);
+    for (const name of ['Archivist', 'Curator', 'Printer']) expect(screen.getByRole('img', { name })).toBeVisible();
+    const link = screen.getByRole('link', { name: 'Edit Curator' });
+    expect(link).not.toHaveAttribute('media');
+    expect(link).not.toContainElement(screen.getByRole('img', { name: 'Curator' }));
   });
 
   it('server-renders every variant and its associated action name', () => {
