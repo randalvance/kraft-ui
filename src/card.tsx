@@ -23,12 +23,15 @@ type CardSlots = {
 };
 
 type ActionName = { 'aria-label': string } | { 'aria-labelledby': string };
-type ArticleCardProps = CardSlots & Omit<ComponentPropsWithoutRef<'article'>, 'dangerouslySetInnerHTML'> & { as?: 'article' };
-type LinkCardProps = CardSlots & Omit<ComponentPropsWithoutRef<'a'>, 'dangerouslySetInnerHTML'> & ActionName & {
+/** Native props without the slot names, so a slot never takes on an attribute's type (an anchor's `media` is a string). */
+type NativeProps<T extends 'article' | 'a' | 'button'> =
+  Omit<ComponentPropsWithoutRef<T>, 'dangerouslySetInnerHTML' | keyof CardSlots>;
+type ArticleCardProps = CardSlots & NativeProps<'article'> & { as?: 'article' };
+type LinkCardProps = CardSlots & NativeProps<'a'> & ActionName & {
   as: 'a';
   href: string;
 };
-type ButtonCardProps = CardSlots & Omit<ComponentPropsWithoutRef<'button'>, 'dangerouslySetInnerHTML'> & ActionName & {
+type ButtonCardProps = CardSlots & NativeProps<'button'> & ActionName & {
   as: 'button';
 };
 
