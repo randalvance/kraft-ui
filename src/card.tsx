@@ -6,6 +6,7 @@ import type { Tone } from './primitives.js';
 const CardGlyph = /* @__PURE__ */ createIcon({ check: checkIcon, plus: plusIcon });
 
 export type CardTone = Tone | 'ochre' | 'teal' | 'violet' | 'plum' | 'blush' | 'navy';
+export type CardSize = 'default' | 'compact';
 
 type CardSlots = {
   header?: ReactNode;
@@ -20,6 +21,8 @@ type CardSlots = {
   selected?: boolean;
   /** Rotation in degrees when theme tilt is enabled. */
   tilt?: number;
+  /** `compact` drops the base height, so the card is as tall as its content. */
+  size?: CardSize;
 };
 
 type ActionName = { 'aria-label': string } | { 'aria-labelledby': string };
@@ -39,12 +42,13 @@ export type CardProps = ArticleCardProps | LinkCardProps | ButtonCardProps;
 
 /** A paper card with optional whole-card activation and independent slot controls. */
 export const Card = forwardRef<HTMLElement, CardProps>(function Card({
-  header, media, children, footer, corner, tone, off, selected, tilt = 0, className, style, ...nativeProps
+  header, media, children, footer, corner, tone, off, selected, tilt = 0, size, className, style, ...nativeProps
 }, ref) {
   const frameProps = {
     className: className ? `kraft-card ${className}` : 'kraft-card',
     style: { ...style, '--kraft-card-tilt': `${tilt}deg` } as CSSProperties,
     'data-tone': tone,
+    'data-size': size === 'compact' ? size : undefined,
     'data-off': off || undefined,
     'data-selected': selected || undefined,
   };
@@ -84,13 +88,15 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card({
 
 export type CardAddTileProps = Omit<ComponentPropsWithoutRef<'button'>, 'children' | 'dangerouslySetInnerHTML'> & {
   label: string;
+  /** `compact` drops the base height, to sit with compact cards. */
+  size?: CardSize;
 };
 
 /** A dashed paper tile for the add action at the end of a card grid. */
 export const CardAddTile = forwardRef<HTMLButtonElement, CardAddTileProps>(function CardAddTile({
-  label, type = 'button', className, ...props
+  label, type = 'button', size, className, ...props
 }, ref) {
-  return <button {...props} type={type} ref={ref}
+  return <button {...props} type={type} ref={ref} data-size={size === 'compact' ? size : undefined}
     className={className ? `kraft-card-add-tile ${className}` : 'kraft-card-add-tile'}>
     <CardGlyph name="plus" size={24} />
     <span>{label}</span>
