@@ -310,7 +310,7 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 ### Secondary
 
 - **Mat green / sage** distinguishes the sage button; **st-green** supplies the separate badge and sticker face.
-- **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. Mat red itself is the cardboard frame around the `Composer`, with mat-red-2 as its cut edge; it is never a text ground. **st-red** provides the danger badge and sticker face.
+- **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. Mat red itself is the cardboard frame around the `Composer`, with mat-red-2 as its cut edge; it is never a text ground. `Mat` cuts the same cardboard with `tone="red"`, and its words stay on the inset paper sheet. **st-red** provides the danger badge and sticker face.
 - **Green** is lifted in Night so a green dot stays at least 3:1 against a highlighted (picked) row.
 - **Red, green, amber, ochre, teal, violet, plum, blush, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
 

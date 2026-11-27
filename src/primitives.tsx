@@ -62,7 +62,7 @@ export const Surface = forwardRef(function Surface({ as: Tag = 'div', material =
   return <Tag {...props} ref={ref} className={cx('kraft-box', 'kraft-surface', className)} data-material={material} data-elevation={elevation} style={layoutStyle({ padding }, style)} />;
 }) as PolymorphicComponent<SurfaceProps>;
 
-export type MatProps = Pick<SurfaceProps, 'padding' | 'children'> & { tone?: 'kraft' | 'amber' | 'sage' };
+export type MatProps = Pick<SurfaceProps, 'padding' | 'children'> & { tone?: 'kraft' | 'amber' | 'sage' | 'red' };
 export const Mat = forwardRef(function Mat({
   as: Tag = 'div', tone = 'kraft', padding = 16, className, children, ...props
 }: PolymorphicProps<ElementType, MatProps>, ref: ForwardedRef<HTMLElement>) {
