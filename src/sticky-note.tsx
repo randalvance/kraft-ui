@@ -7,6 +7,7 @@ type NoteSlots = {
   tone?: StickyNoteTone;
   /** Rotation in degrees when theme tilt is enabled. */
   tilt?: number;
+  /** Shown above the body. The note adds no heading: give one placed here the level that follows the page outline. */
   header?: ReactNode;
   children?: ReactNode;
   footer?: ReactNode;

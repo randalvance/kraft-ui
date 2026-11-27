@@ -243,6 +243,13 @@ import { Card, CardAddTile, Heading, Icon, IconButton } from '@randalvance/kraft
 
 `StickyNote` renders a handwritten paper note with a curled corner. Use `header` and `footer` for optional slots and `children` for the body. Its five tones are `attention` (yellow, the default), `blush` (pink), `blue`, `sage` (green), and `ochre` (orange). Set `tilt` in degrees per note (default `-2`). The note sits upright when the enclosing theme disables tilt.
 
+The note adds no heading of its own: `header` renders what you give it. When a note needs a heading, pass one in `header` at the level that follows the page outline. `Heading` renders an `h2`, which fits notes on a board directly under the page `h1`. Use `as="h3"` for notes under an `h2`, such as notes in a `CorkBoardColumn`. A level that skips one, such as an `h3` straight after the `h1`, fails axe's `heading-order` check.
+
+```tsx
+<Heading as="h1">Idea board</Heading>
+<StickyNote header={<Heading size="title-sm">Cover ideas</Heading>}>Try the smaller lettering.</StickyNote>
+```
+
 The default `as="article"` accepts rich content, including links and controls. Choose `as="button"` to make the whole note a native button, and use text or other noninteractive phrasing content in its slots. The button defaults to `type="button"`. Native props such as `onClick` and `disabled` and the ref reach the rendered element. Use `selected` for controlled selection, exposed as `aria-pressed`. The visible note text supplies the button's accessible name. If you set `aria-label` or `aria-labelledby`, keep the visible text in the accessible name.
 
 Use `status="waiting"` for a hatched top edge or `status="done"` to strike through the body. Both statuses include visible text and can coexist with selection. Override the default “Waiting” or “Done” with `statusLabel`.
@@ -319,7 +326,9 @@ import { Icon, Tag } from '@randalvance/kraft-ui';
 
 `CorkBoardItem` wraps one pinned thing in any layout and draws its `pin` over the top edge. Pass `onMove` and a `label` to make a free item movable by keyboard: it becomes a named tab stop, the arrow keys call `onMove` with the next `{ x, y }`, and Shift moves five steps. `step` sets the distance in pixels (default 8). The item never moves past the top or left edge, the focused item comes to the front, and the board scrolls to follow it. Store the position yourself and pass it back as `x` and `y`. The board does not add pointer dragging; if you add it, keep `onMove` so every move also works without a drag.
 
-`CorkBoardColumn` renders a named `<section>` with a pinned kraft header that stays in view while the board scrolls. `name` is its heading (`headingLevel`, default 3) and names the region. `count` shows a number beside it; pass `countLabel`, such as “3 notes”, for what screen readers hear in its place. `pinTone` colors the header's tack. Size columns with `--kraft-cork-board-column-width` (default `15rem`).
+`CorkBoardColumn` renders a named `<section>` with a pinned kraft header that stays in view while the board scrolls. `name` is its heading and names the region. `count` shows a number beside it; pass `countLabel`, such as “3 notes”, for what screen readers hear in its place. `pinTone` colors the header's tack. Size columns with `--kraft-cork-board-column-width` (default `15rem`).
+
+Set `headingLevel` to match the page outline. The default, 2, fits a board that sits directly under the page `h1`. Use `headingLevel={3}` for a board under an `h2`. A level that skips one, such as an `h3` straight after the `h1`, fails axe's `heading-order` check.
 
 `Pin` draws a tack with a highlight in `tone="red"` (default), `blue`, `green`, or `amber`. It is a decorative span by default; pass `label` to expose it as a named image. `as="button"` makes it a native button that requires a `label`, such as “Unpin the poster proof”, lifts on hover, and has a 28px target. Native props and the ref reach the span or button.
 

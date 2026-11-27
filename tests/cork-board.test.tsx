@@ -177,7 +177,7 @@ describe('CorkBoardColumn', () => {
     expect(column).toHaveClass('kraft-cork-board-column', 'mine');
     const header = column.querySelector<HTMLElement>(':scope > .kraft-cork-board-column-header')!;
     expect(header).toHaveAttribute('data-material', 'kraft');
-    expect(within(header).getByRole('heading', { level: 3, name: 'In progress' })).toBeInTheDocument();
+    expect(within(header).getByRole('heading', { level: 2, name: 'In progress' })).toBeInTheDocument();
     expect(header.querySelector('.kraft-pin')).toHaveAttribute('aria-hidden', 'true');
     const count = header.querySelector<HTMLElement>('.kraft-cork-board-column-count')!;
     expect(count).toHaveTextContent('2');
@@ -188,10 +188,10 @@ describe('CorkBoardColumn', () => {
   });
 
   it('supports another heading level, no count, and an explicit accessible name', () => {
-    render(<CorkBoardColumn name="Done" headingLevel={2} aria-label="Finished work" />);
+    render(<CorkBoardColumn name="Done" headingLevel={3} aria-label="Finished work" />);
     const column = screen.getByRole('region', { name: 'Finished work' });
     expect(column).not.toHaveAttribute('aria-labelledby');
-    expect(within(column).getByRole('heading', { level: 2, name: 'Done' })).toBeInTheDocument();
+    expect(within(column).getByRole('heading', { level: 3, name: 'Done' })).toBeInTheDocument();
     expect(column.querySelector('.kraft-cork-board-column-count')).not.toBeInTheDocument();
   });
 
@@ -219,7 +219,7 @@ describe('cork board server rendering', () => {
     expect(html).toContain('role="group" aria-label="Order paper"');
     expect(html).toContain('<button type="button" aria-label="Unpin" class="kraft-pin" data-tone="red">');
     expect(html).toContain('data-layout="columns"');
-    expect(html).toContain('>To do</h3>');
+    expect(html).toContain('>To do</h2>');
     expect(html).toContain('aria-hidden="true" class="kraft-pin" data-tone="green"');
   });
 });

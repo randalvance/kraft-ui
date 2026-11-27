@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
-  CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, StickyNote, ThemeProvider,
+  CorkBoard, CorkBoardColumn, CorkBoardItem, Heading, Pin, Stack, StickyNote, ThemeProvider,
   type CorkBoardPosition, type PinTone, type StickyNoteTone,
 } from '../src';
 
@@ -139,7 +139,7 @@ export const Columns: Story = {
     const todo = within(board).getByRole('region', { name: 'To do' });
     await expect(within(board).getByRole('region', { name: 'In progress' })).toBeVisible();
     await expect(within(board).getByRole('region', { name: 'Done' })).toBeVisible();
-    await expect(within(todo).getByRole('heading', { level: 3, name: 'To do' })).toBeVisible();
+    await expect(within(todo).getByRole('heading', { level: 2, name: 'To do' })).toBeVisible();
     await expect(within(todo).getByText('3 notes')).toBeInTheDocument();
     await expect(within(todo).getAllByRole('article')).toHaveLength(3);
     const header = getComputedStyle(todo.querySelector('.kraft-cork-board-column-header')!);
@@ -150,6 +150,34 @@ export const Columns: Story = {
 };
 
 export const NightColumns: Story = { ...Columns, globals: { theme: 'night' } };
+
+export const PageOutline: Story = {
+  parameters: { docs: { description: { story: 'A column name is a heading, so its level has to follow the page outline. The default `h2` fits a board directly under the page `h1`. A board under an `h2` takes `headingLevel={3}`.' } } },
+  render: args => <Stack gap={16}>
+    <Heading as="h1" size="lg">Poster plan</Heading>
+    <CorkBoard {...args} layout="columns" aria-label="This week">
+      <CorkBoardColumn name="To do">
+        <StickyNote>Order cream paper</StickyNote>
+      </CorkBoardColumn>
+      <CorkBoardColumn name="Done" pinTone="green">
+        <StickyNote tone="sage" status="done">Book the print studio</StickyNote>
+      </CorkBoardColumn>
+    </CorkBoard>
+    <Heading>Next month</Heading>
+    <CorkBoard {...args} layout="columns" aria-label="Next month's notes">
+      <CorkBoardColumn headingLevel={3} name="Ideas" pinTone="blue">
+        <StickyNote tone="blue">Pick three photographs</StickyNote>
+      </CorkBoardColumn>
+      <CorkBoardColumn headingLevel={3} name="Booked" pinTone="amber">
+        <StickyNote tone="ochre">Ask the garden team about spring</StickyNote>
+      </CorkBoardColumn>
+    </CorkBoard>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const outline = within(canvasElement).getAllByRole('heading').map(heading => `${heading.tagName} ${heading.textContent}`);
+    await expect(outline).toEqual(['H1 Poster plan', 'H2 To do', 'H2 Done', 'H2 Next month', 'H3 Ideas', 'H3 Booked']);
+  },
+};
 
 function UnpinBoard(props: Story['args']) {
   const [kept, setKept] = useState(notes.slice(0, 3));
