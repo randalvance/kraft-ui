@@ -640,7 +640,7 @@ import { Inline, Kbd, SearchField } from '@randalvance/kraft-ui';
 
 Choose a form with `variant`:
 
-- `rows` (default): paper rows with a radio mark. `trailing` is not width-capped, so it can hold a count, a badge, or a handwritten `<Text as="span" variant="hand">` note.
+- `rows` (default): paper rows with a radio mark. `trailing` is not width-capped, so it can hold a count, a `Stamp`, or a handwritten `<Text as="span" variant="hand">` note. It sits at the end of the row while the mark, label, and description keep 9rem beside it. In a narrower row or card it moves to its own line under the description, so neither the label nor the trailing content is squeezed.
 - `flat`: plain rows where only the picked row is highlighted, for sort or filter menus.
 - `swatch`: a row of colour swatches. Each option's `swatch` takes any CSS colour, such as `var(--kraft-teal)`.
 - `picture`: picture-only options, such as a portrait picker. Pass decorative content, for example `<Avatar decorative />`, as each option's `picture`.

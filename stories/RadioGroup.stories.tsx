@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { Avatar, RadioGroup, Text, type RadioOption } from '../src';
+import { Avatar, RadioGroup, Stamp, Text, type RadioOption } from '../src';
 
 const options: RadioOption[] = [
   { value: 'fable', label: 'Fable', description: 'A careful choice', trailing: 'High' },
@@ -13,6 +13,11 @@ const plans: RadioOption[] = [
   { value: 'pack', label: 'Pack', description: 'Up to four pets with daily walks and vet reminders' },
   { value: 'shelter', label: 'Shelter', description: 'Unlimited pets, a shared calendar, and a care log' },
 ];
+const retention: RadioOption[] = [
+  { value: '7', label: '7 days', description: 'Enough to debug a bad release.' },
+  { value: '30', label: '30 days', description: 'Covers a full billing cycle.', trailing: <Stamp size="sm" tone="sage">Recommended</Stamp> },
+  { value: '90', label: '90 days', description: 'Matches the server logs.' },
+];
 const swatches: RadioOption[] = ['ochre', 'teal', 'violet', 'plum', 'blush'].map(tone => ({
   value: tone, label: tone[0].toUpperCase() + tone.slice(1), swatch: `var(--kraft-${tone})`,
 }));
@@ -22,6 +27,13 @@ const portraits: RadioOption[] = [
   { value: 'mochi', label: 'Mochi', picture: <Avatar initial="M" tone="attention" size={36} decorative /> },
   { value: 'rex', label: 'Rex', disabled: true, picture: <Avatar initial="R" size={36} decorative /> },
 ];
+
+/** Counts the lines a node's text is set on. */
+const lineCount = (node: Element) => {
+  const range = document.createRange();
+  range.selectNodeContents(node);
+  return new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size;
+};
 
 const meta = { title: 'Components/Radio group', component: RadioGroup,
   parameters: { docs: { description: { component: 'Native radio inputs for one choice from a small visible set. Options sit on paper rows by default; `columns` lays them out as equal-width cards, `variant="flat"` highlights only the picked row, and `variant="swatch"` or `"picture"` draw colour swatches or pictures named by the option label. The group has a fieldset legend, participates in forms, and supports browser radio keyboard behavior.' } } },
@@ -44,6 +56,7 @@ export const Horizontal: Story = {
     const rows = [...canvasElement.querySelectorAll('.kraft-radio-option')].map(row => row.getBoundingClientRect());
     await expect(new Set(rows.map(row => Math.round(row.top))).size).toBe(1);
     await expect(Math.abs(rows[0].width - rows[2].width)).toBeLessThan(1);
+    for (const note of canvasElement.querySelectorAll('.kraft-radio-trailing')) await expect(lineCount(note)).toBe(1);
   },
 };
 
@@ -64,6 +77,24 @@ export const ColumnsWrap: Story = {
     const group = canvasElement.querySelector('.kraft-radio-options')!.getBoundingClientRect();
     const card = canvasElement.querySelector('.kraft-radio-option')!.getBoundingClientRect();
     await expect(card.width).toBeLessThan(group.width / 2);
+  },
+};
+
+export const ColumnsTrailing: Story = {
+  name: 'Columns with a trailing stamp',
+  args: { label: 'How long should events be kept?', name: 'retention', options: retention, defaultValue: '30', columns: 3, style: { maxWidth: 640 } },
+  play: async ({ canvasElement }) => {
+    const cards = [...canvasElement.querySelectorAll('.kraft-radio-option')];
+    const card = cards[1].getBoundingClientRect();
+    const copy = cards[1].querySelector('.kraft-radio-copy')!.getBoundingClientRect();
+    const trailing = cards[1].querySelector('.kraft-radio-trailing')!.getBoundingClientRect();
+    await expect(lineCount(cards[1].querySelector('.kraft-stamp-cell')!)).toBe(1);
+    await expect(lineCount(cards[1].querySelector('.kraft-radio-label')!)).toBe(1);
+    // The card cannot hold the stamp beside the copy, so the stamp takes its own line inside the card.
+    await expect(trailing.top).toBeGreaterThanOrEqual(copy.bottom);
+    await expect(trailing.right).toBeLessThanOrEqual(card.right);
+    await expect(trailing.bottom).toBeLessThanOrEqual(card.bottom);
+    for (const other of cards) await expect(Math.abs(other.getBoundingClientRect().height - card.height)).toBeLessThan(1);
   },
 };
 
@@ -133,6 +164,24 @@ export const HandwrittenTrailing: Story = {
     const row = canvasElement.querySelector('.kraft-radio-option')!.getBoundingClientRect();
     const note = canvasElement.querySelector('.kraft-radio-trailing')!.getBoundingClientRect();
     await expect(note.width).toBeGreaterThan(row.width * .4);
+  },
+};
+
+export const TrailingBesideLongCopy: Story = {
+  name: 'Trailing stamp beside a long description',
+  args: { label: 'Backups', name: 'backups', defaultValue: 'nightly', options: [
+    { value: 'nightly', label: 'Nightly', description: 'A full copy every night at two, kept for thirty days before it is shredded.', trailing: <Stamp size="sm" tone="sage">Recommended</Stamp> },
+    { value: 'weekly', label: 'Weekly', description: 'One copy on Sunday morning.', trailing: <Stamp size="sm">Basic</Stamp> },
+  ] },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('.kraft-radio-option')!;
+    const copy = row.querySelector('.kraft-radio-copy')!.getBoundingClientRect();
+    const trailing = row.querySelector('.kraft-radio-trailing')!.getBoundingClientRect();
+    // The description wraps; the stamp keeps its width and its place at the end of the row.
+    await expect(lineCount(row.querySelector('.kraft-stamp-cell')!)).toBe(1);
+    await expect(lineCount(row.querySelector('.kraft-radio-description')!)).toBeGreaterThan(1);
+    await expect(trailing.left).toBeGreaterThanOrEqual(copy.right);
+    await expect(trailing.top).toBeLessThan(copy.bottom);
   },
 };
 
