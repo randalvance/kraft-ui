@@ -21,21 +21,23 @@ function checkNames() {
 void checkNames;
 
 describe('Icon', () => {
-  it('server-renders all 29 design-system glyphs and the 19 Primepaw additions with a single ink', () => {
+  it('server-renders all 32 design-system glyphs and the 30 Primepaw additions with a single ink', () => {
     const expectedNames = [
-      'agent', 'agents', 'background', 'branch', 'check', 'chevron-down', 'code', 'copy', 'factory',
-      'home', 'inbox', 'kanban', 'knowledge', 'mark', 'mcps', 'memory', 'pinwheel', 'plus',
-      'pull-requests', 'search', 'send', 'sessions', 'settings', 'share', 'skills', 'stop', 'trash',
-      'workflows', 'workspaces', 'microphone', 'close', 'pin', 'pencil', 'sync', 'folder', 'file',
-      'new-file', 'new-folder', 'grip', 'three-dots', 'terminal', 'clock', 'bolt', 'eye', 'link',
-      'chevron-left', 'power', 'key',
+      'agent', 'agents', 'background', 'board', 'branch', 'bulb', 'check', 'chevron-down', 'clipboard',
+      'code', 'copy', 'factory', 'home', 'inbox', 'kanban', 'knowledge', 'mark', 'mcps', 'memory',
+      'pinwheel', 'plus', 'pull-requests', 'search', 'send', 'sessions', 'settings', 'share', 'skills',
+      'stop', 'trash', 'workflows', 'workspaces',
+      'microphone', 'close', 'pin', 'pencil', 'sync', 'folder', 'file', 'new-file', 'new-folder', 'grip',
+      'three-dots', 'terminal', 'clock', 'bolt', 'eye', 'link', 'chevron-left', 'power', 'key', 'moon',
+      'chevron-right', 'sparkle', 'filter', 'graph', 'expand', 'sliders', 'activity', 'ban', 'question',
+      'editor',
     ] as const satisfies readonly IconName[];
-    expect(iconNames).toHaveLength(48);
-    expect(new Set(iconNames).size).toBe(48);
+    expect(iconNames).toHaveLength(62);
+    expect(new Set(iconNames).size).toBe(62);
     expect(iconNames).toEqual(expect.arrayContaining([...expectedNames]));
     const container = document.createElement('div');
     container.innerHTML = renderToString(<>{expectedNames.map(name => <Icon key={name} name={name} label={name} />)}</>);
-    expect(container.querySelectorAll('svg')).toHaveLength(48);
+    expect(container.querySelectorAll('svg')).toHaveLength(62);
     for (const svg of container.querySelectorAll('svg')) {
       expect(svg.querySelector('path,circle,rect,line,polyline,polygon,ellipse')).not.toBeNull();
       for (const element of [svg, ...svg.querySelectorAll('*')]) {
@@ -44,6 +46,16 @@ describe('Icon', () => {
         }
       }
     }
+  });
+
+  it('gives every name its own drawing, apart from the folder that workspaces shares', () => {
+    const drawings = new Map<string, IconName[]>();
+    for (const name of iconNames) {
+      const drawing = render(<Icon name={name} />).container.querySelector('svg')!.innerHTML;
+      drawings.set(drawing, [...(drawings.get(drawing) ?? []), name]);
+    }
+    // A name wired to another glyph's definition, such as a right chevron that points left, lands here.
+    expect([...drawings.values()].filter(names => names.length > 1)).toEqual([['workspaces', 'folder']]);
   });
 
   it('renders a non-focusable, decorative SVG using the surrounding ink by default', () => {
