@@ -184,6 +184,31 @@ describe('Composer', () => {
     expect(submit).toHaveBeenCalledTimes(2);
   });
 
+  // A picture is a submit button too, though `form.elements` leaves it out.
+  const pictureForm = (submit: (event: FormEvent<HTMLFormElement>) => void, press?: () => void, locked = false) => <form onSubmit={submit}>
+    <input type="image" alt="Send by picture" disabled={locked} onClick={press} />
+    <Composer aria-label="Message" name="message" send={<IconButton type="submit" aria-label="Send message">↑</IconButton>} />
+  </form>;
+
+  it('presses an image submit control when it is the first submit button of the form', async () => {
+    const press = vi.fn();
+    const submit = vi.fn((event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      return (event.nativeEvent as SubmitEvent).submitter;
+    });
+    render(pictureForm(submit, press));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Message' }), 'Print the labels{Enter}');
+    expect(press).toHaveBeenCalledOnce();
+    expect(submit).toHaveReturnedWith(screen.getByRole('button', { name: 'Send by picture' }));
+  });
+
+  it('holds the form when its first submit button is a disabled image control', async () => {
+    const submit = vi.fn((event: FormEvent<HTMLFormElement>) => event.preventDefault());
+    render(pictureForm(submit, undefined, true));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Message' }), 'Print the labels{Enter}');
+    expect(submit).not.toHaveBeenCalled();
+  });
+
   it('submits a form that has no submit button, runs its validation, and reaches a form outside its ancestors', async () => {
     const submit = vi.fn((event: FormEvent<HTMLFormElement>) => event.preventDefault());
     const user = userEvent.setup();

@@ -330,9 +330,13 @@ const sendKeyHints: Record<ComposerSendKey, { send: readonly string[]; line: rea
   'mod-enter': { send: ['Ctrl', 'Enter'], line: ['Enter'] },
 };
 
-/** Follows native implicit submission: the form's first submit button is pressed, and a disabled one holds the form. */
+/**
+ * Follows native implicit submission: the form's first submit button is pressed, and a disabled one holds the form.
+ * An image button is a submit button too, but `form.elements` leaves it out, so the form's tree is searched instead.
+ */
 function submitFrom(form: HTMLFormElement) {
-  const button = [...form.elements].find(control => control.matches('button, input') && (control as HTMLButtonElement).type === 'submit') as HTMLButtonElement | undefined;
+  const button = [...(form.getRootNode() as ParentNode).querySelectorAll<HTMLButtonElement | HTMLInputElement>('button, input')]
+    .find(control => control.form === form && (control.type === 'submit' || control.type === 'image'));
   if (!button) form.requestSubmit();
   else if (!button.matches(':disabled')) button.click();
 }
