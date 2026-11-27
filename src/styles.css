@@ -105,6 +105,7 @@
 }
 .kraft-mat[data-tone="amber"] { --kraft-mat-face: var(--kraft-ochre-soft); --kraft-mat-edge: var(--kraft-ochre); }
 .kraft-mat[data-tone="sage"] { --kraft-mat-face: var(--kraft-mat-green); --kraft-mat-edge: var(--kraft-mat-green-2); }
+.kraft-mat[data-tone="red"] { --kraft-mat-face: var(--kraft-mat-red); --kraft-mat-edge: var(--kraft-mat-red-2); }
 .kraft-tape {
   position: absolute;
   z-index: 1;

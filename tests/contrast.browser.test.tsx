@@ -22,6 +22,7 @@ import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat,
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
 const materials = ['paper', 'kraft', 'cardboard'] as const;
+const matTones = ['kraft', 'amber', 'sage', 'red'] as const;
 const statusTones = ['faint', 'danger', 'attention'] as const;
 const font = { '--kraft-font-sans': '"Nunito Variable", system-ui, sans-serif' } as CSSProperties;
 
@@ -1303,8 +1304,8 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
   it.each([true, false])('keeps inset sheets and loading indicators legible with decoration=%s', async decoration => {
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration} motion={decoration} tilt={decoration} style={{ ...font, width: 780, padding: 28 }}>
       <Stack gap={24}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-          {(['kraft', 'amber', 'sage'] as const).map(tone => <Mat key={tone} tone={tone}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+          {matTones.map(tone => <Mat key={tone} tone={tone}>
             <Tape placement="top-right" />
             <Stack gap={8}>
               <Text data-contrast={`${tone}-body`}>Review the proof.</Text>
@@ -1331,6 +1332,34 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       }
     });
     await verifyPaintedContrast(matrix, 3);
+  });
+
+  it('cuts each mat tone from its own cardboard, the red one from the composer frame, and keeps a focus ring visible on each', () => {
+    // No sheet padding, so the focus ring of a control in the sheet reaches the frame.
+    const view = render(<ThemeProvider theme={theme} style={{ ...font, padding: 24 }}>
+      <Stack gap={24}>
+        {matTones.map(tone => <Mat key={tone} tone={tone} padding={0} data-testid={`mat-${tone}`}>
+          <Button>Review the {tone} proof</Button>
+        </Mat>)}
+        <Composer aria-label="Message" />
+      </Stack>
+    </ThemeProvider>);
+    const frames = matTones.map(tone => getComputedStyle(view.getByTestId(`mat-${tone}`)));
+    // A tone with no face of its own falls back to kraft.
+    expect(new Set(frames.map(frame => frame.backgroundColor)).size).toBe(matTones.length);
+
+    const composer = getComputedStyle(view.getByRole('textbox', { name: 'Message' }).closest('.kraft-composer')!);
+    const red = frames[matTones.indexOf('red')];
+    expect(red.backgroundColor, 'red face').toBe(composer.backgroundColor);
+    expect(red.borderTopColor, 'red cut edge').toBe(composer.borderTopColor);
+
+    for (const [index, tone] of matTones.entries()) {
+      const button = view.getByRole('button', { name: `Review the ${tone} proof` });
+      act(() => button.focus());
+      const ring = getComputedStyle(button);
+      expect(ring.outlineStyle, `${tone}: focus`).toBe('solid');
+      expect(contrast(channels(ring.outlineColor), channels(frames[index].backgroundColor)), `${tone}: focus ring on the frame`).toBeGreaterThanOrEqual(3);
+    }
   });
 
   it.each([true, false])('keeps every icon readable on materials and controls with decoration=%s', async decoration => {

@@ -187,7 +187,7 @@ The package exports `AvatarProps`, `AvatarStatus`, `AvatarGroupProps`, `AvatarPi
 
 ### Mat, Tape, and Pinwheel
 
-- `Mat` frames its children in an inset paper sheet. Use `tone="kraft"` (default), `tone="amber"` for work awaiting review, or `tone="sage"` for finished work. Use `padding` to set the sheet's inner spacing (default `16`) and `as` to choose the frame's native element. The ref points to the frame.
+- `Mat` frames its children in an inset paper sheet. Use `tone="kraft"` (default), `tone="amber"` for work awaiting review, `tone="sage"` for finished work, or `tone="red"` for the red cardboard of the `Composer` frame. Use `padding` to set the sheet's inner spacing (default `16`) and `as` to choose the frame's native element. The ref points to the frame.
 - `Tape` positions a masking-tape strip at `placement="top"` (default), `right`, `bottom`, `left`, or one of `top-left`, `top-right`, `bottom-left`, and `bottom-right`. Place it inside a `Mat` or another positioned ancestor.
 - `Pinwheel` is Kraft's standard loading indicator. Use `size="row"` (default, 24px) or `size="button"` (16px) for a compact space. It stays still when theme motion is off or the system prefers reduced motion.
 

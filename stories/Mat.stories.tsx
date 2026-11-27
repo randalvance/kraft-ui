@@ -5,7 +5,7 @@ import { Button, Heading, Inline, Mat, Pinwheel, Stack, Tape, Text } from '../sr
 const meta = {
   title: 'Primitives/Mat',
   component: Mat,
-  argTypes: { tone: { control: 'select', options: ['kraft', 'amber', 'sage'] } },
+  argTypes: { tone: { control: 'select', options: ['kraft', 'amber', 'sage', 'red'] } },
   args: {
     as: 'section',
     'aria-label': 'Workshop notes',
@@ -42,6 +42,14 @@ export const Sage: Story = {
     tone: 'sage',
     'aria-label': 'Approved proof',
     children: <Stack gap={8}><Heading>Approved proof</Heading><Text>The proof is ready to print.</Text></Stack>,
+  },
+};
+
+export const Red: Story = {
+  args: {
+    tone: 'red',
+    'aria-label': 'Note to the printer',
+    children: <Stack gap={8}><Heading>Note to the printer</Heading><Text>Trim the cover two millimetres on the fore edge.</Text></Stack>,
   },
 };
 
