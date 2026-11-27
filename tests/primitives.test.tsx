@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { Button, Icon, IconButton, ThemeProvider, Surface, Heading, Sticker, Separator, Link, Box, PaperPanel, Text } from '../src';
+import { Badge, Button, Icon, IconButton, ThemeProvider, Surface, Heading, Sticker, Separator, Link, Box, PaperPanel, Text, type CardTone, type ExtendedTone } from '../src';
 
 describe('native interaction contracts', () => {
  it('supports keyboard activation and forwards its native ref', async () => {
@@ -108,6 +108,84 @@ describe('composition and server rendering', () => {
   expect(container.querySelector('.kraft-paper-panel-footer')).toHaveTextContent('Ready');
   const blank = renderToString(<PaperPanel title="Blank" />);
   expect(blank).toContain('kraft-paper-panel-body');
+ });
+});
+describe('palette tones', () => {
+ const paletteTones = ['ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] as const satisfies readonly ExtendedTone[];
+ it.each(paletteTones)('keeps a %s button native, focusable, and keyboard operable with its ref', async tone => {
+  const click = vi.fn(), ref = createRef<HTMLButtonElement>();
+  render(<Button ref={ref} variant={tone} onClick={click}>Open workspace</Button>);
+  const button = screen.getByRole('button', { name: 'Open workspace' });
+  expect(ref.current).toBe(button);
+  expect(button.tagName).toBe('BUTTON');
+  expect(button).toHaveAttribute('type', 'button');
+  expect(button).toHaveAttribute('data-variant', tone);
+  await userEvent.tab(); expect(button).toHaveFocus();
+  await userEvent.keyboard('{Enter} '); expect(click).toHaveBeenCalledTimes(2);
+ });
+ it.each(paletteTones)('names a %s icon button from its label and reports its pressed and busy states', async tone => {
+  const click = vi.fn(), ref = createRef<HTMLButtonElement>();
+  const view = render(<IconButton ref={ref} variant={tone} aria-label="Pin workspace" aria-pressed onClick={click}><Icon name="pin" /></IconButton>);
+  const button = screen.getByRole('button', { name: 'Pin workspace', pressed: true });
+  expect(ref.current).toBe(button);
+  expect(button).toHaveAttribute('data-variant', tone);
+  expect(button.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  await userEvent.click(button); expect(click).toHaveBeenCalledOnce();
+  view.rerender(<IconButton ref={ref} variant={tone} aria-label="Pin workspace" loading onClick={click}><Icon name="pin" /></IconButton>);
+  expect(screen.getByRole('button', { name: 'Pin workspace' })).toBe(button);
+  expect(button).toBeDisabled();
+  expect(button).toHaveAttribute('aria-busy', 'true');
+  await userEvent.click(button); expect(click).toHaveBeenCalledOnce();
+ });
+ it.each(paletteTones)('prints a %s badge and sticker as plain spans that keep native props and refs', tone => {
+  const badge = createRef<HTMLSpanElement>(), sticker = createRef<HTMLSpanElement>();
+  render(<>
+    <Badge ref={badge} tone={tone} id="model" title="Model">Opus</Badge>
+    <Sticker ref={sticker} tone={tone} shape="pill" aria-label="Workspace colour">Print room</Sticker>
+    <Sticker tone={tone} decorative>Spare</Sticker>
+  </>);
+  expect(badge.current).toBe(screen.getByText('Opus'));
+  expect(badge.current?.tagName).toBe('SPAN');
+  expect(badge.current).toHaveAttribute('data-tone', tone);
+  expect(badge.current).toHaveAttribute('id', 'model');
+  expect(badge.current).toHaveAttribute('title', 'Model');
+  expect(badge.current).not.toHaveAttribute('role');
+  expect(sticker.current).toBe(screen.getByLabelText('Workspace colour'));
+  expect(sticker.current?.tagName).toBe('SPAN');
+  expect(sticker.current).toHaveAttribute('data-tone', tone);
+  expect(sticker.current).not.toHaveAttribute('aria-hidden');
+  expect(screen.getByText('Spare')).toHaveAttribute('aria-hidden', 'true');
+ });
+ it('renders every palette tone on the server without a browser', () => {
+  const html = renderToString(<>{paletteTones.map(tone => <div key={tone} data-row={tone}>
+    <Button variant={tone}>Open</Button>
+    <IconButton variant={tone} size="sm" aria-label={`Pin ${tone}`}><Icon name="pin" /></IconButton>
+    <Badge tone={tone} size="count">3</Badge>
+    <Sticker tone={tone} shape="square">New</Sticker>
+  </div>)}</>);
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  for (const tone of paletteTones) {
+    const [button, iconButton] = container.querySelectorAll(`[data-row="${tone}"] button`);
+    expect(button).toHaveAttribute('data-variant', tone);
+    expect(button).toHaveAttribute('type', 'button');
+    expect(button).toHaveTextContent('Open');
+    expect(iconButton).toHaveAttribute('data-variant', tone);
+    expect(iconButton).toHaveAttribute('aria-label', `Pin ${tone}`);
+    expect(iconButton).toHaveAttribute('data-size', 'sm');
+    const [badge, sticker] = container.querySelectorAll(`[data-row="${tone}"] > span`);
+    expect(badge).toHaveAttribute('data-tone', tone);
+    expect(badge).toHaveAttribute('data-size', 'count');
+    expect(sticker).toHaveAttribute('data-tone', tone);
+    expect(sticker).toHaveAttribute('data-shape', 'square');
+  }
+ });
+ it('shares one tone set between cards and the toned controls and marks', () => {
+  // A workspace colour picked once must fit its card, its button, and its sticker.
+  const pick = (tone: CardTone) => <><Button variant={tone}>Open</Button><Badge tone={tone}>Tagged</Badge></>;
+  render(pick('plum'));
+  expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute('data-variant', 'plum');
+  expect(screen.getByText('Tagged')).toHaveAttribute('data-tone', 'plum');
  });
 });
 describe('type range', () => {

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { cdp, page, userEvent } from 'vitest/browser';
 import { act, cleanup, render } from '@testing-library/react';
 import type { CSSProperties } from 'react';
-import { Avatar, AvatarGroup, AvatarPicker, Card, CardAddTile, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus, type CardTone } from '../src';
+import { Avatar, AvatarGroup, AvatarPicker, Card, CardAddTile, CorkBoard, CorkBoardColumn, CorkBoardItem, Pin, Badge, Blockquote, Button, Code, CodeBlock, DescriptionList, Prose, Icon, iconNames, IconButton, Inline, Mat, Pinwheel, Tape, Stamp, Sticker, StickyNote, Link, Text, Stack, Surface, Table, TableRowAction, Tabs, ThemeProvider, type Theme, type AvatarStatus, type CardTone, type ExtendedTone } from '../src';
 import '@fontsource-variable/nunito';
 import '@fontsource/caveat/500.css';
 import '@fontsource/caveat/600.css';
@@ -21,6 +21,9 @@ import { Banner, Breadcrumb, Callout, CollapsibleGroup, EmptyState, Pager, Stat,
 
 afterEach(cleanup);
 const tones = ['neutral', 'blue', 'sage', 'danger', 'attention'] as const;
+// Buttons, icon buttons, badges, and stickers also take the wider palette.
+const paletteTones = ['ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] as const;
+const extendedTones = [...tones, ...paletteTones] satisfies ExtendedTone[];
 const materials = ['paper', 'kraft', 'cardboard'] as const;
 const matTones = ['kraft', 'amber', 'sage', 'red'] as const;
 const statusTones = ['faint', 'danger', 'attention'] as const;
@@ -688,7 +691,7 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
   });
 
   it.each([true, false])('keeps button labels, glyphs, badges, and indicators readable with decoration=%s', async decoration => {
-    const variants = [...tones, 'ghost', 'text', 'dashed', 'danger-text'] as const;
+    const variants = [...extendedTones, 'ghost', 'text', 'dashed', 'danger-text'] as const;
     const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
       motion={decoration} tilt={decoration} style={{ ...font, width: 980, padding: 24 }}>
       <Stack gap={24}>
@@ -698,8 +701,8 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
             <span data-contrast={`${variant}-${pressed}`}>{variant}</span>
           </Button>)}
         </Inline>)}
-        <Inline gap={24}>
-          {([...tones, 'bare'] as const).flatMap(variant => [false, true].map(pressed =>
+        <Inline gap={24} wrap>
+          {([...extendedTones, 'bare'] as const).flatMap(variant => [false, true].map(pressed =>
             <IconButton key={`${variant}-${pressed}`} variant={variant} size="sm" aria-label={`${variant} inbox`}
               aria-pressed={pressed} badge={<Sticker size="count" data-contrast={`${variant}-badge-${pressed}`}>12</Sticker>}>
               <Icon name="inbox" data-glyph={`${variant}-glyph-${pressed}`} />
@@ -718,7 +721,13 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
     await verifyPaintedContrast(matrix);
     matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
     matrix.querySelectorAll('[data-glyph]').forEach(glyph => glyph.setAttribute('data-contrast', glyph.getAttribute('data-glyph')!));
+    // A corner sticker lies over the corner of a small button's glyph box. Its soft edge can raster a shade
+    // differently between two screenshots, which reads as light glyph ink on the sticker's white cut.
+    // The sticker's own label is measured above, so the glyphs are measured on their faces without it.
+    const corners = matrix.querySelectorAll<HTMLElement>('.kraft-icon-button-badge');
+    corners.forEach(corner => { corner.style.visibility = 'hidden'; });
     await verifyPaintedContrast(matrix, 3);
+    corners.forEach(corner => { corner.style.visibility = ''; });
     for (const button of view.getAllByRole('button')) {
       const ground = channels(getComputedStyle(button.closest('.kraft-surface') ?? matrix).backgroundColor);
       const name = button.ariaLabel ?? button.textContent;
@@ -734,6 +743,103 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
       expect(css.outlineStyle).toBe('solid');
       expect(contrast(channels(css.outlineColor), ground), `${name}: keyboard focus`).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it('cuts each palette tone its own face, a darker edge, and one ink shared by buttons and marks', () => {
+    const view = render(<ThemeProvider theme={theme} style={font}>
+      {extendedTones.map(tone => <Inline key={tone} gap={16}>
+        <Button variant={tone}>{tone} button</Button>
+        <IconButton variant={tone} aria-label={`${tone} icon button`}><Icon name="pin" /></IconButton>
+        <Badge tone={tone}>{tone} badge</Badge>
+        <Sticker tone={tone} shape="pill">{tone} sticker</Sticker>
+      </Inline>)}
+    </ThemeProvider>);
+    const button = (tone: string) => getComputedStyle(view.getByRole('button', { name: `${tone} button` }));
+    const mark = (tone: string, piece: 'badge' | 'sticker') => getComputedStyle(view.getByText(`${tone} ${piece}`));
+    // A tone with no face of its own falls back to the neutral one.
+    expect(new Set(extendedTones.map(tone => button(tone).backgroundColor)).size, 'button faces').toBe(extendedTones.length);
+    expect(new Set(extendedTones.map(tone => mark(tone, 'badge').backgroundColor)).size, 'badge faces').toBe(extendedTones.length);
+    expect(new Set(extendedTones.map(tone => mark(tone, 'sticker').backgroundColor)).size, 'sticker faces').toBe(extendedTones.length);
+    for (const tone of paletteTones) {
+      const card = button(tone);
+      const face = channels(card.backgroundColor), edge = channels(card.borderTopColor);
+      expect(face[3] ?? 1, `${tone}: opaque face`).toBe(1);
+      expect(luminance(edge.slice(0, 3)), `${tone}: the cut edge is deeper than the face`).toBeLessThan(luminance(face.slice(0, 3)));
+      expect(card.boxShadow, `${tone}: the raised side is the cut edge`).toContain(card.borderTopColor);
+      expect(contrast(channels(card.color).slice(0, 3), face.slice(0, 3)), `${tone}: ink on the bare face`).toBeGreaterThanOrEqual(4.5);
+      const iconButton = getComputedStyle(view.getByRole('button', { name: `${tone} icon button` }));
+      for (const [name, piece] of [['icon button', iconButton], ['badge', mark(tone, 'badge')], ['sticker', mark(tone, 'sticker')]] as const) {
+        expect(piece.backgroundColor, `${tone} ${name}: face`).toBe(card.backgroundColor);
+        expect(piece.color, `${tone} ${name}: ink`).toBe(card.color);
+      }
+      expect(iconButton.borderTopColor, `${tone} icon button: edge`).toBe(card.borderTopColor);
+    }
+  });
+
+  it.each([true, false])('keeps every toned button, badge, and sticker readable on every material with decoration=%s', async decoration => {
+    const grounds = ['desk', ...materials] as const;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 1040, padding: 24 }}>
+      <Stack gap={16}>
+        {grounds.map(ground => {
+          const pieces = <Stack gap={12}>
+            <Inline gap={12} wrap>{extendedTones.map(tone => <Button key={tone} variant={tone} size="sm"
+              leading={<Icon name="pin" data-glyph={`${ground}-${tone}-button-glyph`} />}>
+              <span data-contrast={`${ground}-${tone}-button`}>{tone}</span>
+            </Button>)}</Inline>
+            <Inline gap={12} wrap>{extendedTones.map(tone => <IconButton key={tone} variant={tone} size="sm" aria-label={`${ground} ${tone} inbox`}>
+              <Icon name="inbox" data-glyph={`${ground}-${tone}-icon-button-glyph`} />
+            </IconButton>)}</Inline>
+            <Inline gap={12} wrap>{extendedTones.map(tone =>
+              <Badge key={tone} tone={tone} size="sm" data-contrast={`${ground}-${tone}-badge`}>{tone}</Badge>)}</Inline>
+            <Inline gap={12} wrap>{extendedTones.map(tone =>
+              <Sticker key={tone} tone={tone} shape="pill" size="sm" data-contrast={`${ground}-${tone}-sticker`}>{tone}</Sticker>)}</Inline>
+          </Stack>;
+          return ground === 'desk' ? <div key={ground}>{pieces}</div> : <Surface key={ground} material={ground} padding={12}>{pieces}</Surface>;
+        })}
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await verifyPaintedContrast(matrix);
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll('[data-glyph]').forEach(glyph => glyph.setAttribute('data-contrast', glyph.getAttribute('data-glyph')!));
+    await verifyPaintedContrast(matrix, 3);
+    const buttons = view.getAllByRole('button');
+    expect(buttons).toHaveLength(2 * grounds.length * extendedTones.length);
+    for (const button of buttons) {
+      const ground = channels(getComputedStyle(button.closest('.kraft-surface') ?? matrix).backgroundColor);
+      const name = button.ariaLabel ?? `${button.closest('.kraft-surface')?.getAttribute('data-material') ?? 'desk'} ${button.textContent}`;
+      const css = getComputedStyle(button);
+      act(() => button.focus());
+      expect(css.outlineStyle, `${name}: keyboard focus`).toBe('solid');
+      expect(contrast(channels(css.outlineColor), ground), `${name}: keyboard focus`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it.each([true, false])('keeps every badge and sticker tone readable in every shape and size with decoration=%s', async decoration => {
+    const sizes = ['default', 'sm', 'count'] as const;
+    const view = render(<ThemeProvider data-testid="contrast-matrix" theme={theme} texture={decoration}
+      motion={decoration} tilt={decoration} style={{ ...font, width: 1040, padding: 24 }}>
+      <Stack gap={16}>
+        {sizes.map(size => <Inline key={size} gap={16} wrap>{extendedTones.map(tone =>
+          <Badge key={tone} tone={tone} size={size} data-contrast={`badge-${size}-${tone}`}>{size === 'count' ? 12 : tone}</Badge>)}</Inline>)}
+        {(['round', 'pill', 'square'] as const).flatMap(shape => sizes.map(size => <Inline key={`${shape}-${size}`} gap={16} wrap>
+          {extendedTones.map(tone => <Sticker key={tone} tone={tone} shape={shape} size={size} data-contrast={`sticker-${shape}-${size}-${tone}`}>
+            {/* A small round sticker holds a couple of letters; a longer word would run off its face. */}
+            {size === 'count' ? 12 : shape === 'round' && size === 'sm' ? tone.slice(0, 2) : tone}
+          </Sticker>)}
+        </Inline>))}
+        <Inline gap={16} wrap>{extendedTones.map(tone =>
+          <Badge key={tone} tone={tone}><Icon name="pin" data-glyph={`badge-glyph-${tone}`} />Pinned</Badge>)}</Inline>
+        <Inline gap={16} wrap>{extendedTones.map(tone =>
+          <Sticker key={tone} tone={tone} shape="pill"><Icon name="bolt" data-glyph={`sticker-glyph-${tone}`} />Rush</Sticker>)}</Inline>
+      </Stack>
+    </ThemeProvider>);
+    const matrix = view.getByTestId('contrast-matrix');
+    await verifyPaintedContrast(matrix);
+    matrix.querySelectorAll('[data-contrast]').forEach(sample => sample.removeAttribute('data-contrast'));
+    matrix.querySelectorAll('[data-glyph]').forEach(glyph => glyph.setAttribute('data-contrast', glyph.getAttribute('data-glyph')!));
+    await verifyPaintedContrast(matrix, 3);
   });
 
   it.each([true, false])('keeps card copy, spines, selection and focus readable with decoration=%s', async decoration => {
@@ -1315,8 +1421,8 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
             </Stack>
           </Mat>)}
         </div>
-        <Inline gap={16}>{tones.map(tone => <Button key={tone} variant={tone} loading>Save {tone}</Button>)}</Inline>
-        <Inline gap={16}>{tones.map(tone => <IconButton key={tone} variant={tone} size="sm" aria-label={`Refresh ${tone}`} loading>
+        <Inline gap={16} wrap>{extendedTones.map(tone => <Button key={tone} variant={tone} loading>Save {tone}</Button>)}</Inline>
+        <Inline gap={16} wrap>{extendedTones.map(tone => <IconButton key={tone} variant={tone} size="sm" aria-label={`Refresh ${tone}`} loading>
           <Icon name="sync" />
         </IconButton>)}</Inline>
       </Stack>
@@ -1449,7 +1555,7 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
   });
 
   it('keeps printed-label ink readable across the entire gloss gradient', () => {
-    const view = render(<ThemeProvider theme={theme}>{tones.map(tone => <Badge key={tone} tone={tone}>{tone}</Badge>)}</ThemeProvider>);
+    const view = render(<ThemeProvider theme={theme}>{extendedTones.map(tone => <Badge key={tone} tone={tone}>{tone}</Badge>)}</ThemeProvider>);
     for (const mark of view.container.querySelectorAll<HTMLElement>('.kraft-badge')) {
       const css = getComputedStyle(mark);
       const base = channels(css.backgroundColor).slice(0, 3);
@@ -1459,6 +1565,31 @@ describe.each<Theme>(['paper', 'night'])('%s painted contrast', theme => {
         const ground = base.map((value, i) => gloss[i] * alpha + value * (1 - alpha));
         expect(contrast(ink, ground), `${theme}/${mark.dataset.tone}: full gloss range`).toBeGreaterThanOrEqual(4.5);
       }
+    }
+  });
+  it('keeps palette button ink readable across every pulp texel and the whole face light', async () => {
+    const view = render(<ThemeProvider theme={theme} data-testid="bounds-buttons">{paletteTones.map(tone => <Button key={tone} variant={tone}>{tone}</Button>)}</ThemeProvider>);
+    const scope = getComputedStyle(view.getByTestId('bounds-buttons'));
+    const light = channels(scope.getPropertyValue('--kraft-face'));
+    const pulp = await imagePixels(scope.getPropertyValue('--kraft-pulp-paper').trim().match(/^url\(["']?(.*?)["']?\)$/)![1]);
+    for (const tone of paletteTones) {
+      const css = getComputedStyle(view.getByRole('button', { name: tone }));
+      const face = channels(css.backgroundColor).slice(0, 3), ink = channels(css.color).slice(0, 3);
+      // The button paints the face light, then the pulp, then the face colour. The pulp layer carries the blend.
+      const blend = css.backgroundBlendMode.split(', ')[1];
+      let minimum = Infinity;
+      for (let i = 0; i < pulp.data.length; i += 4) {
+        const alpha = pulp.data[i + 3] / 255;
+        const fibre = face.map((value, channel) => {
+          const texel = pulp.data[i + channel];
+          const mixed = blend === 'multiply' ? value * texel / 255 : blend === 'screen' ? value + texel - value * texel / 255 : texel;
+          return mixed * alpha + value * (1 - alpha);
+        });
+        for (const amount of [0, light[3]]) {
+          minimum = Math.min(minimum, contrast(ink, fibre.map((value, channel) => light[channel] * amount + value * (1 - amount))));
+        }
+      }
+      expect(minimum, `${theme}/${tone}: full pulp and light range with ${blend}`).toBeGreaterThanOrEqual(4.5);
     }
   });
   it('keeps material ink readable across every texture texel and light-gradient endpoint', async () => {

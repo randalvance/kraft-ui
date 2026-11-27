@@ -42,6 +42,24 @@ colors:
   plum: "#8d4f75"
   attention: "#f0c24a"
   on-attention: "#2a2219"
+  ochre-face: "#c7935a"
+  ochre-edge: "#9a692f"
+  on-ochre: "#2a2219"
+  teal-face: "#1b656f"
+  teal-edge: "#0f4a52"
+  on-teal: "#ffffff"
+  violet-face: "#6b4b90"
+  violet-edge: "#4a296b"
+  on-violet: "#ffffff"
+  plum-face: "#814469"
+  plum-edge: "#5d2348"
+  on-plum: "#ffffff"
+  blush-face: "#e8a9a2"
+  blush-edge: "#ba7e78"
+  on-blush: "#2a2219"
+  navy-face: "#2a4070"
+  navy-edge: "#15274f"
+  on-navy: "#ffffff"
   highlighter: "#fff0a0"
   highlighter-2: "#d9b84a"
   tape: "#f1e3a6b8"
@@ -213,6 +231,42 @@ components:
     typography: "{typography.label}"
     rounded: "{rounded.radius-4}"
     padding: "8px 14px"
+  button-ochre:
+    backgroundColor: "{colors.ochre-face}"
+    textColor: "{colors.on-ochre}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
+  button-teal:
+    backgroundColor: "{colors.teal-face}"
+    textColor: "{colors.on-teal}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
+  button-violet:
+    backgroundColor: "{colors.violet-face}"
+    textColor: "{colors.on-violet}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
+  button-plum:
+    backgroundColor: "{colors.plum-face}"
+    textColor: "{colors.on-plum}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
+  button-blush:
+    backgroundColor: "{colors.blush-face}"
+    textColor: "{colors.on-blush}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
+  button-navy:
+    backgroundColor: "{colors.navy-face}"
+    textColor: "{colors.on-navy}"
+    typography: "{typography.label}"
+    rounded: "{rounded.radius-4}"
+    padding: "8px 14px"
   button-sm:
     rounded: "{rounded.radius-4}"
     padding: "5px 10px"
@@ -312,7 +366,17 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 - **Mat green / sage** distinguishes the sage button; **st-green** supplies the separate badge and sticker face.
 - **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. Mat red itself is the cardboard frame around the `Composer`, with mat-red-2 as its cut edge; it is never a text ground. `Mat` cuts the same cardboard with `tone="red"`, and its words stay on the inset paper sheet. **st-red** provides the danger badge and sticker face.
 - **Green** is lifted in Night so a green dot stays at least 3:1 against a highlighted (picked) row.
-- **Red, green, amber, ochre, teal, violet, plum, blush, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
+- **Red, green, amber, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
+
+### Palette tones
+
+Ochre, teal, violet, plum, blush, and navy are identity colours: one per workspace, rail tile, note, or model chip. They carry no status, so a piece says what its colour means in words. Buttons, icon buttons, badges, and stickers take them beside the five shared tones; cards, rail tiles, and collapsible groups already did.
+
+- Each tone has three tokens with Paper and Night values: **`-face`**, **`-edge`**, and **`on-`**, as in `teal-face`, `teal-edge`, and `on-teal`. The face carries the on-colour ink at 4.5:1 or better under the mark gloss and the face light, the edge is a deeper cut of the same hue, and one face serves the button, the badge, and the sticker.
+- A face equals the palette colour wherever that colour already carries an ink. Paper teal, violet, and plum are deepened to the depth of blue so they hold white ink, because the raw colours reach 4.5:1 in neither ink. Navy takes the `blue-deep` values.
+- The ink changes sides with the theme. Teal, violet, and plum print white on a deep face in Paper and dark ink on a light face in Night, as blue does. Ochre and blush print dark ink on a light face in Paper and white on a deep face in Night. Navy prints white in both.
+- A toned button prints only the pulp fibres that deepen its label's contrast: the dark ones under light ink and the light ones under dark ink. Paper blue drops its light fibres for the same reason.
+- Night blush sits close to the danger sticker's red. Keep a blush piece away from a danger mark where the two could be confused, or give it a word.
 
 ### Neutral
 
@@ -392,9 +456,9 @@ Surface outlines lightly mix the material edge with transparency. Raised buttons
 
 ### Buttons
 
-`Button` has neutral, blue, sage, danger, and attention card variants in sm, md, and lg sizes. Raised buttons lift on hover and travel down and right during activation. `ghost`, `text`, and `dashed` are flat by default and show a paper tint on hover. Text actions can use danger ink. A persistent `aria-pressed="true"` has a flat face and inset ink ring, with the same label alignment as its neighbors. The `leading` slot spaces a decorative glyph before the label. Labels stay on one line by default and flow within the available width with `wrap`. Focus draws an offset ink outline. Disabled controls use muted ink. Loading keeps the label, shows a small Pinwheel in place of the leading icon, disables activation, and announces the busy state.
+`Button` has neutral, blue, sage, danger, and attention card variants, and ochre, teal, violet, plum, blush, and navy palette variants, in sm, md, and lg sizes. A palette variant gives a piece its own colour and carries no status. Raised buttons lift on hover and travel down and right during activation. `ghost`, `text`, and `dashed` are flat by default and show a paper tint on hover. Text actions can use danger ink. A persistent `aria-pressed="true"` has a flat face and inset ink ring, with the same label alignment as its neighbors. The `leading` slot spaces a decorative glyph before the label. Labels stay on one line by default and flow within the available width with `wrap`. Focus draws an offset ink outline. Disabled controls use muted ink. Loading keeps the label, shows a small Pinwheel in place of the leading icon, disables activation, and announces the busy state.
 
-`IconButton` requires an accessible label. Small icon buttons are 28×28px with 16px glyphs, and larger sizes use 20px glyphs. `bare` keeps the hit area and removes the resting card face. The optional corner `badge` holds an upright count sticker. During loading, the busy mark replaces the action icon and the corner badge stays visible.
+`IconButton` requires an accessible label. Small icon buttons are 28×28px with 16px glyphs, and larger sizes use 20px glyphs. It takes the same eleven card variants as `Button`. `bare` keeps the hit area and removes the resting card face. The optional corner `badge` holds an upright count sticker. During loading, the busy mark replaces the action icon and the corner badge stays visible.
 
 **The Dependable Press Rule.** Raised buttons depress toward their cut edge during activation. Persistent toggles flatten in place. Buttons and stickers stay upright.
 
@@ -514,7 +578,7 @@ Meters draw status inks on the same cut backing as `StatusDot`: white in Paper a
 
 ### Badges and stickers
 
-`Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels. Marks print in a single ink: an icon on a badge or sticker takes the mark's ink, so an accent-colored glyph, such as an attention-yellow one, cannot disappear into a face of the same hue.
+`Badge` is a compact printed mark, neutral by default. `Sticker` is a larger cut-out, blue and round by default, with round, pill, and square shape choices and no decorative rotation. Both share neutral, blue, sage, danger, and attention tones and the six palette tones, each printed in the tone's own on-colour ink. They are spans rather than controls; `Sticker` can be marked decorative to hide it from assistive technology. All sticker shapes stay upright, independent of theme-level tilt. Round stickers have a fixed 64px diameter set by `--kraft-sticker-size`; use pills for longer labels. Marks print in a single ink: an icon on a badge or sticker takes the mark's ink, so an accent-colored glyph, such as an attention-yellow one, cannot disappear into a face of the same hue.
 
 ## Do's and Don'ts
 

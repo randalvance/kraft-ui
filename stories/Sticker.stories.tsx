@@ -1,11 +1,12 @@
 import { expect } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, Sticker } from '../src';
-const meta = { title: 'Primitives/Sticker', component: Sticker, parameters: { docs: { description: { component: "An upright printed mark with a cut outline and no cast shadow. Round marks come in 64px, 36px, and 18px sizes, customizable with --kraft-sticker-size; use pills for longer labels. Hide redundant decoration with decorative; provide an accessible name for icon-only meaning." } } }, argTypes: { tone: { control: 'select', options: ['neutral','blue','sage','danger','attention'] }, shape: { control: 'select', options: ['round','pill','square'] }, decorative: { control: 'boolean' } }, args: { children: 'Keep', tone: 'blue', shape: 'round', decorative: false } } satisfies Meta<typeof Sticker>;
+const tones = ['neutral', 'blue', 'sage', 'danger', 'attention', 'ochre', 'teal', 'violet', 'plum', 'blush', 'navy'] as const;
+const meta = { title: 'Primitives/Sticker', component: Sticker, parameters: { docs: { description: { component: "An upright printed mark with a cut outline and no cast shadow. Round marks come in 64px, 36px, and 18px sizes, customizable with --kraft-sticker-size; use pills for longer labels. Hide redundant decoration with decorative; provide an accessible name for icon-only meaning." } } }, argTypes: { tone: { control: 'select', options: tones }, shape: { control: 'select', options: ['round','pill','square'] }, decorative: { control: 'boolean' } }, args: { children: 'Keep', tone: 'blue', shape: 'round', decorative: false } } satisfies Meta<typeof Sticker>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
-export const Tones: Story = { render: () => <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>{(["neutral","blue","sage","danger","attention"] as const).map(tone => <Sticker key={tone} tone={tone}>{tone}</Sticker>)}</div> };
+export const Tones: Story = { render: () => <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>{tones.map(tone => <Sticker key={tone} tone={tone}>{tone}</Sticker>)}</div> };
 export const CircleGeometry: Story = {
   render: () => <div style={{ display: 'flex', alignItems: 'stretch', gap: 16, width: 280 }}>{['K', 'Keep', 'Attention'].map(label => <Sticker key={label}>{label}</Sticker>)}</div>,
   play: async ({ canvasElement }) => {
@@ -48,7 +49,7 @@ export const Compact: Story = {
 /** Printed marks are single ink: a glyph on a sticker prints in the sticker's ink, even when the surrounding text is an accent colour such as the attention yellow. */
 export const PrintedGlyphs: Story = {
   render: () => <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', color: 'var(--kraft-attention)' }}>
-    {(['neutral', 'blue', 'sage', 'danger', 'attention'] as const).map(tone => <Sticker key={tone} tone={tone} shape="pill"><Icon name="bolt" />Rush</Sticker>)}
+    {tones.map(tone => <Sticker key={tone} tone={tone} shape="pill"><Icon name="bolt" />Rush</Sticker>)}
   </div>,
   play: async ({ canvasElement }) => {
     for (const sticker of canvasElement.querySelectorAll<HTMLElement>('.kraft-sticker')) {
