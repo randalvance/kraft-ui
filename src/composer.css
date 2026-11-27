@@ -1,0 +1,135 @@
+/* The prompt box: a red cardboard frame laid on the page, with a paper card set into it. */
+.kraft-composer {
+  --kraft-composer-frame: var(--kraft-mat-red);
+  --kraft-composer-frame-edge: var(--kraft-mat-red-2);
+  --kraft-composer-line: 28px;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--kraft-stroke-frame);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-board, var(--kraft-pulp-board)), var(--kraft-composer-frame);
+  border: var(--kraft-stroke-mat) solid var(--kraft-composer-frame-edge);
+  border-radius: var(--kraft-radius-10);
+  /* The lift-frame shadow, with its cut edge taken from the frame. */
+  box-shadow: 1.5px 3px 0 var(--kraft-composer-frame-edge), 5px 9px 10px var(--kraft-amb), 12px 22px 30px -6px var(--kraft-amb-2);
+  cursor: text;
+  transition: translate var(--kraft-motion-duration, 150ms) var(--kraft-ease), box-shadow var(--kraft-motion-duration, 150ms) var(--kraft-ease);
+}
+/* Focus anywhere inside lifts the frame off the page: the face rises and its cut edge deepens by the same amount.
+   It stays up while focus moves between the textarea and the controls, so a press on send does not shift under the pointer. */
+.kraft-composer:focus-within {
+  translate: 0 -1px;
+  box-shadow: 1.5px 4px 0 var(--kraft-composer-frame-edge), 6px 11px 12px var(--kraft-amb), 14px 26px 34px -6px var(--kraft-amb-2);
+}
+.kraft-composer:has(.kraft-composer-input:focus-visible) { outline: 2px solid var(--kraft-ink); outline-offset: 3px; }
+
+/* The card is the one piece set into another rather than laid on it, so it is recessed. It is its own paper for the ink roles. */
+.kraft-composer-card {
+  --kraft-content-ink: var(--kraft-ink);
+  --kraft-content-muted: var(--kraft-text-muted-paper);
+  --kraft-content-link: var(--kraft-link-paper);
+  --kraft-form-error-ink: var(--kraft-content-danger, var(--kraft-red-2));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  color: var(--kraft-content-ink);
+  background: linear-gradient(135deg, var(--kraft-face), transparent 55%), var(--kraft-texture-paper, var(--kraft-pulp-paper)), var(--kraft-card);
+  /* The frame's cut edge leaned toward the ink: at night the edge alone is as dark as the card and would not show it. */
+  border: 1px solid color-mix(in srgb, var(--kraft-composer-frame-edge) 55%, var(--kraft-ink));
+  border-radius: var(--kraft-radius-4);
+  box-shadow: var(--kraft-recess);
+  font: 400 14px/1.5 var(--kraft-font-sans);
+}
+[data-kraft-theme="night"] .kraft-composer-card { --kraft-form-error-ink: var(--kraft-red); }
+.kraft-composer:has(.kraft-composer-input[aria-invalid="true"]) .kraft-composer-card { border-block-end: 2px dashed var(--kraft-form-error-ink, var(--kraft-red-2)); }
+
+/* The rules are printed on the textarea itself and scroll with the text, one under each line. */
+.kraft-composer-input {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: var(--kraft-textarea-height, auto);
+  max-block-size: calc(var(--kraft-composer-max-rows, 7) * var(--kraft-composer-line) + var(--kraft-space-12));
+  margin: 0;
+  padding: var(--kraft-space-12) 18px 0;
+  overflow-y: auto;
+  color: inherit;
+  background: repeating-linear-gradient(transparent 0 calc(var(--kraft-composer-line) - 1px), var(--kraft-rule) calc(var(--kraft-composer-line) - 1px) var(--kraft-composer-line)) 0 var(--kraft-space-12) / 100% auto no-repeat local;
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  resize: none;
+  font: 400 15px/var(--kraft-composer-line) var(--kraft-font-sans);
+  caret-color: currentColor;
+  scrollbar-width: thin;
+}
+/* The placeholder is written by hand in the card's readable faint ink: the plain faint token falls under 4.5:1 on the night card's lighter fibres. */
+.kraft-composer-input::placeholder { color: var(--kraft-content-faint, var(--kraft-text-faint-paper)); font: 500 20px/var(--kraft-composer-line) var(--kraft-font-hand); opacity: 1; }
+
+.kraft-composer-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8) var(--kraft-space-10);
+  padding-block: var(--kraft-space-10) var(--kraft-space-12);
+  padding-inline: var(--kraft-space-14) var(--kraft-space-12);
+}
+.kraft-composer-bar {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8) var(--kraft-space-10);
+  min-inline-size: 0;
+  cursor: auto;
+}
+/* The hints and actions keep to the end edge, and drop below a long bar together. */
+.kraft-composer-end {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--kraft-space-8) var(--kraft-space-10);
+  min-inline-size: 0;
+  margin-inline-start: auto;
+}
+.kraft-composer-hints, .kraft-composer-status { color: var(--kraft-content-muted); font: 500 17px/22px var(--kraft-font-hand); }
+.kraft-composer-hints { min-inline-size: 0; text-align: end; }
+.kraft-composer-hint { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+/* A space sits between two hints so they read as two phrases; the margin widens it. */
+.kraft-composer-hint + .kraft-composer-hint { margin-inline-start: var(--kraft-space-6); }
+.kraft-composer-status { display: inline-flex; align-items: center; gap: var(--kraft-space-6); white-space: nowrap; }
+/* The live region stays in the row while idle; this gives back the gap it would otherwise hold. */
+.kraft-composer-status:empty { margin-inline-end: calc(-1 * var(--kraft-space-10)); }
+.kraft-composer-mic, .kraft-composer-send { display: inline-flex; flex: none; align-items: center; gap: var(--kraft-space-8); cursor: auto; }
+/* Actions are discs. A small icon button is round already; a larger one is rounded here. */
+:is(.kraft-composer-mic, .kraft-composer-send) .kraft-icon-button { border-radius: 50%; }
+
+.kraft-composer:has(.kraft-composer-input:disabled) {
+  --kraft-composer-frame: color-mix(in srgb, var(--kraft-mat-red) 35%, var(--kraft-paper-2));
+  --kraft-composer-frame-edge: color-mix(in srgb, var(--kraft-mat-red-2) 35%, var(--kraft-line));
+  box-shadow: 0 1px 0 var(--kraft-composer-frame-edge);
+  translate: none;
+  cursor: not-allowed;
+}
+.kraft-composer:has(.kraft-composer-input:disabled) .kraft-composer-card { color: var(--kraft-faint); background: var(--kraft-paper-2); box-shadow: none; }
+.kraft-composer:has(.kraft-composer-input:disabled) :is(.kraft-composer-hints, .kraft-composer-status) { color: var(--kraft-faint); }
+.kraft-composer-input:disabled { cursor: not-allowed; }
+.kraft-composer-input:disabled::placeholder { color: var(--kraft-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .kraft-composer { transition: none; }
+}
+@media (forced-colors: active) {
+  .kraft-composer { background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .kraft-composer-card { color: FieldText; background: Field; border-color: FieldText; box-shadow: none; }
+  .kraft-composer-input { background: none; }
+  .kraft-composer-hints, .kraft-composer-status { color: FieldText; }
+  .kraft-composer:has(.kraft-composer-input:focus-visible) { outline-color: Highlight; }
+  .kraft-composer:has(.kraft-composer-input[aria-invalid="true"]) .kraft-composer-card { border-block-end-color: Highlight; }
+  .kraft-composer:has(.kraft-composer-input:disabled), .kraft-composer:has(.kraft-composer-input:disabled) .kraft-composer-card { border-color: GrayText; }
+  .kraft-composer:has(.kraft-composer-input:disabled) :is(.kraft-composer-card, .kraft-composer-hints, .kraft-composer-status),
+  .kraft-composer-input:disabled::placeholder { color: GrayText; }
+}

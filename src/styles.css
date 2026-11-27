@@ -19,6 +19,7 @@
 @import './navigation.css';
 @import './collapsible-group.css';
 @import './tag-input.css';
+@import './composer.css';
 
 .kraft-root { --kraft-content-ink: var(--kraft-ink); --kraft-content-muted: var(--kraft-text-muted-paper); --kraft-content-link: var(--kraft-link-paper); color: var(--kraft-content-ink); background: var(--kraft-desk); font: 400 14px/1.5 var(--kraft-font-sans); --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); --kraft-motion-duration: var(--kraft-dur-hover); --kraft-decoration-angle: -4deg; accent-color: var(--kraft-blue); caret-color: var(--kraft-ink); }
 [data-kraft-theme] { --kraft-texture-paper: var(--kraft-pulp-paper); --kraft-texture-board: var(--kraft-pulp-board); }
@@ -64,7 +65,7 @@
 .kraft-text[data-tone="attention"] { color: var(--kraft-content-attention, var(--kraft-text-attention-paper)); }
 /* Tone inks follow the ground: each paper, kraft, and cardboard context names its own readable set.
    Sage leans the status green toward the ground's ink, further on the darker materials. */
-:root, [data-kraft-theme], .kraft-root, .kraft-surface, .kraft-paper-panel-body, .kraft-tabs[data-panel="paper"] > .kraft-tab-panel, .kraft-card, .kraft-page-header, .kraft-table-scroll, .kraft-app-sheet {
+:root, [data-kraft-theme], .kraft-root, .kraft-surface, .kraft-paper-panel-body, .kraft-tabs[data-panel="paper"] > .kraft-tab-panel, .kraft-card, .kraft-page-header, .kraft-table-scroll, .kraft-app-sheet, .kraft-composer-card {
   --kraft-content-faint: var(--kraft-text-faint-paper); --kraft-content-danger: var(--kraft-text-danger-paper); --kraft-content-attention: var(--kraft-text-attention-paper);
   --kraft-content-sage: color-mix(in srgb, var(--kraft-status-done) 80%, var(--kraft-ink));
 }

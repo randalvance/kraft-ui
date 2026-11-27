@@ -310,7 +310,7 @@ Warm paper neutrals and earthy material faces support a small set of printed acc
 ### Secondary
 
 - **Mat green / sage** distinguishes the sage button; **st-green** supplies the separate badge and sticker face.
-- **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. **st-red** provides the danger badge and sticker face.
+- **Mat red** provides the danger button's face and edge. The raised face blends mat-red-2 with mat-red-3 to keep white ink readable over texture. Mat red itself is the cardboard frame around the `Composer`, with mat-red-2 as its cut edge; it is never a text ground. **st-red** provides the danger badge and sticker face.
 - **Green** is lifted in Night so a green dot stays at least 3:1 against a highlighted (picked) row.
 - **Red, green, amber, ochre, teal, violet, plum, blush, marker, and highlighter** remain available palette tokens. Their presence does not introduce additional component variants.
 
@@ -372,7 +372,8 @@ Depth is structural: a crisp material edge sits beneath a face, followed by a di
 - **lift-paper-1 / 2 / 3:** increasing paper depth, used by non-cardboard Surface elevations.
 - **lift-board:** cardboard Surface depth; cardboard retains this shadow at nonzero elevations.
 - **lift-board-sm / up and press-board:** the structural vocabulary reflected by button rest, hover, and press treatments, with the button's own variant edge color.
-- **lift-mat / frame, press-paper, and recess:** available foundation depth tokens; they do not imply further components.
+- **lift-frame and recess:** the depth of the `Composer` frame and the inset of the card set into it.
+- **lift-mat and press-paper:** available foundation depth tokens; they do not imply further components.
 - **sticker / sticker-s / sticker-on:** zero-offset cut outlines, not cast shadows. Badge uses the small cut; Sticker uses the standard cut.
 
 **The Cut-edge Rule.** Light comes from the top left. Structural edges and cast shadows travel down and right; sticker outlines never become cast shadows.
@@ -410,6 +411,12 @@ Both wrap the input in a label so the box and its text form one target. Focus dr
 `TextField`, `Textarea`, and `SearchField` are paper strips with a thin cut edge and a shallow shadow. Their ink and placeholders stay readable in Paper and Night. The search mark sits inside the start edge and reverses naturally in right-to-left layouts. SearchField's frame, not its input, carries the paper, so a trailing hint or count sits in flow at the end edge, after the browser's clear button, and the focus outline wraps the whole frame. A replacement mark, such as a funnel, takes the same muted ink and 16px box. `Kbd` keycaps are small sheets with a 2px bottom edge for depth, bold 12px sans ink (11px at `sm`), and a muted plus sign between chord keys; they never tilt. A multiline field keeps the browser's vertical resize affordance. Focus draws the same offset ink outline as other controls; disabled fields use quiet tinted paper without a lifted edge.
 
 `FormField` places a bold label and a short handwritten hint above one native control. A validation message sits below it in red ink while the control gains a dashed red lower edge. The label names the control; hints and errors describe it, and an error also sets its invalid state. Applications decide when validation appears. A field can be used without the wrapper when an external label or accessible name is supplied.
+
+### Composer
+
+`Composer` is the one place a piece is set into another rather than laid on it. The frame is mat-red cardboard with the board texture, a 1.5px mat-red-2 edge, the 7px `stroke-frame` width, radius 10, and the lift-frame shadow. The card inside is the whitest paper, **card**, with the paper texture, radius 4, and the recess shadow. Its 1px edge is the frame's cut edge leaned 45% toward the ink, so it keeps 3:1 against the card at night, when the edge alone is as dark as the paper. The card is its own paper for the ink roles, so the frame can lie on the desk, paper, kraft, or cardboard. Text is 15px sans on 28px rules in **rule**, printed on the textarea so they scroll with it. The placeholder is 20px handwriting in the card's readable faint ink, because the plain faint token falls under 4.5:1 on the night card's lighter fibres.
+
+The foot holds the application's bar at the start. At the end sit a handwritten busy status beside a small Pinwheel, the key hints as small keycaps with handwritten words in secondary ink, and the mic and send discs. In a narrow column the end drops below the bar. Focus in the textarea draws the ink outline around the whole frame. While focus is anywhere inside, the frame sits 1px higher and its cut edge deepens by the same amount, so it does not shift when focus moves from the text to a disc. A disabled composer mixes the frame toward the quiet paper, lays it flat, and loses the recess. An invalid one has the dashed red lower edge of other fields. The frame, card, and discs never tilt; a stamp in the bar does.
 
 ### Radio choices and select
 

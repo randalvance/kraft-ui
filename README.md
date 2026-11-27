@@ -48,6 +48,7 @@ export function Note() {
 | Form choices | `Checkbox`, `CheckboxGroup`, `CheckboxStatus`, `Toggle`, `RadioGroup`, `SegmentedControl`, `ToggleChips`, `Select` |
 | Form fields | `FormField`, `TextField`, `Textarea`, `SearchField`, `InlineEdit` |
 | Key hints | `Kbd`, `KbdProps`, `KbdSize` |
+| Prompt box | `Composer`, `ComposerProps`, `ComposerSendKey` |
 | Status marks | `StatusDot`, `StatusDotProps`, `StatusDotVariant`, `StatusDotShape`, `StatusDotSize`, `StatusSticker`, `StatusStickerProps`, `StatusStickerVariant`, `StatusStickerIndicator`, `StatusStickerSize`, `StatusTone` |
 | Edit pages | `FormSection`, `FormSectionProps`, `PageHeader`, `PageHeaderProps` |
 | Collections | `ActionableList`, `ActionableListItem`, `TreeView` |
@@ -480,6 +481,61 @@ import { Breadcrumb, Button, CollapsibleGroup, FormField, Pager, TagInput, Toolb
 </Toolbar>;
 
 <CollapsibleGroup name="columns" title="Waiting on review" count={3} tone="attention" defaultOpen>…</CollapsibleGroup>;
+```
+
+### Composer
+
+`Composer` is the prompt box: a red cardboard frame around ruled paper, with key hints, a mic disc, and a send disc inside the frame and a bar for the application's own controls. It wraps one native `<textarea>`. The ref and native textarea props reach it, including `name`, `value` or `defaultValue`, `onChange`, `placeholder`, `required`, `disabled`, and `form`. `className` and `style` size the whole frame, and `inputClassName` and `inputStyle` reach the textarea. Name it with `aria-label`, a `<label>`, or a `FormField`, which also supplies its description and error. The placeholder is written in the hand face.
+
+The paper starts at `rows` lines (2 by default), grows with the text up to `maxRows` lines (7 by default), and then scrolls with its rules.
+
+Enter sends and Shift+Enter adds a line. `sendKey="mod-enter"` (`ComposerSendKey`) sends on Ctrl+Enter or ⌘+Enter instead and leaves Enter to add a line. The send key calls `onSend` with the text. Inside a form, or with the `form` attribute, it also submits that form the way a single-line input does: it presses the form's first submit button, so validation, the button's `onClick`, and `onSubmit` all run, and a disabled submit button holds the form. Blank text is never sent, a held key sends once, and an Enter that confirms an input-method composition is left alone. Call `preventDefault()` in your own `onKeyDown` to take a key over. The composer does not clear the text: empty a controlled `value`, or reset the form.
+
+The keys are shown as `Kbd` hints that follow `sendKey` and are the textarea's accessible description. `hints` replaces them with your own content, such as a translation, and `hints={null}` removes them.
+
+`bar` holds the application's controls, such as a model `Select`, a `Gauge`, a `Stamp`, and folder and branch `Tag`s. `mic` and `send` hold the actions, and an `IconButton` in either is drawn as a disc. The tab order is the textarea, the bar, the mic, and then send. Pressing the frame or a hint moves focus to the textarea; the bar and the actions keep their own presses. The application owns what it puts in these slots: the names, a pressed mic, a send disc that turns blue once there is text, and the stop button that replaces it.
+
+`busy` means the application is working on the last message. The send key is held, the textarea stays editable and is marked `aria-busy`, and a Pinwheel shows beside `busyLabel` (“Working…” by default) in a polite status region. The default hints give way to that status; your own `hints` stay. `disabled` disables the textarea and quiets the frame. Disable the controls in the slots yourself.
+
+The frame rises by a pixel while focus is inside it. The rise follows the theme motion setting and the system preference for reduced motion. The frame, card, and discs stay upright when tilt is on. `ComposerProps` and `ComposerSendKey` are exported.
+
+```tsx
+import { useState } from 'react';
+import { Composer, Icon, IconButton, Stamp, Tag } from '@randalvance/kraft-ui';
+
+function Prompt({ busy, onSend, onStop }: { busy: boolean; onSend: (text: string) => void; onStop: () => void }) {
+  const [draft, setDraft] = useState('');
+  const [yolo, setYolo] = useState(false);
+  const send = () => {
+    if (busy || !draft.trim()) return;
+    onSend(draft);
+    setDraft('');
+  };
+  return <Composer aria-label="Message the agent" placeholder="Write to the agent…" busy={busy}
+    value={draft} onChange={event => setDraft(event.currentTarget.value)} onSend={send}
+    bar={<>
+      <Stamp as="button" size="sm" tone="danger" pressed={yolo} onClick={() => setYolo(!yolo)}>Yolo</Stamp>
+      <Tag variant="paper" leading={<Icon name="folder" />}>lighthouse</Tag>
+      <Tag leading={<Icon name="branch" />}>main</Tag>
+    </>}
+    mic={<IconButton size="sm" aria-label="Dictate"><Icon name="microphone" /></IconButton>}
+    send={busy
+      ? <IconButton variant="danger" aria-label="Stop the agent" onClick={onStop}><Icon name="stop" /></IconButton>
+      : <IconButton variant={draft.trim() ? 'blue' : 'neutral'} aria-label="Send message" onClick={send}><Icon name="send" /></IconButton>} />;
+}
+```
+
+In a form, a submit button in `send` and the send key both submit it:
+
+```tsx
+<form onSubmit={event => {
+  event.preventDefault();
+  start(new FormData(event.currentTarget).get('job'));
+  event.currentTarget.reset();
+}}>
+  <Composer aria-label="Describe the job" name="job" required sendKey="mod-enter" rows={3}
+    send={<IconButton type="submit" variant="blue" aria-label="Start the session"><Icon name="send" /></IconButton>} />
+</form>;
 ```
 
 ### Interactive components and compositions

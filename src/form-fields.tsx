@@ -1,4 +1,6 @@
-import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, useState, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useRef, useState, type ComponentPropsWithoutRef, type CSSProperties, type ReactNode, type RefObject } from 'react';
+import { Kbd } from './kbd.js';
+import { Pinwheel } from './material-marks.js';
 import { Tag, type TagVariant } from './tag.js';
 
 type FieldContextValue = {
@@ -11,7 +13,7 @@ type FieldContextValue = {
 const FieldContext = createContext<FieldContextValue | null>(null);
 
 export type FormFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & {
-  /** One TextField, Textarea, SearchField, or TagInput belongs inside each FormField. */
+  /** One TextField, Textarea, SearchField, TagInput, or Composer belongs inside each FormField. */
   children: ReactNode;
   label: ReactNode;
   labelStyle?: 'default' | 'uppercase';
@@ -92,27 +94,19 @@ function fitTextarea(node: HTMLTextAreaElement) {
   }
 }
 
-/** A paper multiline field with native resizing and form behavior. */
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
-  variant = 'boxed', mono = false, autoGrow = false, footer, className, id,
-  'aria-describedby': describedBy, 'aria-invalid': invalid, onChange, ...props
-}, ref) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  useImperativeHandle(ref, () => textareaRef.current!, []);
-  const generatedId = useId();
-  const hasFooter = footer != null && footer !== false && footer !== '';
-  const footerId = `${generatedId}-footer`;
-  const relations = useFieldRelations(id, describedBy, invalid);
-
+/**
+ * Keeps a growing textarea fitted to its content. `sizing` lists what changes the content's height;
+ * the width, late fonts, and a form reset are watched here.
+ */
+function useFittedTextarea(textareaRef: RefObject<HTMLTextAreaElement | null>, active: boolean, form: string | undefined, sizing: readonly unknown[]) {
   useEffect(() => {
     const node = textareaRef.current!;
-    if (autoGrow) fitTextarea(node);
+    if (active) fitTextarea(node);
     else node.style.removeProperty('--kraft-textarea-height');
-  }, [autoGrow, variant, mono, className, props.style, props.value, props.defaultValue, props.rows, props.wrap,
-    props.placeholder, relations['aria-invalid']]);
+  }, [active, ...sizing]);
 
   useEffect(() => {
-    if (!autoGrow) return;
+    if (!active) return;
     const node = textareaRef.current!;
     const update = () => fitTextarea(node);
     let width: number | undefined;
@@ -125,20 +119,35 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
     observer?.observe(node, { box: 'border-box' });
     const fonts = node.ownerDocument.fonts;
     fonts?.addEventListener('loadingdone', update);
-    const form = node.form;
+    const owner = node.form;
     let resetFrame = 0;
     const onReset = () => {
       cancelAnimationFrame(resetFrame);
       resetFrame = requestAnimationFrame(update);
     };
-    form?.addEventListener('reset', onReset);
+    owner?.addEventListener('reset', onReset);
     return () => {
       observer?.disconnect();
       fonts?.removeEventListener('loadingdone', update);
-      form?.removeEventListener('reset', onReset);
+      owner?.removeEventListener('reset', onReset);
       cancelAnimationFrame(resetFrame);
     };
-  }, [autoGrow, props.form]);
+  }, [active, form]);
+}
+
+/** A paper multiline field with native resizing and form behavior. */
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
+  variant = 'boxed', mono = false, autoGrow = false, footer, className, id,
+  'aria-describedby': describedBy, 'aria-invalid': invalid, onChange, ...props
+}, ref) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  useImperativeHandle(ref, () => textareaRef.current!, []);
+  const generatedId = useId();
+  const hasFooter = footer != null && footer !== false && footer !== '';
+  const footerId = `${generatedId}-footer`;
+  const relations = useFieldRelations(id, describedBy, invalid);
+  useFittedTextarea(textareaRef, autoGrow, props.form, [variant, mono, className, props.style, props.value, props.defaultValue,
+    props.rows, props.wrap, props.placeholder, relations['aria-invalid']]);
 
   return <>
     <textarea {...props} {...relations} ref={textareaRef} data-variant={variant} data-mono={mono || undefined}
@@ -284,4 +293,121 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
         }
       }} />
   </span>;
+});
+
+export type ComposerSendKey = 'enter' | 'mod-enter';
+
+export type ComposerProps = Omit<ComponentPropsWithoutRef<'textarea'>, 'children'> & {
+  /**
+   * `enter` (default) sends on Enter and adds a line on Shift+Enter. `mod-enter` sends on Ctrl+Enter or ⌘+Enter and
+   * leaves Enter to add a line.
+   */
+  sendKey?: ComposerSendKey;
+  /** Called with the text when the send key is pressed. Blank text is not sent, and nothing is sent while `busy`. */
+  onSend?: (value: string) => void;
+  /** The application's own controls, such as a model picker, a gauge, a stamp, and folder and branch tags. */
+  bar?: ReactNode;
+  /** A voice action, usually a small `IconButton`. It is drawn as a disc. */
+  mic?: ReactNode;
+  /** The send action, usually an `IconButton`. It is drawn as a disc; `type="submit"` submits the enclosing form. */
+  send?: ReactNode;
+  /** Replaces the key hints, which describe the textarea. `null` removes them. */
+  hints?: ReactNode;
+  /** The application is working on the last message: the send key is held, and a pinwheel shows with `busyLabel`. */
+  busy?: boolean;
+  /** The status shown and announced while busy. Defaults to “Working…”. */
+  busyLabel?: ReactNode;
+  /** The most lines the paper grows to before it scrolls. Defaults to 7. */
+  maxRows?: number;
+  /** Applies to the native textarea. `className` and `style` size and place the whole frame. */
+  inputClassName?: string;
+  inputStyle?: CSSProperties;
+};
+
+const filled = (slot: ReactNode) => slot != null && typeof slot !== 'boolean' && slot !== '';
+const sendKeyHints: Record<ComposerSendKey, { send: readonly string[]; line: readonly string[] }> = {
+  enter: { send: ['Enter'], line: ['Shift', 'Enter'] },
+  'mod-enter': { send: ['Ctrl', 'Enter'], line: ['Enter'] },
+};
+
+/** Follows native implicit submission: the form's first submit button is pressed, and a disabled one holds the form. */
+function submitFrom(form: HTMLFormElement) {
+  const button = [...form.elements].find(control => control.matches('button, input') && (control as HTMLButtonElement).type === 'submit') as HTMLButtonElement | undefined;
+  if (!button) form.requestSubmit();
+  else if (!button.matches(':disabled')) button.click();
+}
+
+/**
+ * The prompt box: a red cardboard frame around ruled paper that grows with the text, with a bar for the
+ * application's controls, key hints, and mic and send actions inside the frame. The send key calls `onSend` and
+ * submits an enclosing form. Native textarea props and the ref reach the textarea.
+ */
+export const Composer = forwardRef<HTMLTextAreaElement, ComposerProps>(function Composer({
+  sendKey = 'enter', onSend, bar, mic, send, hints, busy = false, busyLabel = 'Working…', maxRows,
+  className, style, inputClassName, inputStyle, id, rows = 2, onChange, onKeyDown,
+  'aria-describedby': describedBy, 'aria-invalid': invalid, ...props
+}, ref) {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  useImperativeHandle(ref, () => inputRef.current!, []);
+  const hintsId = `${useId()}-hints`;
+  const relations = useFieldRelations(id, describedBy, invalid);
+  useFittedTextarea(inputRef, true, props.form, [inputClassName, inputStyle, props.value, props.defaultValue, rows, maxRows,
+    props.wrap, props.placeholder]);
+
+  const keys = sendKeyHints[sendKey];
+  // The send key is held while busy, so its hint would mislead. An application's own hints always show.
+  const hint = hints !== undefined ? hints : busy ? null : <>
+    <span className="kraft-composer-hint"><Kbd size="sm" keys={keys.send} /> send</span>{' '}
+    <span className="kraft-composer-hint"><Kbd size="sm" keys={keys.line} /> new line</span>
+  </>;
+  const hasHint = filled(hint);
+
+  return <div className={className ? `kraft-composer ${className}` : 'kraft-composer'} style={style} data-busy={busy || undefined}
+    onMouseDown={event => {
+      // Pressing the frame, the paper's margin, or a passive hint behaves like pressing the textarea.
+      // The bar and the actions belong to the application.
+      const input = inputRef.current;
+      if (!input || input.disabled || (event.target as Element).closest(`.kraft-composer-bar, .kraft-composer-mic, .kraft-composer-send, ${interactive}`)) return;
+      event.preventDefault();
+      input.focus();
+    }}>
+    <div className="kraft-composer-card">
+      <textarea {...props} {...relations} ref={inputRef} rows={rows} aria-busy={busy || props['aria-busy']}
+        aria-describedby={[relations['aria-describedby'], hasHint && hintsId].filter(Boolean).join(' ') || undefined}
+        className={inputClassName ? `kraft-composer-input ${inputClassName}` : 'kraft-composer-input'}
+        style={maxRows === undefined ? inputStyle : { '--kraft-composer-max-rows': maxRows, ...inputStyle } as CSSProperties}
+        onChange={props.value == null ? event => {
+          fitTextarea(event.currentTarget);
+          onChange?.(event);
+        } : onChange}
+        onKeyDown={event => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || event.altKey) return;
+          // An Enter that confirms an input-method composition is not a send. Safari reports it after the
+          // composition has ended, with key code 229.
+          if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
+          if (sendKey === 'mod-enter' && !event.ctrlKey && !event.metaKey) return;
+          // The send key never adds a line, even when there is nothing to send yet.
+          event.preventDefault();
+          const input = event.currentTarget;
+          if (event.repeat || busy || !input.value.trim()) return;
+          onSend?.(input.value);
+          if (input.form) submitFrom(input.form);
+          // An uncontrolled textarea cleared by either handler shrinks back at once.
+          if (props.value == null) fitTextarea(input);
+        }} />
+      <div className="kraft-composer-foot">
+        {filled(bar) && <div className="kraft-composer-bar">{bar}</div>}
+        <div className="kraft-composer-end">
+          {/* The region is always present, so the status is announced when it appears. */}
+          <span className="kraft-composer-status" role="status">
+            {busy && <><Pinwheel size="button" />{filled(busyLabel) && <span>{busyLabel}</span>}</>}
+          </span>
+          {hasHint && <span id={hintsId} className="kraft-composer-hints">{hint}</span>}
+          {filled(mic) && <span className="kraft-composer-mic">{mic}</span>}
+          {filled(send) && <span className="kraft-composer-send">{send}</span>}
+        </div>
+      </div>
+    </div>
+  </div>;
 });
