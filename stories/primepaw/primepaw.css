@@ -1,0 +1,67 @@
+/*
+ * Primepaw rebuild: layout glue only. Every material, colour and type choice comes from Kraft UI components and
+ * tokens. Anything here that looks like a component is listed as a missing component in docs/primepaw-rebuild.md.
+ */
+
+/* The app fills the story canvas edge to edge. */
+.story-stage:has(> .pp-frame) { padding: 0; min-height: 0; }
+.pp-frame { position: relative; block-size: 100dvh; min-block-size: 640px; }
+.pp-frame > .pp-app { block-size: 100%; }
+.pp-rail-list { padding: 0; }
+
+.pp-dock { position: absolute; inset-block-end: 16px; inset-inline-end: 20px; z-index: 2; }
+
+.pp-page-title { min-inline-size: 0; }
+
+/* Thread pieces. */
+.pp-thread { display: flex; flex-direction: column; gap: 20px; max-inline-size: 1040px; margin-inline: auto; min-block-size: 100%; }
+.pp-thread-body { display: flex; flex-direction: column; gap: 20px; flex: 1; }
+.pp-user-note { display: flex; justify-content: flex-end; }
+.pp-user-note > * { max-inline-size: min(600px, 80%); }
+.pp-agent-line { max-inline-size: 780px; }
+.pp-composer { position: sticky; inset-block-end: 0; }
+.pp-composer .kraft-textarea, .pp-composer textarea { inline-size: 100%; }
+.pp-slip { max-inline-size: 780px; position: relative; }
+.pp-slip-actions { border-block-start: 1px dashed var(--kraft-edge); padding-block-start: 12px; }
+.pp-dot { display: inline-block; inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--kraft-ink); }
+.pp-dot-blue { background: var(--kraft-blue); }
+
+/* Session view: thread plus the artifacts clipboard and side chat. */
+.pp-session { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 420px); gap: 20px; block-size: 100%; }
+.pp-session-side { display: flex; flex-direction: column; gap: 16px; min-block-size: 0; }
+.pp-artifact-chips { display: grid; align-items: start; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; max-inline-size: 520px; }
+
+/* Card grids. */
+.pp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; align-items: stretch; }
+.pp-grid-wide { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.pp-two-col { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); gap: 24px; align-items: start; }
+.pp-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); gap: 20px; align-items: start; }
+@container kraft-app-shell (max-width: 1100px) {
+  .pp-two-col, .pp-split, .pp-session { grid-template-columns: minmax(0, 1fr); }
+}
+
+.pp-mono { font-family: var(--kraft-font-mono); font-size: 12px; }
+.pp-swatch { display: inline-block; inline-size: 12px; block-size: 12px; border-radius: 2px; flex: none; }
+.pp-preview { display: grid; place-items: center; block-size: 120px; border-radius: var(--kraft-radius-4); background: var(--kraft-paper-2); }
+.pp-preview-lines { display: grid; gap: 6px; padding: 14px; align-content: start; place-items: stretch; }
+.pp-preview-lines > span { block-size: 6px; border-radius: 3px; background: var(--kraft-line); }
+.pp-preview-lines > span:nth-child(3n) { inline-size: 60%; }
+.pp-preview-lines > span:nth-child(3n + 2) { inline-size: 85%; }
+
+/* Workflow swimlane stand-in: one dot per run. */
+.pp-runs { display: flex; gap: 8px; align-items: center; }
+
+/* Tasks: nested group cards inside the cork. */
+.pp-task-group { display: flex; flex-direction: column; gap: 12px; }
+.pp-task-notes { display: flex; flex-wrap: wrap; gap: 12px; }
+.pp-task-notes > .kraft-sticky-note { inline-size: 120px; min-block-size: 110px; }
+
+/* Setup checklist. */
+.pp-setup { max-inline-size: 820px; }
+.pp-setup-step { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: start; padding-block: 16px; border-block-end: 1px dashed var(--kraft-edge); }
+.pp-setup-step-body { grid-column: 2 / -1; }
+
+/* Board cards and list cards are as tall as their content. */
+.kraft-app-board .kraft-card, .pp-compact-cards .kraft-card { --kraft-card-min-height: 0; }
+.pp-nowrap { white-space: nowrap; }
+.pp-inbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; align-items: start; }
