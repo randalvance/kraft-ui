@@ -1,7 +1,7 @@
 import { useState, type MouseEventHandler, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { StickyNote, Surface, ThemeProvider, type StickyNoteTone } from '../src';
+import { Heading, Stack, StickyNote, Surface, ThemeProvider, type StickyNoteTone } from '../src';
 
 const tones: StickyNoteTone[] = ['attention', 'blush', 'blue', 'sage', 'ochre'];
 
@@ -43,6 +43,25 @@ export const Tones: Story = {
 };
 
 export const NightTones: Story = { ...Tones, globals: { theme: 'night' } };
+
+export const PageOutline: Story = {
+  parameters: { docs: { description: { story: 'A note adds no heading of its own. When `header` holds one, give it the level that follows the page outline. `Heading` renders an `h2`, which fits notes directly under the page `h1`. Notes under an `h2` take `as="h3"`.' } } },
+  render: () => <Stack gap={16}>
+    <Heading as="h1" size="lg">Idea board</Heading>
+    <Board>
+      <StickyNote tone="blush" tilt={1} header={<Heading size="title-sm">Cover ideas</Heading>} footer="Mara">Try the smaller lettering.</StickyNote>
+      <StickyNote tone="blue" tilt={-1} header={<Heading size="title-sm">Photographs</Heading>} footer="Wednesday">Pick three for the spread.</StickyNote>
+    </Board>
+    <Heading>Parked</Heading>
+    <Board>
+      <StickyNote tone="ochre" tilt={-1.5} header={<Heading as="h3" size="title-sm">Paper order</Heading>} footer="Thursday">Get two packs of cream stock.</StickyNote>
+    </Board>
+  </Stack>,
+  play: async ({ canvasElement }) => {
+    const outline = within(canvasElement).getAllByRole('heading').map(heading => `${heading.tagName} ${heading.textContent}`);
+    await expect(outline).toEqual(['H1 Idea board', 'H2 Cover ideas', 'H2 Photographs', 'H2 Parked', 'H3 Paper order']);
+  },
+};
 
 export const States: Story = {
   render: () => <Board>

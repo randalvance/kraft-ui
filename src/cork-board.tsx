@@ -137,13 +137,14 @@ export type CorkBoardColumnProps = Omit<ComponentPropsWithoutRef<'section'>, 'ti
   count?: number;
   /** What screen readers hear instead of the bare count, for example "3 notes". */
   countLabel?: string;
+  /** Level of the name's heading. Match the page outline: 2 (default) directly under the page `h1`, 3 under an `h2`. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   pinTone?: PinTone;
 };
 
 /** A Kanban column: a pinned kraft header with a name and count above a stack of items. */
 export const CorkBoardColumn = forwardRef<HTMLElement, CorkBoardColumnProps>(function CorkBoardColumn({
-  name, count, countLabel, headingLevel = 3, pinTone, className, children,
+  name, count, countLabel, headingLevel = 2, pinTone, className, children,
   'aria-label': ariaLabel, 'aria-labelledby': labelledBy, ...props
 }, ref) {
   const nameId = `${useId()}-name`;
